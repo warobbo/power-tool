@@ -21,7 +21,19 @@ Turn daily watt-hours into a recommended leisure-battery size using:
 
 Results lead with the 12 V Ah size to buy (how UK leisure batteries are sold), plus 24 V Ah and the Wh total.
 
-Solar, inverter sizing, and wire/fuse tools are **not** in this slice.
+## Solar (slice 3)
+
+Turn daily watt-hours into a recommended solar-panel size using:
+
+- saved Daily Power total (or a figure you type)
+- UK / EU season presets: summer (4.5 h), spring / autumn (3 h, default), winter (1.2 h)
+- editable peak sun hours
+- real-world losses (default 25% for dirt, angle, controller, and cable)
+- an optional extra margin
+
+Results lead with array watts (how panels are sold), plus example 100 W / 200 W / 400 W panel counts and the watt-hours per day that array can support.
+
+Inverter sizing and wire/fuse tools are **not** in this slice.
 
 The site is a static front-end: no backend, no accounts, and no APIs. It is meant to deploy on Render as a static site.
 
@@ -30,6 +42,7 @@ The site is a static front-end: no backend, no accounts, and no APIs. It is mean
 1. Open Daily Power and set your appliances, or keep the defaults.
 2. Open Battery. Daily watt-hours are filled in from what you just saved.
 3. Choose days without charging and LiFePO4 or AGM. Sizes update live.
+4. Open Solar. The same daily watt-hours are filled in. Pick a season or type peak sun hours. Watts update live.
 
 Numbers are a **planning estimate only**.
 
@@ -45,7 +58,7 @@ From the repo root:
 python3 -m http.server 8080
 ```
 
-Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) and [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html).
+Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), and [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html).
 
 You can also open the HTML files directly in a browser. A local server is the more reliable option.
 
@@ -77,7 +90,7 @@ All Power Tools slices share one browser profile:
 | **localStorage key** | `powertools.systemProfile` |
 | **Current version** | `1` |
 
-Daily Power reads and writes `dailyPower`. Battery reads that total and writes `battery` on the same object:
+Daily Power reads and writes `dailyPower`. Battery and Solar read that total and write `battery` and `solar` on the same object:
 
 ```json
 {
@@ -94,15 +107,23 @@ Daily Power reads and writes `dailyPower`. Battery reads that total and writes `
     "contingencyPct": 10,
     "useManualWh": false,
     "manualWh": 0
+  },
+  "solar": {
+    "season": "spring-autumn",
+    "peakSunHours": 3,
+    "lossPct": 25,
+    "marginPct": 10,
+    "useManualWh": false,
+    "manualWh": 0
   }
 }
 ```
 
-Later slices should add sibling keys on the **same object** (for example `solar`, `inverter`, `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
+Later slices should add sibling keys on the **same object** (for example `inverter`, `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
 
 ## Out of scope
 
-Solar yield, inverter sizing, wire/fuse calculations, payments, trip planner, Airtable, bots, DVLA lookups, and any claim of electrical compliance or certification.
+Inverter sizing, wire/fuse calculations, shade modelling, payments, trip planner, Airtable, bots, DVLA lookups, and any claim of electrical compliance or certification.
 
 ## Disclaimer
 
