@@ -1,7 +1,8 @@
 /**
  * Shared Power Tools system profile in localStorage.
- * Later slices (battery, solar, inverter, wiring) should reuse STORAGE_KEY
- * and add sibling keys beside `dailyPower` rather than creating new keys.
+ * Later slices (solar, inverter, wiring) should reuse STORAGE_KEY
+ * and add sibling keys beside `dailyPower` and `battery` rather than
+ * creating new keys.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) {
@@ -81,15 +82,44 @@
     };
   }
 
+  function sanitiseBattery(raw) {
+    var fallback = PowerDefaults.createDefaultBattery();
+    var source = raw && typeof raw === "object" ? raw : {};
+    var chemistry = PowerCalc.sanitiseChemistry(source.chemistry || fallback.chemistry);
+    var customUsablePct = PowerCalc.clamp(
+      PowerCalc.toNumber(source.customUsablePct, fallback.customUsablePct),
+      10,
+      100
+    );
+
+    return {
+      daysAutonomy: PowerCalc.clamp(
+        PowerCalc.toNumber(source.daysAutonomy, fallback.daysAutonomy),
+        0.5,
+        14
+      ),
+      chemistry: chemistry,
+      customUsablePct: customUsablePct,
+      contingencyPct: PowerCalc.clamp(
+        PowerCalc.toNumber(source.contingencyPct, fallback.contingencyPct),
+        0,
+        50
+      ),
+      useManualWh: !!source.useManualWh,
+      manualWh: PowerCalc.clamp(PowerCalc.toNumber(source.manualWh, fallback.manualWh), 0, 100000),
+    };
+  }
+
   function sanitiseProfile(raw) {
     var profile = {
       version: PROFILE_VERSION,
       dailyPower: sanitiseDailyPower(raw && raw.dailyPower),
+      battery: sanitiseBattery(raw && raw.battery),
     };
 
     if (raw && typeof raw === "object") {
       Object.keys(raw).forEach(function (key) {
-        if (key !== "version" && key !== "dailyPower") {
+        if (key !== "version" && key !== "dailyPower" && key !== "battery") {
           profile[key] = raw[key];
         }
       });
@@ -146,6 +176,7 @@
     saveProfile: saveProfile,
     sanitiseProfile: sanitiseProfile,
     sanitiseDailyPower: sanitiseDailyPower,
+    sanitiseBattery: sanitiseBattery,
     applyPreset: applyPreset,
   };
 });

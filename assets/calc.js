@@ -1,5 +1,5 @@
 /**
- * Pure daily-power maths. Works in the browser and in Node tests.
+ * Pure daily-power and battery-bank maths. Works in the browser and in Node tests.
  * Ah figures assume a simple Wh / system-voltage conversion (no Peukert).
  */
 (function (root, factory) {
@@ -14,6 +14,11 @@
   var DEFAULT_INVERTER_LOSS_PCT = 12;
   var VOLTAGE_12 = 12;
   var VOLTAGE_24 = 24;
+  var LIFEPO4_USABLE_PCT = 80;
+  var AGM_USABLE_PCT = 50;
+  var DEFAULT_DAYS_AUTONOMY = 2;
+  var DEFAULT_CONTINGENCY_PCT = 10;
+  var DEFAULT_CUSTOM_USABLE_PCT = 80;
 
   function toNumber(value, fallback) {
     var n = typeof value === "number" ? value : parseFloat(value);
@@ -87,15 +92,85 @@
     };
   }
 
+  function sanitiseChemistry(value) {
+    if (value === "agm" || value === "custom") return value;
+    return "lifepo4";
+  }
+
+  function chemistryUsablePct(chemistry, customUsablePct) {
+    var kind = sanitiseChemistry(chemistry);
+    if (kind === "agm") return AGM_USABLE_PCT;
+    if (kind === "custom") {
+      return clamp(toNumber(customUsablePct, DEFAULT_CUSTOM_USABLE_PCT), 10, 100);
+    }
+    return LIFEPO4_USABLE_PCT;
+  }
+
+  function resolveDailyWh(profile) {
+    var battery = profile && profile.battery;
+    if (battery && battery.useManualWh) {
+      return clamp(toNumber(battery.manualWh, 0), 0, 100000);
+    }
+    return calcTotals(profile && profile.dailyPower).totalWh;
+  }
+
+  function calcBatteryBank(profile) {
+    var battery = (profile && profile.battery) || {};
+    var chemistry = sanitiseChemistry(battery.chemistry);
+    var daysAutonomy = clamp(toNumber(battery.daysAutonomy, DEFAULT_DAYS_AUTONOMY), 0.5, 14);
+    var customUsablePct = clamp(
+      toNumber(battery.customUsablePct, DEFAULT_CUSTOM_USABLE_PCT),
+      10,
+      100
+    );
+    var usablePct = chemistryUsablePct(chemistry, customUsablePct);
+    var contingencyPct = clamp(
+      toNumber(battery.contingencyPct, DEFAULT_CONTINGENCY_PCT),
+      0,
+      50
+    );
+    var useManualWh = !!battery.useManualWh;
+    var dailyWh = resolveDailyWh(profile);
+    var daysWh = dailyWh * daysAutonomy;
+    var energyNeededWh = daysWh * (1 + contingencyPct / 100);
+    var bankWh = usablePct > 0 ? energyNeededWh / (usablePct / 100) : 0;
+
+    return {
+      dailyWh: dailyWh,
+      daysAutonomy: daysAutonomy,
+      chemistry: chemistry,
+      usablePct: usablePct,
+      customUsablePct: customUsablePct,
+      contingencyPct: contingencyPct,
+      useManualWh: useManualWh,
+      source: useManualWh ? "manual" : "dailyPower",
+      daysWh: daysWh,
+      energyNeededWh: energyNeededWh,
+      contingencyWh: energyNeededWh - daysWh,
+      bankWh: bankWh,
+      ah12: bankWh / VOLTAGE_12,
+      ah24: bankWh / VOLTAGE_24,
+    };
+  }
+
   return {
     DEFAULT_INVERTER_LOSS_PCT: DEFAULT_INVERTER_LOSS_PCT,
     VOLTAGE_12: VOLTAGE_12,
     VOLTAGE_24: VOLTAGE_24,
+    LIFEPO4_USABLE_PCT: LIFEPO4_USABLE_PCT,
+    AGM_USABLE_PCT: AGM_USABLE_PCT,
+    DEFAULT_DAYS_AUTONOMY: DEFAULT_DAYS_AUTONOMY,
+    DEFAULT_CONTINGENCY_PCT: DEFAULT_CONTINGENCY_PCT,
+    DEFAULT_CUSTOM_USABLE_PCT: DEFAULT_CUSTOM_USABLE_PCT,
     toNumber: toNumber,
     clamp: clamp,
     normaliseAppliance: normaliseAppliance,
     applianceWh: applianceWh,
     applyInverterLoss: applyInverterLoss,
     calcTotals: calcTotals,
+    sanitiseChemistry: sanitiseChemistry,
+    chemistryUsablePct: chemistryUsablePct,
+    resolveDailyWh: resolveDailyWh,
+    calcBatteryBank: calcBatteryBank,
   };
 });

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campervan Battery Bank Sizing | Ah at 12V / 24V | UK &amp; EU</title>
+    <meta name="description" content="Work out campervan leisure battery size from daily watt-hours, days without charging, and LiFePO4 or AGM usable capacity. Free UK/EU planning estimate at 12V and 24V.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Wayne Robinson">
+    <meta property="og:title" content="Campervan Battery Bank Sizing | Ah at 12V / 24V">
+    <meta property="og:description" content="Turn daily watt-hours into a recommended leisure-battery size in Wh and Ah at 12V and 24V for UK and EU motorhomes and campervans.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#2f5d46">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <!-- ASSET_VERSION=20260908h — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908h">
+  </head>
+  <body>
+    <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
+    <header class="site-header">
+      <p class="eyebrow no-print">Power Tools</p>
+      <nav class="tool-nav no-print" aria-label="Power Tools">
+        <a href="index.html">Daily Power</a>
+        <a href="battery.html" aria-current="page">Battery Bank</a>
+      </nav>
+      <h1>Battery bank sizing calculator</h1>
+      <p class="lede no-print">
+        For UK and EU motorhome and campervan trips. Start from your daily watt-hours,
+        choose how many days you want to last without charging, and see a recommended
+        bank size in watt-hours plus amp-hours at 12&nbsp;V and 24&nbsp;V.
+      </p>
+      <p class="print-only print-meta">Planning estimate · battery bank Wh and Ah at 12&nbsp;V and 24&nbsp;V</p>
+    </header>
+
+    <main id="calculator" class="site-main">
+      <div class="layout">
+        <div class="summary-stack">
+          <div class="totals-wrap">
+            <section class="totals" aria-live="polite">
+              <article class="total-card primary">
+                <p class="label">Recommended bank</p>
+                <p class="value"><strong id="bank-wh">0</strong><span>Wh</span></p>
+                <p class="hint" id="bank-note"></p>
+              </article>
+              <div class="ah-grid">
+                <article class="total-card">
+                  <p class="label">At 12 V</p>
+                  <p class="value"><strong id="bank-ah12">0</strong><span>Ah</span></p>
+                  <p class="hint">Wh ÷ 12</p>
+                </article>
+                <article class="total-card">
+                  <p class="label">At 24 V</p>
+                  <p class="value"><strong id="bank-ah24">0</strong><span>Ah</span></p>
+                  <p class="hint">Wh ÷ 24</p>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <section class="breakdown panel" aria-labelledby="breakdown-title">
+            <h2 id="breakdown-title">How this was worked out</h2>
+            <ol id="breakdown-list"></ol>
+          </section>
+        </div>
+
+        <div class="controls">
+          <section class="panel no-print" aria-labelledby="daily-title">
+            <div class="panel-head">
+              <div>
+                <h2 id="daily-title">Daily energy</h2>
+                <p class="save-state" id="save-state">Saved on this device</p>
+              </div>
+              <button type="button" class="print-btn" id="print-sheet">Print / save PDF</button>
+            </div>
+            <p class="lede tight" id="daily-source"></p>
+            <label class="field" for="manual-wh" id="manual-wh-wrap" hidden>
+              <span>Watt-hours per day</span>
+              <span class="field-control">
+                <input id="manual-wh" type="number" inputmode="decimal" min="0" max="100000" step="1" value="0">
+                <em>Wh</em>
+              </span>
+            </label>
+            <div class="action-row" id="daily-actions"></div>
+          </section>
+
+          <section class="panel loads-panel no-print" aria-labelledby="sizing-title">
+            <h2 id="sizing-title">Bank settings</h2>
+            <p class="lede tight">Change days, chemistry, or extra margin. The sizes above update as you type.</p>
+
+            <label class="field" for="days-autonomy">
+              <span>Days without charging</span>
+              <span class="field-control">
+                <input id="days-autonomy" type="number" inputmode="decimal" min="0.5" max="14" step="0.5" value="2">
+                <em>days</em>
+              </span>
+            </label>
+            <p class="field-hint">How long you want to run if there is little or no solar or hook-up. Two days is a common start.</p>
+
+            <h3 class="field-heading" id="chemistry-title">Battery chemistry</h3>
+            <div id="chemistry" class="preset-row" role="group" aria-labelledby="chemistry-title"></div>
+            <p class="field-hint" id="chemistry-hint"></p>
+
+            <label class="field" for="custom-usable" id="custom-usable-wrap" hidden>
+              <span>Usable percentage</span>
+              <span class="field-control">
+                <input id="custom-usable" type="number" inputmode="decimal" min="10" max="100" step="1" value="80">
+                <em>%</em>
+              </span>
+            </label>
+
+            <label class="field" for="contingency">
+              <span>Extra margin (optional)</span>
+              <span class="field-control">
+                <input id="contingency" type="number" inputmode="decimal" min="0" max="50" step="1" value="10">
+                <em>%</em>
+              </span>
+            </label>
+            <p class="field-hint">A small buffer for weather, ageing, and days that use more than usual. Set 0 to skip.</p>
+          </section>
+        </div>
+      </div>
+
+      <section class="help-grid no-print" aria-labelledby="help-title">
+        <article class="help-card">
+          <h2 id="help-title">How to use</h2>
+          <ol>
+            <li>Daily energy is taken from Daily Power if you have used it. You can type your own watt-hours instead.</li>
+            <li>Choose how many days you want to last without charging. Two is a common start.</li>
+            <li>Pick LiFePO4 or AGM / lead-acid. That sets how much of the rated battery you can safely use.</li>
+            <li>Sizes update as you type. Refresh the page: your numbers stay on this device.</li>
+          </ol>
+        </article>
+      </section>
+
+      <section class="help-card faq-card no-print" aria-labelledby="faq-title">
+        <h2 id="faq-title">FAQ</h2>
+        <dl class="faq-list">
+          <div>
+            <dt>What does “days without charging” mean?</dt>
+            <dd>
+              It is how long you want the batteries to last if the solar is poor or you are not on hook-up.
+              Two days covers a dull weekend for many people. Add more if you camp for longer without charging.
+            </dd>
+          </div>
+          <div>
+            <dt>Why is a LiFePO4 bank smaller than AGM?</dt>
+            <dd>
+              You can use more of a lithium battery’s rated size. This calculator plans LiFePO4 at 80% usable
+              and AGM / lead-acid at 50%, so the AGM bank needs to be larger for the same daily use.
+            </dd>
+          </div>
+          <div>
+            <dt>12V or 24V — which Ah number do I use?</dt>
+            <dd>
+              Use the Ah figure that matches your leisure-battery voltage. The same watt-hour bank is half the Ah
+              on 24&nbsp;V (Wh ÷ 24) compared with 12&nbsp;V (Wh ÷ 12). Do not mix the two.
+            </dd>
+          </div>
+          <div>
+            <dt>Should I buy the exact Ah figure?</dt>
+            <dd>
+              Treat it as a planning size, then round up to a battery you can actually buy. Weather, fridge
+              run-time, cable losses and battery age all change the real figure. Leave a margin and get a
+              qualified installer for safety-critical work.
+            </dd>
+          </div>
+          <div>
+            <dt>Can I change the daily watt-hours here?</dt>
+            <dd>
+              Yes. Use “Enter a different figure” if you do not want the Daily Power total. Your Daily Power
+              list stays as you left it. Switch back any time to use that saved total again.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <aside class="disclaimer" aria-label="Disclaimer">
+        <h2>Disclaimer</h2>
+        <p>
+          This calculator is a planning estimate only. It is not an electrical design, installation guide,
+          or certification. Check manufacturer ratings for every battery, charger and cable, and use a
+          qualified installer for safety-critical work.
+        </p>
+      </aside>
+    </main>
+
+    <footer class="site-footer no-print">
+      <p>Power Tools for Wayne Robinson. Daily Power and Battery Bank. No accounts and no server-side data.</p>
+    </footer>
+
+    <div
+      class="rotate-gate no-print"
+      id="rotate-gate"
+      role="alertdialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="rotate-gate-title"
+      aria-describedby="rotate-gate-text"
+    >
+      <div class="rotate-gate-card">
+        <svg class="rotate-gate-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="18" y="8" width="28" height="48" rx="5" fill="none" stroke="currentColor" stroke-width="3"></rect>
+          <circle cx="32" cy="48" r="2.2" fill="currentColor"></circle>
+          <path d="M50 28a18 18 0 0 1-28 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+          <path d="M46 22v8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h2 id="rotate-gate-title" tabindex="-1">Turn your phone upright</h2>
+        <p id="rotate-gate-text">This calculator is made for portrait. Rotate your phone back to keep using it.</p>
+      </div>
+    </div>
+
+    <script src="assets/calc.js?v=20260908h"></script>
+    <script src="assets/defaults.js?v=20260908h"></script>
+    <script src="assets/storage.js?v=20260908h"></script>
+    <script src="assets/ui.js?v=20260908h"></script>
+    <script src="assets/battery.js?v=20260908h"></script>
+  </body>
+</html>
