@@ -63,6 +63,8 @@
     });
   }
 
+  var PRESET_ORDER = ["weekend", "family", "fulltime", "defaults"];
+
   var PRESETS = {
     defaults: {
       label: "Reset to defaults",
@@ -89,6 +91,26 @@
         "induction-hob": { watts: 1600, hours: 0, qty: 1, enabled: false },
         tv: { watts: 28, hours: 1.5, qty: 1, enabled: true },
         "inverter-idle": { watts: 8, hours: 6, qty: 1, enabled: true },
+      }),
+    },
+    family: {
+      label: "Full week — 4 people (2 adults + 2 children)",
+      inverterLossEnabled: true,
+      inverterLossPct: 12,
+      keepCustom: true,
+      appliances: starterSet({
+        fridge: { watts: 45, hours: 11, qty: 1, enabled: true },
+        lights: { watts: 10, hours: 5, qty: 1, enabled: true },
+        pump: { watts: 42, hours: 0.4, qty: 1, enabled: true },
+        heater: { watts: 18, hours: 3, qty: 1, enabled: true },
+        phone: { watts: 10, hours: 2.5, qty: 4, enabled: true },
+        laptop: { watts: 60, hours: 1.5, qty: 1, enabled: true },
+        fan: { watts: 24, hours: 3, qty: 1, enabled: true },
+        "water-heater": { watts: 1000, hours: 0.15, qty: 1, enabled: false },
+        kettle: { watts: 1200, hours: 0.25, qty: 1, enabled: true },
+        "induction-hob": { watts: 1600, hours: 0.5, qty: 1, enabled: true },
+        tv: { watts: 28, hours: 2.5, qty: 1, enabled: true },
+        "inverter-idle": { watts: 8, hours: 10, qty: 1, enabled: true },
       }),
     },
     fulltime: {
@@ -119,6 +141,7 @@
       dailyPower: {
         inverterLossEnabled: false,
         inverterLossPct: 12,
+        activePreset: "defaults",
         appliances: starterSet(),
       },
     };
@@ -138,6 +161,7 @@
 
   return {
     STARTER_IDS: STARTER_IDS,
+    PRESET_ORDER: PRESET_ORDER,
     PRESETS: PRESETS,
     starterSet: starterSet,
     createDefaultProfile: createDefaultProfile,

@@ -20,6 +20,7 @@
     saveState: document.getElementById("save-state"),
     addCustom: document.getElementById("add-custom"),
     presets: document.getElementById("presets"),
+    printSheet: document.getElementById("print-sheet"),
   };
 
   function formatNumber(value, digits) {
@@ -63,6 +64,37 @@
     if (els.saveState) {
       els.saveState.textContent = "Saved on this device · " + lastSaved;
     }
+  }
+
+  function clearActivePreset() {
+    if (!profile.dailyPower.activePreset) return;
+    profile.dailyPower.activePreset = "";
+    syncPresetSelection();
+  }
+
+  function syncPresetSelection() {
+    if (!els.presets) return;
+    var active = profile.dailyPower.activePreset || "";
+    els.presets.querySelectorAll("[data-preset]").forEach(function (button) {
+      var selected = button.getAttribute("data-preset") === active;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+  }
+
+  function renderPresetButtons() {
+    if (!els.presets) return;
+    els.presets.innerHTML = defaults.PRESET_ORDER.map(function (id) {
+      var preset = defaults.PRESETS[id];
+      return (
+        '<button type="button" data-preset="' +
+        escapeHtml(id) +
+        '" aria-pressed="false">' +
+        escapeHtml(preset.label) +
+        "</button>"
+      );
+    }).join("");
+    syncPresetSelection();
   }
 
   function renderTotals() {
@@ -217,6 +249,7 @@
   function render() {
     renderAppliances();
     renderTotals();
+    syncPresetSelection();
   }
 
   function updateField(id, field, value) {
@@ -235,6 +268,7 @@
       item.watts = calc.clamp(calc.toNumber(value, 0), 0, 20000);
     }
 
+    clearActivePreset();
     persist();
     renderTotals();
     refreshRowWh(id);
@@ -277,12 +311,14 @@
     profile.dailyPower.appliances = profile.dailyPower.appliances.filter(function (item) {
       return item.id !== id;
     });
+    clearActivePreset();
     persist();
     render();
   }
 
   function addCustom() {
     profile.dailyPower.appliances.push(defaults.newCustomAppliance());
+    clearActivePreset();
     persist();
     render();
     var last = els.applianceList.querySelector(".appliance-card:last-child .name-input");
@@ -301,6 +337,7 @@
   els.addCustom.addEventListener("click", addCustom);
   els.inverterLoss.addEventListener("change", function () {
     profile.dailyPower.inverterLossEnabled = els.inverterLoss.checked;
+    clearActivePreset();
     persist();
     renderTotals();
   });
@@ -311,6 +348,13 @@
     applyPreset(button.getAttribute("data-preset"));
   });
 
+  if (els.printSheet) {
+    els.printSheet.addEventListener("click", function () {
+      window.print();
+    });
+  }
+
+  renderPresetButtons();
   render();
   persist();
 })();

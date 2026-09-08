@@ -145,6 +145,8 @@ test("presets change hours and keep custom rows when asked", function () {
     }),
     false
   );
+  assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
+  assert.strictEqual(reset.dailyPower.activePreset, "defaults");
 });
 
 test("sanitise keeps later-slice keys on the shared profile", function () {
@@ -163,6 +165,92 @@ test("full-time preset uses more energy than the weekend preset", function () {
   var weekend = calc.calcTotals(defaults.PRESETS.weekend);
   var fulltime = calc.calcTotals(defaults.PRESETS.fulltime);
   assert.ok(fulltime.totalWh > weekend.totalWh);
+});
+
+test("family week preset is heavier than a light weekend", function () {
+  var family = defaults.PRESETS.family;
+  var phone = family.appliances.find(function (item) {
+    return item.id === "phone";
+  });
+  var kettle = family.appliances.find(function (item) {
+    return item.id === "kettle";
+  });
+  var hob = family.appliances.find(function (item) {
+    return item.id === "induction-hob";
+  });
+  var fridge = family.appliances.find(function (item) {
+    return item.id === "fridge";
+  });
+  var weekendFridge = defaults.PRESETS.weekend.appliances.find(function (item) {
+    return item.id === "fridge";
+  });
+
+  assert.ok(family, "family week preset exists");
+  assert.strictEqual(family.label, "Full week — 4 people (2 adults + 2 children)");
+  assert.strictEqual(family.inverterLossEnabled, true);
+  assert.strictEqual(phone.qty, 4);
+  assert.strictEqual(kettle.enabled, true);
+  assert.ok(kettle.hours > 0);
+  assert.strictEqual(hob.enabled, true);
+  assert.ok(hob.hours > 0);
+  assert.ok(fridge.hours > weekendFridge.hours);
+  assert.ok(defaults.PRESET_ORDER.indexOf("family") !== -1);
+
+  var weekendTotals = calc.calcTotals(defaults.PRESETS.weekend);
+  var familyTotals = calc.calcTotals(family);
+  assert.ok(familyTotals.totalWh > weekendTotals.totalWh);
+});
+
+test("load merge adds missing starter appliances without overwriting saved rows", function () {
+  var oldProfile = {
+    version: 1,
+    dailyPower: {
+      inverterLossEnabled: true,
+      inverterLossPct: 12,
+      appliances: [
+        { id: "fridge", name: "Compressor fridge", watts: 55, hours: 14, qty: 1, enabled: true },
+        { id: "lights", name: "LED lights", watts: 8, hours: 4, qty: 1, enabled: true },
+        { id: "pump", name: "Water pump", watts: 42, hours: 0.25, qty: 1, enabled: true },
+        { id: "heater", name: "Diesel heater / fan (low draw)", watts: 18, hours: 4, qty: 1, enabled: true },
+        { id: "phone", name: "Phone / tablet charge", watts: 10, hours: 2, qty: 2, enabled: true },
+        { id: "laptop", name: "Laptop", watts: 60, hours: 2, qty: 1, enabled: true },
+        { id: "fan", name: "MaxxFan / roof fan", watts: 24, hours: 3, qty: 1, enabled: true },
+        { id: "water-heater", name: "Water heater (electric when used)", watts: 1000, hours: 0.25, qty: 1, enabled: false },
+        { id: "tv", name: "TV / monitor", watts: 28, hours: 2, qty: 1, enabled: true },
+        { id: "inverter-idle", name: "Inverter idle / phantom load", watts: 8, hours: 8, qty: 1, enabled: true },
+        { id: "custom-test", name: "Starlink", watts: 50, hours: 8, qty: 1, enabled: true, custom: true },
+      ],
+    },
+  };
+
+  var clean = storage.sanitiseProfile(oldProfile);
+  var appliances = clean.dailyPower.appliances;
+  var byId = {};
+  appliances.forEach(function (item) {
+    byId[item.id] = item;
+  });
+
+  defaults.STARTER_IDS.forEach(function (id) {
+    assert.ok(byId[id], "missing starter " + id);
+  });
+
+  assert.strictEqual(byId.fridge.watts, 55);
+  assert.strictEqual(byId.fridge.hours, 14);
+  assert.strictEqual(byId.fridge.enabled, true);
+  assert.strictEqual(byId.kettle.watts, 1200);
+  assert.strictEqual(byId.kettle.hours, 0.15);
+  assert.strictEqual(byId.kettle.enabled, false);
+  assert.strictEqual(byId["induction-hob"].watts, 1600);
+  assert.strictEqual(byId["induction-hob"].hours, 0.4);
+  assert.strictEqual(byId["induction-hob"].enabled, false);
+  assert.strictEqual(byId["custom-test"].name, "Starlink");
+  assert.strictEqual(byId["custom-test"].custom, true);
+  assert.strictEqual(clean.dailyPower.activePreset, "");
+
+  defaults.STARTER_IDS.forEach(function (id, index) {
+    assert.strictEqual(appliances[index].id, id);
+  });
+  assert.strictEqual(appliances[appliances.length - 1].id, "custom-test");
 });
 
 if (failed) {

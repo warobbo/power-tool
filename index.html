@@ -15,14 +15,15 @@
     <link rel="stylesheet" href="assets/styles.css">
   </head>
   <body>
-    <a class="skip-link" href="#calculator">Skip to calculator</a>
+    <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
     <header class="site-header">
-      <p class="eyebrow">Power Tools · Slice 1</p>
+      <p class="eyebrow no-print">Power Tools · Slice 1</p>
       <h1>Daily power consumption calculator</h1>
-      <p class="lede">
+      <p class="lede no-print">
         For UK and EU motorhome and campervan trips. Tick what you use, set watts and hours,
         and see watt-hours per day plus amp-hours at 12&nbsp;V and 24&nbsp;V.
       </p>
+      <p class="print-only print-meta">Planning estimate · daily Wh and Ah at 12&nbsp;V and 24&nbsp;V</p>
     </header>
 
     <main id="calculator" class="site-main">
@@ -50,18 +51,15 @@
         </div>
 
         <div class="controls">
-          <section class="panel" aria-labelledby="preset-title">
+          <section class="panel no-print" aria-labelledby="preset-title">
             <div class="panel-head">
               <div>
                 <h2 id="preset-title">Start from a preset</h2>
                 <p class="save-state" id="save-state">Saved on this device</p>
               </div>
+              <button type="button" class="print-btn" id="print-sheet">Print / save PDF</button>
             </div>
-            <div id="presets" class="preset-row">
-              <button type="button" data-preset="weekend">Light weekend (2 people)</button>
-              <button type="button" data-preset="fulltime">Typical full-time off-grid</button>
-              <button type="button" data-preset="defaults">Reset to defaults</button>
-            </div>
+            <div id="presets" class="preset-row" role="group" aria-label="Usage presets"></div>
             <label class="loss-toggle">
               <input id="inverter-loss" type="checkbox">
               <span>
@@ -71,7 +69,7 @@
             </label>
           </section>
 
-          <section class="panel loads-panel" aria-labelledby="loads-title">
+          <section class="panel loads-panel no-print" aria-labelledby="loads-title">
             <h2 id="loads-title">Appliances</h2>
             <p class="lede tight">Edit watts, hours per day, and quantity. Untick anything you will not use.</p>
             <div id="appliance-list" class="appliance-list"></div>
@@ -85,7 +83,7 @@
         </section>
       </div>
 
-      <section class="help-grid" aria-labelledby="help-title">
+      <section class="help-grid no-print" aria-labelledby="help-title">
         <article class="help-card">
           <h2 id="help-title">How to use</h2>
           <ol>
@@ -95,15 +93,59 @@
             <li>Totals update as you type. Refresh the page: your numbers stay on this device.</li>
           </ol>
         </article>
-        <article class="help-card">
-          <h2>FAQ</h2>
-          <ul>
-            <li><strong>Wh vs Ah.</strong> Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by battery voltage.</li>
-            <li><strong>12 V vs 24 V.</strong> The same Wh is half the Ah on a 24&nbsp;V system (Wh ÷ 24) compared with 12&nbsp;V (Wh ÷ 12).</li>
-            <li><strong>The fridge is often the big load.</strong> A compressor fridge can use more energy per day than lights, phones and a laptop combined.</li>
-            <li><strong>This is an estimate.</strong> Duty cycle, weather, age of kit and inverter efficiency all change the real figure.</li>
-          </ul>
-        </article>
+      </section>
+
+      <section class="help-card faq-card no-print" aria-labelledby="faq-title">
+        <h2 id="faq-title">FAQ</h2>
+        <dl class="faq-list">
+          <div>
+            <dt>How many amp hours does a campervan use per day?</dt>
+            <dd>
+              There is no single number. A light weekend for two people is often a few tens of Ah at 12&nbsp;V.
+              A family week with a kettle or induction hob through an inverter can be a few hundred Ah.
+              Use the totals above for your own kit rather than a rule of thumb.
+            </dd>
+          </div>
+          <div>
+            <dt>Wh vs Ah — what’s the difference?</dt>
+            <dd>
+              Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by battery voltage:
+              Ah = Wh ÷ volts. Wh is useful for comparing loads. Ah is useful once you know whether the
+              bank is 12&nbsp;V or 24&nbsp;V.
+            </dd>
+          </div>
+          <div>
+            <dt>12V or 24V — which Ah number do I use?</dt>
+            <dd>
+              Use the Ah figure that matches your leisure-battery voltage. The same daily Wh is half the Ah
+              on 24&nbsp;V (Wh ÷ 24) compared with 12&nbsp;V (Wh ÷ 12). Do not mix the two.
+            </dd>
+          </div>
+          <div>
+            <dt>Why is the fridge often the biggest load?</dt>
+            <dd>
+              A compressor fridge may only draw 40–60&nbsp;W, but it cycles for many hours. That daily
+              watt-hour total often beats lights, phones and a laptop combined. Hours here means compressor
+              run-time, not time the fridge is switched on.
+            </dd>
+          </div>
+          <div>
+            <dt>Is this calculator accurate enough for battery sizing?</dt>
+            <dd>
+              It is a planning estimate, not a design or a guarantee. Weather, fridge duty cycle, cable
+              losses, battery age and inverter efficiency all change the real figure. Use it to compare
+              setups and leave a margin; get a qualified installer for safety-critical work.
+            </dd>
+          </div>
+          <div>
+            <dt>Should I add inverter loss?</dt>
+            <dd>
+              Tick it if you run 230&nbsp;V kit (kettle, hob, laptop brick) through an inverter. The extra
+              12% is a simple allowance, not a measured efficiency. 12&nbsp;V loads such as the fridge do
+              not need it on their own.
+            </dd>
+          </div>
+        </dl>
       </section>
 
       <aside class="disclaimer" aria-label="Disclaimer">
@@ -116,7 +158,7 @@
       </aside>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer no-print">
       <p>Power Tools for Wayne Robinson. Slice 1 of a power and solar hub. No accounts and no server-side data.</p>
     </footer>
 
