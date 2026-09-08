@@ -10,7 +10,7 @@ Pick appliances and hours of use to see:
 - amp-hours (Ah) per day at 12 V
 - amp-hours (Ah) per day at 24 V
 
-## Battery Bank (slice 2)
+## Battery (slice 2)
 
 Turn daily watt-hours into a recommended leisure-battery size using:
 
@@ -19,7 +19,7 @@ Turn daily watt-hours into a recommended leisure-battery size using:
 - chemistry: LiFePO4 (80% usable), AGM / lead-acid (50% usable), or a custom percentage
 - an optional extra margin
 
-Results are total bank Wh plus Ah at 12 V and 24 V.
+Results are the battery size to buy in Wh plus Ah at 12 V and 24 V.
 
 Solar, inverter sizing, and wire/fuse tools are **not** in this slice.
 
@@ -28,7 +28,7 @@ The site is a static front-end: no backend, no accounts, and no APIs. It is mean
 ## How to use
 
 1. Open Daily Power and set your appliances, or keep the defaults.
-2. Open Battery Bank. Daily watt-hours are filled in from what you just saved.
+2. Open Battery. Daily watt-hours are filled in from what you just saved.
 3. Choose days without charging and LiFePO4 or AGM. Sizes update live.
 
 Numbers are a **planning estimate only**.
@@ -77,7 +77,7 @@ All Power Tools slices share one browser profile:
 | **localStorage key** | `powertools.systemProfile` |
 | **Current version** | `1` |
 
-Daily Power reads and writes `dailyPower`. Battery Bank reads that total and writes `battery` on the same object:
+Daily Power reads and writes `dailyPower`. Battery reads that total and writes `battery` on the same object:
 
 ```json
 {
