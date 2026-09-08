@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campervan Solar Panel Size | Array Watts | UK &amp; EU</title>
+    <meta name="description" content="Work out campervan solar panel size in watts from daily watt-hours, UK peak sun hours, and real-world losses. Free UK/EU planning estimate with 100 W, 200 W and 400 W panel hints.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Wayne Robinson">
+    <meta property="og:title" content="Campervan Solar Panel Size | Array Watts">
+    <meta property="og:description" content="Turn daily watt-hours into a recommended solar-panel size in watts for UK and EU motorhomes and campervans, using season sun hours and real-world losses.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#2f5d46">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <!-- ASSET_VERSION=20260908k — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908k">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What are peak sun hours?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Peak sun hours are not clock hours of daylight. They are the equivalent hours of strong midday sun that produce the same energy as a whole day. A dull UK day can have many daylight hours but only one or two peak sun hours."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is winter UK solar so low?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The sun is low, days are short, and cloud is common. Southern England in November to February is often around one peak sun hour. Scotland and the north are lower still. Winter camping usually needs a bigger array, more battery days, or hook-up."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "MPPT or PWM — does it change this number?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This page uses one loss figure for dirt, angle, controller and cable. An MPPT controller usually wastes less than PWM, especially in cold or poor light. If you know you will use PWM, raise the losses a little. The watt figure is still only a planning size."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will these panels fit on my roof?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This calculator does not measure roof space. A typical rigid 100 W panel is about 1.2 m by 0.55 m; 200 W and 400 W panels are larger. Hatches, vents, aerials and walkways steal space. Use the panel counts as a shopping hint, then check the actual roof."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Flexible or rigid panels?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Rigid glass panels usually last longer and stay cooler. Flexible panels can suit a curved roof or a hire van where you must not drill, but they often run hotter and wear sooner. The watt size here is the same either way — pick the type that fits the roof and how long you will keep the van."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does charging while driving replace solar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A vehicle charger only works while the engine is running, and many vans only put a modest charge into the leisure battery. It helps on travel days. It will not cover a parked weekend the way solar can. Plan solar for the days you stay put; treat driving charge as a bonus."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this replace battery sizing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Solar puts energy in during the day. The leisure battery covers the night and dull spells. Size the battery for the days you want to last without charging, then size solar to put that daily use back. Use both tools. They share the same daily watt-hours on this device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "I am on hook-up most nights — do I still need this much solar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If you plug in most nights, you can plan a smaller array or skip solar. Use this page for the nights you stay off-grid. A small panel can still top phones and a fridge on a sunny day, but hook-up is doing the heavy charging."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What do the losses cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The default 25% is a simple allowance for dirt, a less-than-ideal roof angle, the solar controller, and cable losses. It is not a lab measurement. Raise it if the roof is shaded or flat in winter; lower it a little if panels are clean, well aimed, and on an MPPT controller."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I buy the exact watt figure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Treat it as a planning size, then round up to panels you can actually buy and fit. Weather, shade, fridge run-time and roof angle all change the real figure. The 100 W, 200 W and 400 W counts are examples only — not a shop. Leave a margin and use a qualified installer for safety-critical work."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
+    <header class="site-header">
+      <p class="eyebrow no-print">Power Tools</p>
+      <nav class="tool-nav no-print" aria-label="Power Tools">
+        <a href="index.html">Daily Power</a>
+        <a href="battery.html">Battery</a>
+        <a href="solar.html" aria-current="page">Solar</a>
+      </nav>
+      <h1>Solar panel size calculator</h1>
+      <p class="lede no-print">
+        For UK and EU motorhome and campervan trips. Start from your daily watt-hours,
+        pick a season or type peak sun hours, and see a recommended solar size in watts —
+        how panels are sold — plus a rough count of 100&nbsp;W, 200&nbsp;W and 400&nbsp;W panels.
+      </p>
+      <p class="print-only print-meta">Planning estimate · solar array watts and example panel counts</p>
+    </header>
+
+    <main id="calculator" class="site-main">
+      <div class="layout">
+        <div class="summary-stack">
+          <div class="totals-wrap">
+            <section class="totals solar-totals" aria-live="polite">
+              <article class="total-card primary solar-result">
+                <p class="label">Recommended solar</p>
+                <p class="value"><strong id="array-watts">0</strong><span>W</span></p>
+                <p class="solar-kicker">panel watts to plan for</p>
+                <p class="solar-support">
+                  <span><strong id="panels-100">0</strong> × 100&nbsp;W</span>
+                  <span><strong id="panels-200">0</strong> × 200&nbsp;W</span>
+                  <span><strong id="panels-400">0</strong> × 400&nbsp;W</span>
+                </p>
+                <p class="hint" id="array-note"></p>
+              </article>
+            </section>
+          </div>
+
+          <section class="breakdown panel" aria-labelledby="breakdown-title">
+            <h2 id="breakdown-title">How this was worked out</h2>
+            <ol id="breakdown-list"></ol>
+          </section>
+        </div>
+
+        <div class="controls">
+          <section class="panel no-print" aria-labelledby="daily-title">
+            <div class="panel-head">
+              <div>
+                <h2 id="daily-title">Daily energy</h2>
+                <p class="save-state" id="save-state">Saved on this device</p>
+              </div>
+              <button type="button" class="print-btn" id="print-sheet">Print / save PDF</button>
+            </div>
+            <p class="lede tight" id="daily-source"></p>
+            <label class="field" for="manual-wh" id="manual-wh-wrap" hidden>
+              <span>Watt-hours per day</span>
+              <span class="field-control">
+                <input id="manual-wh" type="number" inputmode="decimal" min="0" max="100000" step="1" value="0">
+                <em>Wh</em>
+              </span>
+            </label>
+            <div class="action-row" id="daily-actions"></div>
+          </section>
+
+          <section class="panel loads-panel no-print" aria-labelledby="sizing-title">
+            <h2 id="sizing-title">Solar settings</h2>
+            <p class="lede tight">Change season, sun hours, or losses. The watts above update as you type.</p>
+
+            <h3 class="field-heading" id="season-title">Season (UK / EU sun)</h3>
+            <div id="seasons" class="preset-row" role="group" aria-labelledby="season-title"></div>
+            <p class="field-hint" id="season-hint"></p>
+
+            <label class="field" for="peak-sun-hours">
+              <span>Peak sun hours</span>
+              <span class="field-control">
+                <input id="peak-sun-hours" type="number" inputmode="decimal" min="0.5" max="12" step="0.1" value="3">
+                <em>h</em>
+              </span>
+            </label>
+            <p class="field-hint">Not daylight hours. It is the equivalent hours of strong midday sun. Spring / autumn at 3 hours is the UK default.</p>
+
+            <label class="field" for="loss-pct">
+              <span>Real-world losses</span>
+              <span class="field-control">
+                <input id="loss-pct" type="number" inputmode="decimal" min="0" max="70" step="1" value="25">
+                <em>%</em>
+              </span>
+            </label>
+            <p class="field-hint">Dirt, roof angle, controller and cable. 25% is an honest everyday figure, not a lab rating.</p>
+
+            <label class="field" for="margin-pct">
+              <span>Extra margin (optional)</span>
+              <span class="field-control">
+                <input id="margin-pct" type="number" inputmode="decimal" min="0" max="50" step="1" value="10">
+                <em>%</em>
+              </span>
+            </label>
+            <p class="field-hint">A small buffer for duller days and extra use. Set 0 to skip.</p>
+          </section>
+        </div>
+      </div>
+
+      <section class="help-grid no-print" aria-labelledby="help-title">
+        <article class="help-card">
+          <h2 id="help-title">How to use</h2>
+          <ol>
+            <li>Daily energy is taken from Daily Power if you have used it. You can type your own watt-hours instead.</li>
+            <li>Pick summer, spring / autumn, or winter. That sets typical UK peak sun hours. You can type a different figure.</li>
+            <li>Keep the 25% losses unless you have a reason to change them. Add a small extra margin if you want.</li>
+            <li>The big figure is panel watts — how solar is sold. The 100&nbsp;W / 200&nbsp;W / 400&nbsp;W counts are planning hints only.</li>
+          </ol>
+        </article>
+      </section>
+
+      <section class="help-card faq-card no-print" aria-labelledby="faq-title">
+        <h2 id="faq-title">FAQ</h2>
+        <dl class="faq-list">
+          <div>
+            <dt>What are peak sun hours?</dt>
+            <dd>
+              Peak sun hours are not clock hours of daylight. They are the equivalent hours of strong midday
+              sun that produce the same energy as a whole day. A dull UK day can have many daylight hours but
+              only one or two peak sun hours.
+            </dd>
+          </div>
+          <div>
+            <dt>Why is winter UK solar so low?</dt>
+            <dd>
+              The sun is low, days are short, and cloud is common. Southern England in November to February
+              is often around one peak sun hour. Scotland and the north are lower still. Winter camping usually
+              needs a bigger array, more battery days, or hook-up.
+            </dd>
+          </div>
+          <div>
+            <dt>MPPT or PWM — does it change this number?</dt>
+            <dd>
+              This page uses one loss figure for dirt, angle, controller and cable. An MPPT controller usually
+              wastes less than PWM, especially in cold or poor light. If you know you will use PWM, raise the
+              losses a little. The watt figure is still only a planning size.
+            </dd>
+          </div>
+          <div>
+            <dt>Will these panels fit on my roof?</dt>
+            <dd>
+              This calculator does not measure roof space. A typical rigid 100&nbsp;W panel is about
+              1.2&nbsp;m by 0.55&nbsp;m; 200&nbsp;W and 400&nbsp;W panels are larger. Hatches, vents, aerials
+              and walkways steal space. Use the panel counts as a shopping hint, then check the actual roof.
+            </dd>
+          </div>
+          <div>
+            <dt>Flexible or rigid panels?</dt>
+            <dd>
+              Rigid glass panels usually last longer and stay cooler. Flexible panels can suit a curved roof
+              or a hire van where you must not drill, but they often run hotter and wear sooner. The watt size
+              here is the same either way — pick the type that fits the roof and how long you will keep the van.
+            </dd>
+          </div>
+          <div>
+            <dt>Does charging while driving replace solar?</dt>
+            <dd>
+              A vehicle charger only works while the engine is running, and many vans only put a modest charge
+              into the leisure battery. It helps on travel days. It will not cover a parked weekend the way
+              solar can. Plan solar for the days you stay put; treat driving charge as a bonus.
+            </dd>
+          </div>
+          <div>
+            <dt>Does this replace battery sizing?</dt>
+            <dd>
+              No. Solar puts energy in during the day. The leisure battery covers the night and dull spells.
+              Size the battery for the days you want to last without charging, then size solar to put that
+              daily use back. Use both tools. They share the same daily watt-hours on this device.
+            </dd>
+          </div>
+          <div>
+            <dt>I am on hook-up most nights — do I still need this much solar?</dt>
+            <dd>
+              If you plug in most nights, you can plan a smaller array or skip solar. Use this page for the
+              nights you stay off-grid. A small panel can still top phones and a fridge on a sunny day, but
+              hook-up is doing the heavy charging.
+            </dd>
+          </div>
+          <div>
+            <dt>What do the losses cover?</dt>
+            <dd>
+              The default 25% is a simple allowance for dirt, a less-than-ideal roof angle, the solar
+              controller, and cable losses. It is not a lab measurement. Raise it if the roof is shaded or
+              flat in winter; lower it a little if panels are clean, well aimed, and on an MPPT controller.
+            </dd>
+          </div>
+          <div>
+            <dt>Should I buy the exact watt figure?</dt>
+            <dd>
+              Treat it as a planning size, then round up to panels you can actually buy and fit. Weather,
+              shade, fridge run-time and roof angle all change the real figure. The 100&nbsp;W, 200&nbsp;W
+              and 400&nbsp;W counts are examples only — not a shop. Leave a margin and use a qualified
+              installer for safety-critical work.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <aside class="disclaimer" aria-label="Disclaimer">
+        <h2>Disclaimer</h2>
+        <p>
+          This calculator is a planning estimate only. It is not an electrical design, installation guide,
+          or certification. It does not model shade in detail. Check manufacturer ratings for every panel,
+          controller and cable, and use a qualified installer for safety-critical work.
+        </p>
+      </aside>
+
+      <section class="help-card next-tool no-print" aria-labelledby="next-tool-title">
+        <h2 id="next-tool-title">Also size a battery</h2>
+        <p>
+          Solar puts energy in. The leisure battery covers the night and dull days. Your watt-hours stay
+          on this device — open Battery to turn them into a 12&nbsp;V Ah size to buy.
+        </p>
+        <a class="add-btn next-tool-link" href="battery.html">Open Battery</a>
+      </section>
+    </main>
+
+    <footer class="site-footer no-print">
+      <p>Power Tools for Wayne Robinson. Daily Power, Battery, and Solar. No accounts and no server-side data.</p>
+    </footer>
+
+    <div
+      class="rotate-gate no-print"
+      id="rotate-gate"
+      role="alertdialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="rotate-gate-title"
+      aria-describedby="rotate-gate-text"
+    >
+      <div class="rotate-gate-card">
+        <svg class="rotate-gate-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="18" y="8" width="28" height="48" rx="5" fill="none" stroke="currentColor" stroke-width="3"></rect>
+          <circle cx="32" cy="48" r="2.2" fill="currentColor"></circle>
+          <path d="M50 28a18 18 0 0 1-28 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+          <path d="M46 22v8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h2 id="rotate-gate-title" tabindex="-1">Turn your phone upright</h2>
+        <p id="rotate-gate-text">This calculator is made for portrait. Rotate your phone back to keep using it.</p>
+      </div>
+    </div>
+
+    <script src="assets/calc.js?v=20260908k"></script>
+    <script src="assets/defaults.js?v=20260908k"></script>
+    <script src="assets/storage.js?v=20260908k"></script>
+    <script src="assets/ui.js?v=20260908k"></script>
+    <script src="assets/solar.js?v=20260908k"></script>
+  </body>
+</html>

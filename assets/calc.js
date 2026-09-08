@@ -1,5 +1,5 @@
 /**
- * Pure daily-power and battery-bank maths. Works in the browser and in Node tests.
+ * Pure daily-power, battery, and solar-array maths. Works in the browser and in Node tests.
  * Ah figures assume a simple Wh / system-voltage conversion (no Peukert).
  */
 (function (root, factory) {
@@ -19,6 +19,17 @@
   var DEFAULT_DAYS_AUTONOMY = 2;
   var DEFAULT_CONTINGENCY_PCT = 10;
   var DEFAULT_CUSTOM_USABLE_PCT = 80;
+  var DEFAULT_SOLAR_LOSS_PCT = 25;
+  var DEFAULT_SOLAR_MARGIN_PCT = 10;
+  var DEFAULT_PEAK_SUN_HOURS = 3;
+  var MIN_PEAK_SUN_HOURS = 0.5;
+  var MAX_PEAK_SUN_HOURS = 12;
+  var PANEL_WATTS = [100, 200, 400];
+  var SEASON_HOURS = {
+    summer: 4.5,
+    "spring-autumn": 3,
+    winter: 1.2,
+  };
 
   function toNumber(value, fallback) {
     var n = typeof value === "number" ? value : parseFloat(value);
@@ -106,12 +117,85 @@
     return LIFEPO4_USABLE_PCT;
   }
 
-  function resolveDailyWh(profile) {
-    var battery = profile && profile.battery;
-    if (battery && battery.useManualWh) {
-      return clamp(toNumber(battery.manualWh, 0), 0, 100000);
+  function resolveDailyWhForSlice(profile, sliceName) {
+    var settings = profile && sliceName ? profile[sliceName] : null;
+    if (settings && settings.useManualWh) {
+      return clamp(toNumber(settings.manualWh, 0), 0, 100000);
     }
     return calcTotals(profile && profile.dailyPower).totalWh;
+  }
+
+  function resolveDailyWh(profile) {
+    return resolveDailyWhForSlice(profile, "battery");
+  }
+
+  function resolveSolarDailyWh(profile) {
+    return resolveDailyWhForSlice(profile, "solar");
+  }
+
+  function sanitiseSeason(value) {
+    if (value === "summer" || value === "winter" || value === "custom") return value;
+    return "spring-autumn";
+  }
+
+  function seasonPeakSunHours(season) {
+    var hours = SEASON_HOURS[sanitiseSeason(season)];
+    return hours || DEFAULT_PEAK_SUN_HOURS;
+  }
+
+  function matchSeasonForHours(hours) {
+    var peak = toNumber(hours, NaN);
+    var ids = Object.keys(SEASON_HOURS);
+    for (var i = 0; i < ids.length; i += 1) {
+      if (Math.abs(SEASON_HOURS[ids[i]] - peak) < 0.05) return ids[i];
+    }
+    return "custom";
+  }
+
+  function panelCounts(arrayWatts) {
+    var watts = Math.max(0, toNumber(arrayWatts, 0));
+    return PANEL_WATTS.map(function (size) {
+      return {
+        watts: size,
+        count: watts > 0 ? Math.ceil(watts / size) : 0,
+      };
+    });
+  }
+
+  function calcSolarArray(profile) {
+    var solar = (profile && profile.solar) || {};
+    var season = sanitiseSeason(solar.season);
+    var peakSunHours = clamp(
+      toNumber(solar.peakSunHours, seasonPeakSunHours(season)),
+      MIN_PEAK_SUN_HOURS,
+      MAX_PEAK_SUN_HOURS
+    );
+    var lossPct = clamp(toNumber(solar.lossPct, DEFAULT_SOLAR_LOSS_PCT), 0, 70);
+    var marginPct = clamp(toNumber(solar.marginPct, DEFAULT_SOLAR_MARGIN_PCT), 0, 50);
+    var useManualWh = !!solar.useManualWh;
+    var dailyWh = resolveSolarDailyWh(profile);
+    var energyNeededWh = dailyWh * (1 + marginPct / 100);
+    var efficiency = 1 - lossPct / 100;
+    var effectiveHours = peakSunHours * efficiency;
+    var arrayWatts = effectiveHours > 0 ? energyNeededWh / effectiveHours : 0;
+    var supportedWh = arrayWatts * effectiveHours;
+
+    return {
+      dailyWh: dailyWh,
+      season: season,
+      peakSunHours: peakSunHours,
+      lossPct: lossPct,
+      marginPct: marginPct,
+      useManualWh: useManualWh,
+      source: useManualWh ? "manual" : "dailyPower",
+      energyNeededWh: energyNeededWh,
+      marginWh: energyNeededWh - dailyWh,
+      efficiency: efficiency,
+      effectiveHours: effectiveHours,
+      arrayWatts: arrayWatts,
+      supportedWh: supportedWh,
+      panels: panelCounts(arrayWatts),
+    };
   }
 
   function calcBatteryBank(profile) {
@@ -170,7 +254,21 @@
     calcTotals: calcTotals,
     sanitiseChemistry: sanitiseChemistry,
     chemistryUsablePct: chemistryUsablePct,
+    DEFAULT_SOLAR_LOSS_PCT: DEFAULT_SOLAR_LOSS_PCT,
+    DEFAULT_SOLAR_MARGIN_PCT: DEFAULT_SOLAR_MARGIN_PCT,
+    DEFAULT_PEAK_SUN_HOURS: DEFAULT_PEAK_SUN_HOURS,
+    MIN_PEAK_SUN_HOURS: MIN_PEAK_SUN_HOURS,
+    MAX_PEAK_SUN_HOURS: MAX_PEAK_SUN_HOURS,
+    PANEL_WATTS: PANEL_WATTS,
+    SEASON_HOURS: SEASON_HOURS,
     resolveDailyWh: resolveDailyWh,
+    resolveSolarDailyWh: resolveSolarDailyWh,
+    resolveDailyWhForSlice: resolveDailyWhForSlice,
+    sanitiseSeason: sanitiseSeason,
+    seasonPeakSunHours: seasonPeakSunHours,
+    matchSeasonForHours: matchSeasonForHours,
+    panelCounts: panelCounts,
     calcBatteryBank: calcBatteryBank,
+    calcSolarArray: calcSolarArray,
   };
 });

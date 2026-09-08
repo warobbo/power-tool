@@ -1,8 +1,8 @@
 /**
  * Shared Power Tools system profile in localStorage.
- * Later slices (solar, inverter, wiring) should reuse STORAGE_KEY
- * and add sibling keys beside `dailyPower` and `battery` rather than
- * creating new keys.
+ * Later slices (inverter, wiring) should reuse STORAGE_KEY
+ * and add sibling keys beside `dailyPower`, `battery`, and `solar`
+ * rather than creating new keys.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) {
@@ -110,16 +110,50 @@
     };
   }
 
+  function sanitiseSolar(raw) {
+    var fallback = PowerDefaults.createDefaultSolar();
+    var source = raw && typeof raw === "object" ? raw : {};
+    var season = PowerCalc.sanitiseSeason(source.season || fallback.season);
+    var defaultHours = PowerCalc.seasonPeakSunHours(season);
+
+    return {
+      season: season,
+      peakSunHours: PowerCalc.clamp(
+        PowerCalc.toNumber(source.peakSunHours, defaultHours),
+        PowerCalc.MIN_PEAK_SUN_HOURS,
+        PowerCalc.MAX_PEAK_SUN_HOURS
+      ),
+      lossPct: PowerCalc.clamp(
+        PowerCalc.toNumber(source.lossPct, fallback.lossPct),
+        0,
+        70
+      ),
+      marginPct: PowerCalc.clamp(
+        PowerCalc.toNumber(source.marginPct, fallback.marginPct),
+        0,
+        50
+      ),
+      useManualWh: !!source.useManualWh,
+      manualWh: PowerCalc.clamp(PowerCalc.toNumber(source.manualWh, fallback.manualWh), 0, 100000),
+    };
+  }
+
   function sanitiseProfile(raw) {
     var profile = {
       version: PROFILE_VERSION,
       dailyPower: sanitiseDailyPower(raw && raw.dailyPower),
       battery: sanitiseBattery(raw && raw.battery),
+      solar: sanitiseSolar(raw && raw.solar),
     };
 
     if (raw && typeof raw === "object") {
       Object.keys(raw).forEach(function (key) {
-        if (key !== "version" && key !== "dailyPower" && key !== "battery") {
+        if (
+          key !== "version" &&
+          key !== "dailyPower" &&
+          key !== "battery" &&
+          key !== "solar"
+        ) {
           profile[key] = raw[key];
         }
       });
@@ -177,6 +211,7 @@
     sanitiseProfile: sanitiseProfile,
     sanitiseDailyPower: sanitiseDailyPower,
     sanitiseBattery: sanitiseBattery,
+    sanitiseSolar: sanitiseSolar,
     applyPreset: applyPreset,
   };
 });

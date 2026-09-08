@@ -159,12 +159,46 @@
     },
   };
 
+  var SEASON_ORDER = ["summer", "spring-autumn", "winter"];
+
+  var SEASONS = {
+    summer: {
+      id: "summer",
+      label: "Summer",
+      sublabel: "4.5 hours",
+      peakSunHours: 4.5,
+    },
+    "spring-autumn": {
+      id: "spring-autumn",
+      label: "Spring / autumn",
+      sublabel: "3 hours · UK default",
+      peakSunHours: 3,
+    },
+    winter: {
+      id: "winter",
+      label: "Winter",
+      sublabel: "1.2 hours",
+      peakSunHours: 1.2,
+    },
+  };
+
   function createDefaultBattery() {
     return {
       daysAutonomy: 2,
       chemistry: "lifepo4",
       customUsablePct: 80,
       contingencyPct: 10,
+      useManualWh: false,
+      manualWh: 0,
+    };
+  }
+
+  function createDefaultSolar() {
+    return {
+      season: "spring-autumn",
+      peakSunHours: 3,
+      lossPct: 25,
+      marginPct: 10,
       useManualWh: false,
       manualWh: 0,
     };
@@ -180,6 +214,7 @@
         appliances: starterSet(),
       },
       battery: createDefaultBattery(),
+      solar: createDefaultSolar(),
     };
   }
 
@@ -201,8 +236,11 @@
     PRESETS: PRESETS,
     CHEMISTRY_ORDER: CHEMISTRY_ORDER,
     CHEMISTRY: CHEMISTRY,
+    SEASON_ORDER: SEASON_ORDER,
+    SEASONS: SEASONS,
     starterSet: starterSet,
     createDefaultBattery: createDefaultBattery,
+    createDefaultSolar: createDefaultSolar,
     createDefaultProfile: createDefaultProfile,
     newCustomAppliance: newCustomAppliance,
   };

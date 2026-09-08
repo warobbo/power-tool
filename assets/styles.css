@@ -280,18 +280,21 @@ body {
   gap: 0.7rem;
 }
 
-.totals.battery-totals {
+.totals.battery-totals,
+.totals.solar-totals {
   grid-template-columns: 1fr;
 }
 
-.battery-voltage {
+.battery-voltage,
+.solar-kicker {
   margin: 0.35rem 0 0;
   font-size: 0.95rem;
   font-weight: 650;
   opacity: 0.88;
 }
 
-.battery-support {
+.battery-support,
+.solar-support {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 0.55rem;
@@ -299,7 +302,8 @@ body {
   font-size: 0.88rem;
 }
 
-.battery-support span {
+.battery-support span,
+.solar-support span {
   display: inline-flex;
   align-items: baseline;
   gap: 0.2rem;
@@ -308,7 +312,8 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.battery-support strong {
+.battery-support strong,
+.solar-support strong {
   font-variant-numeric: tabular-nums;
 }
 
@@ -758,7 +763,8 @@ input:focus-visible {
     grid-template-columns: 1.3fr 1fr;
   }
 
-  .totals.battery-totals {
+  .totals.battery-totals,
+  .totals.solar-totals {
     grid-template-columns: 1fr;
   }
 
@@ -783,7 +789,8 @@ input:focus-visible {
     display: contents;
   }
 
-  .totals.battery-totals {
+  .totals.battery-totals,
+  .totals.solar-totals {
     grid-template-columns: 1fr;
   }
 
@@ -1005,7 +1012,8 @@ input:focus-visible {
     margin-bottom: 0.7rem;
   }
 
-  .battery-support span {
+  .battery-support span,
+  .solar-support span {
     background: #f3f3f3;
     border: 1px solid #ccc;
   }
