@@ -12,8 +12,8 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#2f5d46">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <!-- ASSET_VERSION=20260908f — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260908f">
+    <!-- ASSET_VERSION=20260908g — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908g">
   </head>
   <body>
     <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
@@ -165,9 +165,30 @@
       <p>Power Tools for Wayne Robinson. Slice 1 of a power and solar hub. No accounts and no server-side data.</p>
     </footer>
 
-    <script src="assets/calc.js?v=20260908f"></script>
-    <script src="assets/defaults.js?v=20260908f"></script>
-    <script src="assets/storage.js?v=20260908f"></script>
-    <script src="assets/app.js?v=20260908f"></script>
+    <div
+      class="rotate-gate no-print"
+      id="rotate-gate"
+      role="alertdialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="rotate-gate-title"
+      aria-describedby="rotate-gate-text"
+    >
+      <div class="rotate-gate-card">
+        <svg class="rotate-gate-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="18" y="8" width="28" height="48" rx="5" fill="none" stroke="currentColor" stroke-width="3"></rect>
+          <circle cx="32" cy="48" r="2.2" fill="currentColor"></circle>
+          <path d="M50 28a18 18 0 0 1-28 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+          <path d="M46 22v8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h2 id="rotate-gate-title" tabindex="-1">Turn your phone upright</h2>
+        <p id="rotate-gate-text">This calculator is made for portrait. Rotate your phone back to keep using it.</p>
+      </div>
+    </div>
+
+    <script src="assets/calc.js?v=20260908g"></script>
+    <script src="assets/defaults.js?v=20260908g"></script>
+    <script src="assets/storage.js?v=20260908g"></script>
+    <script src="assets/app.js?v=20260908g"></script>
   </body>
 </html>
