@@ -27,7 +27,6 @@
 
     <main id="calculator" class="site-main">
       <div class="layout">
-        <aside class="sidebar">
         <div class="totals-wrap">
           <section class="totals" aria-live="polite">
             <article class="total-card primary">
@@ -49,12 +48,6 @@
             </div>
           </section>
         </div>
-
-        <section class="breakdown panel" aria-labelledby="breakdown-title">
-          <h2 id="breakdown-title">Breakdown by appliance</h2>
-          <ol id="breakdown-list"></ol>
-        </section>
-        </aside>
 
         <div class="controls">
           <section class="panel" aria-labelledby="preset-title">
@@ -85,6 +78,11 @@
             <button type="button" class="add-btn" id="add-custom">Add custom appliance</button>
           </section>
         </div>
+
+        <section class="breakdown panel" aria-labelledby="breakdown-title">
+          <h2 id="breakdown-title">Breakdown by appliance</h2>
+          <ol id="breakdown-list"></ol>
+        </section>
       </div>
 
       <section class="help-grid" aria-labelledby="help-title">

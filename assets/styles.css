@@ -94,31 +94,13 @@ body {
   color: var(--muted);
 }
 
-.layout {
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar {
-  display: contents;
-}
-
 .totals-wrap {
-  order: 1;
   position: sticky;
   top: 0;
   z-index: 5;
   padding: 0.65rem 0 0.85rem;
   background: linear-gradient(180deg, rgba(239, 230, 214, 0.96), rgba(239, 230, 214, 0.88));
   backdrop-filter: blur(10px);
-}
-
-.controls {
-  order: 2;
-}
-
-.breakdown {
-  order: 3;
 }
 
 .totals {
@@ -520,32 +502,28 @@ input:focus-visible {
   .layout {
     display: grid;
     grid-template-columns: minmax(18rem, 22rem) 1fr;
+    grid-template-areas:
+      "totals controls"
+      "breakdown controls";
     gap: 1rem;
     align-items: start;
   }
 
-  .sidebar {
-    display: block;
-    grid-column: 1;
+  .totals-wrap {
+    grid-area: totals;
     position: sticky;
     top: 0.75rem;
-  }
-
-  .totals-wrap {
-    order: unset;
-    position: static;
     padding-top: 0;
     background: none;
   }
 
-  .breakdown {
-    order: unset;
-    margin-top: 0.75rem;
+  .controls {
+    grid-area: controls;
   }
 
-  .controls {
-    order: unset;
-    grid-column: 2;
+  .breakdown {
+    grid-area: breakdown;
+    margin-top: 0;
   }
 
   .totals,
