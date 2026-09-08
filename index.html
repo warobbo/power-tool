@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campervan Daily Power Calculator | Wh &amp; Ah at 12V / 24V | UK &amp; EU</title>
+    <meta name="description" content="Work out campervan and motorhome daily power use in Wh and Ah at 12V and 24V. Free UK/EU planning estimate for fridge, lights, heater and more.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Wayne Robinson">
+    <meta property="og:title" content="Campervan Daily Power Calculator | Wh &amp; Ah at 12V / 24V">
+    <meta property="og:description" content="Pick appliances and hours of use to see daily watt-hours and amp-hours at 12V and 24V for UK and EU motorhomes and campervans.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#2f5d46">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#calculator">Skip to calculator</a>
+    <header class="site-header">
+      <p class="eyebrow">Power Tools · Slice 1</p>
+      <h1>Daily power consumption calculator</h1>
+      <p class="lede">
+        For UK and EU motorhome and campervan trips. Tick what you use, set watts and hours,
+        and see watt-hours per day plus amp-hours at 12&nbsp;V and 24&nbsp;V.
+      </p>
+    </header>
+
+    <main id="calculator" class="site-main">
+      <div class="layout">
+        <div class="totals-wrap">
+          <section class="totals" aria-live="polite">
+            <article class="total-card primary">
+              <p class="label">Total energy</p>
+              <p class="value"><strong id="total-wh">0</strong><span>Wh / day</span></p>
+              <p class="hint" id="loss-note" hidden></p>
+            </article>
+            <div class="ah-grid">
+              <article class="total-card">
+                <p class="label">At 12 V</p>
+                <p class="value"><strong id="total-ah12">0</strong><span>Ah / day</span></p>
+                <p class="hint">Wh ÷ 12</p>
+              </article>
+              <article class="total-card">
+                <p class="label">At 24 V</p>
+                <p class="value"><strong id="total-ah24">0</strong><span>Ah / day</span></p>
+                <p class="hint">Wh ÷ 24</p>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <div class="controls">
+          <section class="panel" aria-labelledby="preset-title">
+            <div class="panel-head">
+              <div>
+                <h2 id="preset-title">Start from a preset</h2>
+                <p class="save-state" id="save-state">Saved on this device</p>
+              </div>
+            </div>
+            <div id="presets" class="preset-row">
+              <button type="button" data-preset="weekend">Light weekend (2 people)</button>
+              <button type="button" data-preset="fulltime">Typical full-time off-grid</button>
+              <button type="button" data-preset="defaults">Reset to defaults</button>
+            </div>
+            <label class="loss-toggle">
+              <input id="inverter-loss" type="checkbox">
+              <span>
+                <strong>Add inverter loss (12%)</strong>
+                <span>Simple extra draw if you run 230&nbsp;V kit through an inverter. Optional.</span>
+              </span>
+            </label>
+          </section>
+
+          <section class="panel loads-panel" aria-labelledby="loads-title">
+            <h2 id="loads-title">Appliances</h2>
+            <p class="lede tight">Edit watts, hours per day, and quantity. Untick anything you will not use.</p>
+            <div id="appliance-list" class="appliance-list"></div>
+            <button type="button" class="add-btn" id="add-custom">Add custom appliance</button>
+          </section>
+        </div>
+
+        <section class="breakdown panel" aria-labelledby="breakdown-title">
+          <h2 id="breakdown-title">Breakdown by appliance</h2>
+          <ol id="breakdown-list"></ol>
+        </section>
+      </div>
+
+      <section class="help-grid" aria-labelledby="help-title">
+        <article class="help-card">
+          <h2 id="help-title">How to use</h2>
+          <ol>
+            <li>Choose a preset if you want a head start, or keep the defaults.</li>
+            <li>Tick only the appliances you will run, then set watts from the label or manual.</li>
+            <li>Enter hours of use per day. For a fridge, hours means compressor run-time, not time switched on.</li>
+            <li>Totals update as you type. Refresh the page: your numbers stay on this device.</li>
+          </ol>
+        </article>
+        <article class="help-card">
+          <h2>FAQ</h2>
+          <ul>
+            <li><strong>Wh vs Ah.</strong> Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by battery voltage.</li>
+            <li><strong>12 V vs 24 V.</strong> The same Wh is half the Ah on a 24&nbsp;V system (Wh ÷ 24) compared with 12&nbsp;V (Wh ÷ 12).</li>
+            <li><strong>The fridge is often the big load.</strong> A compressor fridge can use more energy per day than lights, phones and a laptop combined.</li>
+            <li><strong>This is an estimate.</strong> Duty cycle, weather, age of kit and inverter efficiency all change the real figure.</li>
+          </ul>
+        </article>
+      </section>
+
+      <aside class="disclaimer" aria-label="Disclaimer">
+        <h2>Disclaimer</h2>
+        <p>
+          This calculator is a planning estimate only. It is not an electrical design, installation guide,
+          or certification. Check manufacturer ratings for every appliance, cable and battery, and use a
+          qualified installer for safety-critical work.
+        </p>
+      </aside>
+    </main>
+
+    <footer class="site-footer">
+      <p>Power Tools for Wayne Robinson. Slice 1 of a power and solar hub. No accounts and no server-side data.</p>
+    </footer>
+
+    <script src="assets/calc.js"></script>
+    <script src="assets/defaults.js"></script>
+    <script src="assets/storage.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>
