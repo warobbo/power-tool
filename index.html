@@ -12,8 +12,8 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#2f5d46">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <!-- ASSET_VERSION=20260908b — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260908b">
+    <!-- ASSET_VERSION=20260908c — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908c">
   </head>
   <body>
     <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
@@ -29,25 +29,32 @@
 
     <main id="calculator" class="site-main">
       <div class="layout">
-        <div class="totals-wrap">
-          <section class="totals" aria-live="polite">
-            <article class="total-card primary">
-              <p class="label">Total energy</p>
-              <p class="value"><strong id="total-wh">0</strong><span>Wh / day</span></p>
-              <p class="hint" id="loss-note" hidden></p>
-            </article>
-            <div class="ah-grid">
-              <article class="total-card">
-                <p class="label">At 12 V</p>
-                <p class="value"><strong id="total-ah12">0</strong><span>Ah / day</span></p>
-                <p class="hint">Wh ÷ 12</p>
+        <div class="summary-stack">
+          <div class="totals-wrap">
+            <section class="totals" aria-live="polite">
+              <article class="total-card primary">
+                <p class="label">Total energy</p>
+                <p class="value"><strong id="total-wh">0</strong><span>Wh / day</span></p>
+                <p class="hint" id="loss-note" hidden></p>
               </article>
-              <article class="total-card">
-                <p class="label">At 24 V</p>
-                <p class="value"><strong id="total-ah24">0</strong><span>Ah / day</span></p>
-                <p class="hint">Wh ÷ 24</p>
-              </article>
-            </div>
+              <div class="ah-grid">
+                <article class="total-card">
+                  <p class="label">At 12 V</p>
+                  <p class="value"><strong id="total-ah12">0</strong><span>Ah / day</span></p>
+                  <p class="hint">Wh ÷ 12</p>
+                </article>
+                <article class="total-card">
+                  <p class="label">At 24 V</p>
+                  <p class="value"><strong id="total-ah24">0</strong><span>Ah / day</span></p>
+                  <p class="hint">Wh ÷ 24</p>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <section class="breakdown panel" aria-labelledby="breakdown-title">
+            <h2 id="breakdown-title">Breakdown by appliance</h2>
+            <ol id="breakdown-list"></ol>
           </section>
         </div>
 
@@ -77,11 +84,6 @@
             <button type="button" class="add-btn" id="add-custom">Add custom appliance</button>
           </section>
         </div>
-
-        <section class="breakdown panel" aria-labelledby="breakdown-title">
-          <h2 id="breakdown-title">Breakdown by appliance</h2>
-          <ol id="breakdown-list"></ol>
-        </section>
       </div>
 
       <section class="help-grid no-print" aria-labelledby="help-title">
@@ -163,9 +165,9 @@
       <p>Power Tools for Wayne Robinson. Slice 1 of a power and solar hub. No accounts and no server-side data.</p>
     </footer>
 
-    <script src="assets/calc.js?v=20260908b"></script>
-    <script src="assets/defaults.js?v=20260908b"></script>
-    <script src="assets/storage.js?v=20260908b"></script>
-    <script src="assets/app.js?v=20260908b"></script>
+    <script src="assets/calc.js?v=20260908c"></script>
+    <script src="assets/defaults.js?v=20260908c"></script>
+    <script src="assets/storage.js?v=20260908c"></script>
+    <script src="assets/app.js?v=20260908c"></script>
   </body>
 </html>
