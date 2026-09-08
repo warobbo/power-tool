@@ -52,6 +52,55 @@ test("default starter totals are Wh/12 and Wh/24", function () {
   assert.strictEqual(totals.inverterLossEnabled, false);
 });
 
+test("starter list includes kettle and 1-ring induction hob", function () {
+  var appliances = defaults.starterSet();
+  var kettle = appliances.find(function (item) {
+    return item.id === "kettle";
+  });
+  var hob = appliances.find(function (item) {
+    return item.id === "induction-hob";
+  });
+
+  assert.ok(kettle, "kettle is in the starter list");
+  assert.strictEqual(kettle.name, "Kettle");
+  assert.strictEqual(kettle.watts, 1200);
+  assert.strictEqual(kettle.hours, 0.15);
+  assert.strictEqual(kettle.qty, 1);
+  assert.strictEqual(kettle.enabled, false);
+
+  assert.ok(hob, "1-ring induction hob is in the starter list");
+  assert.strictEqual(hob.name, "1-ring induction hob");
+  assert.strictEqual(hob.watts, 1600);
+  assert.strictEqual(hob.hours, 0.4);
+  assert.strictEqual(hob.qty, 1);
+  assert.strictEqual(hob.enabled, false);
+
+  assert.ok(defaults.STARTER_IDS.indexOf("kettle") !== -1);
+  assert.ok(defaults.STARTER_IDS.indexOf("induction-hob") !== -1);
+});
+
+test("weekend leaves kettle and hob off; full-time uses them", function () {
+  var weekendKettle = defaults.PRESETS.weekend.appliances.find(function (item) {
+    return item.id === "kettle";
+  });
+  var weekendHob = defaults.PRESETS.weekend.appliances.find(function (item) {
+    return item.id === "induction-hob";
+  });
+  var fullKettle = defaults.PRESETS.fulltime.appliances.find(function (item) {
+    return item.id === "kettle";
+  });
+  var fullHob = defaults.PRESETS.fulltime.appliances.find(function (item) {
+    return item.id === "induction-hob";
+  });
+
+  assert.strictEqual(weekendKettle.enabled, false);
+  assert.strictEqual(weekendHob.enabled, false);
+  assert.strictEqual(fullKettle.enabled, true);
+  assert.strictEqual(fullHob.enabled, true);
+  assert.ok(fullKettle.hours > 0);
+  assert.ok(fullHob.hours > 0);
+});
+
 test("inverter loss adds 12 percent to the total", function () {
   var totals = calc.calcTotals({
     inverterLossEnabled: true,
