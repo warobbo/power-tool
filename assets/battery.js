@@ -187,7 +187,7 @@
 
     steps.push({
       label: chemLabel + " planned at " + formatNumber(result.usablePct, 0) + "% usable",
-      value: formatWh(result.bankWh) + " Wh bank",
+      value: formatWh(result.bankWh) + " Wh to buy",
     });
     steps.push({
       label: "Amp-hours",
@@ -223,7 +223,7 @@
     els.bankAh24.textContent = formatAh(result.ah24);
     els.bankNote.textContent =
       result.dailyWh > 0
-        ? "Nameplate size at " +
+        ? "Size to buy at " +
           formatNumber(result.usablePct, 0) +
           "% usable · " +
           formatNumber(result.daysAutonomy, 1) +

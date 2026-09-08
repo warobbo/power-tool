@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Campervan Battery Bank Sizing | Ah at 12V / 24V | UK &amp; EU</title>
+    <title>Campervan Battery Size | Ah at 12V / 24V | UK &amp; EU</title>
     <meta name="description" content="Work out campervan leisure battery size from daily watt-hours, days without charging, and LiFePO4 or AGM usable capacity. Free UK/EU planning estimate at 12V and 24V.">
     <meta name="robots" content="index,follow">
     <meta name="author" content="Wayne Robinson">
-    <meta property="og:title" content="Campervan Battery Bank Sizing | Ah at 12V / 24V">
+    <meta property="og:title" content="Campervan Battery Size | Ah at 12V / 24V">
     <meta property="og:description" content="Turn daily watt-hours into a recommended leisure-battery size in Wh and Ah at 12V and 24V for UK and EU motorhomes and campervans.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#2f5d46">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <!-- ASSET_VERSION=20260908h — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260908h">
+    <!-- ASSET_VERSION=20260908i — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908i">
   </head>
   <body>
     <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
@@ -21,15 +21,15 @@
       <p class="eyebrow no-print">Power Tools</p>
       <nav class="tool-nav no-print" aria-label="Power Tools">
         <a href="index.html">Daily Power</a>
-        <a href="battery.html" aria-current="page">Battery Bank</a>
+        <a href="battery.html" aria-current="page">Battery</a>
       </nav>
-      <h1>Battery bank sizing calculator</h1>
+      <h1>Battery size calculator</h1>
       <p class="lede no-print">
         For UK and EU motorhome and campervan trips. Start from your daily watt-hours,
         choose how many days you want to last without charging, and see a recommended
-        bank size in watt-hours plus amp-hours at 12&nbsp;V and 24&nbsp;V.
+        battery size in watt-hours plus amp-hours at 12&nbsp;V and 24&nbsp;V.
       </p>
-      <p class="print-only print-meta">Planning estimate · battery bank Wh and Ah at 12&nbsp;V and 24&nbsp;V</p>
+      <p class="print-only print-meta">Planning estimate · battery size in Wh and Ah at 12&nbsp;V and 24&nbsp;V</p>
     </header>
 
     <main id="calculator" class="site-main">
@@ -38,7 +38,7 @@
           <div class="totals-wrap">
             <section class="totals" aria-live="polite">
               <article class="total-card primary">
-                <p class="label">Recommended bank</p>
+                <p class="label">Recommended battery</p>
                 <p class="value"><strong id="bank-wh">0</strong><span>Wh</span></p>
                 <p class="hint" id="bank-note"></p>
               </article>
@@ -84,7 +84,7 @@
           </section>
 
           <section class="panel loads-panel no-print" aria-labelledby="sizing-title">
-            <h2 id="sizing-title">Bank settings</h2>
+            <h2 id="sizing-title">Battery settings</h2>
             <p class="lede tight">Change days, chemistry, or extra margin. The sizes above update as you type.</p>
 
             <label class="field" for="days-autonomy">
@@ -143,16 +143,16 @@
             </dd>
           </div>
           <div>
-            <dt>Why is a LiFePO4 bank smaller than AGM?</dt>
+            <dt>Why is a LiFePO4 battery smaller than AGM?</dt>
             <dd>
               You can use more of a lithium battery’s rated size. This calculator plans LiFePO4 at 80% usable
-              and AGM / lead-acid at 50%, so the AGM bank needs to be larger for the same daily use.
+              and AGM / lead-acid at 50%, so the AGM battery needs to be larger for the same daily use.
             </dd>
           </div>
           <div>
             <dt>12V or 24V — which Ah number do I use?</dt>
             <dd>
-              Use the Ah figure that matches your leisure-battery voltage. The same watt-hour bank is half the Ah
+              Use the Ah figure that matches your leisure-battery voltage. The same watt-hour battery is half the Ah
               on 24&nbsp;V (Wh ÷ 24) compared with 12&nbsp;V (Wh ÷ 12). Do not mix the two.
             </dd>
           </div>
@@ -185,7 +185,7 @@
     </main>
 
     <footer class="site-footer no-print">
-      <p>Power Tools for Wayne Robinson. Daily Power and Battery Bank. No accounts and no server-side data.</p>
+      <p>Power Tools for Wayne Robinson. Daily Power and Battery. No accounts and no server-side data.</p>
     </footer>
 
     <div
@@ -209,10 +209,10 @@
       </div>
     </div>
 
-    <script src="assets/calc.js?v=20260908h"></script>
-    <script src="assets/defaults.js?v=20260908h"></script>
-    <script src="assets/storage.js?v=20260908h"></script>
-    <script src="assets/ui.js?v=20260908h"></script>
-    <script src="assets/battery.js?v=20260908h"></script>
+    <script src="assets/calc.js?v=20260908i"></script>
+    <script src="assets/defaults.js?v=20260908i"></script>
+    <script src="assets/storage.js?v=20260908i"></script>
+    <script src="assets/ui.js?v=20260908i"></script>
+    <script src="assets/battery.js?v=20260908i"></script>
   </body>
 </html>
