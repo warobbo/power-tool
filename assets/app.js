@@ -169,7 +169,7 @@
       "</div>" +
       '<div class="appliance-fields">' +
       field(item, "watts", "Watts", "W", 0, 20000, item.watts % 1 === 0 ? 1 : 0.1) +
-      field(item, "hours", "Hours / day", "h", 0, 24, 0.25) +
+      field(item, "hours", "Hours / day", "h", 0, 24, 0.05) +
       field(item, "qty", "Quantity", "×", 1, 99, 1) +
       "</div>" +
       "</article>"
