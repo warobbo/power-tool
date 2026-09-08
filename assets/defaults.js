@@ -208,6 +208,10 @@
     "kettle",
     "induction-hob",
     "microwave",
+    "air-fryer",
+    "coffee-machine",
+    "wonder-oven",
+    "electric-bbq",
     "hairdryer",
     "water-heater",
   ];
@@ -247,6 +251,10 @@
       inverterLoad("kettle", "Kettle", 1200, 1200, 1, true),
       inverterLoad("induction-hob", "1-ring induction hob", 1600, 2000, 1, false),
       inverterLoad("microwave", "Microwave", 800, 1600, 1, false),
+      inverterLoad("air-fryer", "Air fryer", 1500, 1650, 1, false),
+      inverterLoad("coffee-machine", "Coffee machine (capsule)", 1300, 1300, 1, false),
+      inverterLoad("wonder-oven", "Wonder Oven", 1400, 1400, 1, false),
+      inverterLoad("electric-bbq", "Electric BBQ grill", 2200, 2200, 1, false),
       inverterLoad("hairdryer", "Hairdryer", 1600, 1800, 1, false),
       inverterLoad("water-heater", "Water heater (electric)", 1000, 1000, 1, false),
     ];

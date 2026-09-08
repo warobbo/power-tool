@@ -583,7 +583,7 @@ test("inverter defaults and sanitise clamp bad values", function () {
   assert.strictEqual(profile.inverter.systemVoltage, 12);
   assert.strictEqual(profile.inverter.efficiencyPct, 88);
   assert.strictEqual(profile.inverter.marginPct, 20);
-  assert.ok(profile.inverter.loads.length >= 5);
+  assert.ok(profile.inverter.loads.length >= 9);
 
   var kettle = profile.inverter.loads.find(function (item) {
     return item.id === "kettle";
@@ -611,8 +611,35 @@ test("inverter defaults and sanitise clamp bad values", function () {
   var hairdryer = profile.inverter.loads.find(function (item) {
     return item.id === "hairdryer";
   });
+  var airFryer = profile.inverter.loads.find(function (item) {
+    return item.id === "air-fryer";
+  });
+  var coffee = profile.inverter.loads.find(function (item) {
+    return item.id === "coffee-machine";
+  });
+  var wonderOven = profile.inverter.loads.find(function (item) {
+    return item.id === "wonder-oven";
+  });
+  var electricBbq = profile.inverter.loads.find(function (item) {
+    return item.id === "electric-bbq";
+  });
   assert.ok(microwave, "microwave is in the inverter starter list");
   assert.ok(hairdryer, "hairdryer is in the inverter starter list");
+  assert.ok(airFryer, "air fryer is in the inverter starter list");
+  assert.strictEqual(airFryer.name, "Air fryer");
+  assert.strictEqual(airFryer.watts, 1500);
+  assert.strictEqual(airFryer.surgeWatts, 1650);
+  assert.strictEqual(airFryer.enabled, false);
+  assert.ok(coffee, "capsule coffee machine is in the inverter starter list");
+  assert.strictEqual(coffee.name, "Coffee machine (capsule)");
+  assert.strictEqual(coffee.watts, 1300);
+  assert.strictEqual(coffee.enabled, false);
+  assert.ok(wonderOven, "Wonder Oven is in the inverter starter list");
+  assert.strictEqual(wonderOven.watts, 1400);
+  assert.strictEqual(wonderOven.enabled, false);
+  assert.ok(electricBbq, "electric BBQ grill is in the inverter starter list");
+  assert.strictEqual(electricBbq.watts, 2200);
+  assert.strictEqual(electricBbq.enabled, false);
 
   var defaultResult = calc.calcInverter(profile);
   assert.strictEqual(defaultResult.continuousLoadW, 1200);
@@ -700,6 +727,12 @@ test("inverter load merge adds missing starters without overwriting saved rows",
   assert.strictEqual(byId.kettle.name, "Travel kettle");
   assert.strictEqual(byId["induction-hob"].watts, 1600);
   assert.strictEqual(byId["induction-hob"].enabled, false);
+  assert.strictEqual(byId["air-fryer"].watts, 1500);
+  assert.strictEqual(byId["air-fryer"].enabled, false);
+  assert.strictEqual(byId["coffee-machine"].watts, 1300);
+  assert.strictEqual(byId["wonder-oven"].watts, 1400);
+  assert.strictEqual(byId["electric-bbq"].watts, 2200);
+  assert.strictEqual(byId["electric-bbq"].enabled, false);
   assert.strictEqual(byId["custom-mix"].name, "Blender");
   assert.strictEqual(byId["custom-mix"].custom, true);
   assert.strictEqual(clean.systemVoltage, 24);
