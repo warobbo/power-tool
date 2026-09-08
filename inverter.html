@@ -12,8 +12,8 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#2f5d46">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <!-- ASSET_VERSION=20260908l — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260908l">
+    <!-- ASSET_VERSION=20260908n — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908n">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -49,6 +49,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "They draw a lot of watts for a short time. A 1,200 W kettle plus a little extra margin is already a 1,500 W class inverter. Add a 1,600 W hob and you are into 3,000 W territory if you might run them together. Tick only what you will run at the same time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I count a laptop charger, TV or phone charger?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usually not. USB, 12 V sockets and many van TVs run from the leisure battery, not the inverter. Put them on Daily Power as everyday 12 V use. Only add them here if you really plug that kit into a 230 V socket."
           }
         },
         {
@@ -185,6 +193,7 @@
           <section class="panel loads-panel no-print" aria-labelledby="loads-title">
             <h2 id="loads-title">230 V loads</h2>
             <p class="lede tight">Tick only what you might run at the same time. Set watts from the label. Add start / surge if the maker lists a higher figure.</p>
+            <p class="field-hint">USB, 12&nbsp;V sockets and many van TVs usually run from the leisure battery, not the inverter.</p>
             <div id="load-list" class="appliance-list"></div>
             <button type="button" class="add-btn" id="add-custom">Add custom load</button>
           </section>
@@ -236,6 +245,14 @@
               They draw a lot of watts for a short time. A 1,200&nbsp;W kettle plus a little extra margin is
               already a 1,500&nbsp;W class inverter. Add a 1,600&nbsp;W hob and you are into 3,000&nbsp;W
               territory if you might run them together. Tick only what you will run at the same time.
+            </dd>
+          </div>
+          <div>
+            <dt>Should I count a laptop charger, TV or phone charger?</dt>
+            <dd>
+              Usually not. USB, 12&nbsp;V sockets and many van TVs run from the leisure battery, not the
+              inverter. Put them on Daily Power as everyday 12&nbsp;V use. Only add them here if you really
+              plug that kit into a 230&nbsp;V socket.
             </dd>
           </div>
           <div>
@@ -334,10 +351,10 @@
       </div>
     </div>
 
-    <script src="assets/calc.js?v=20260908l"></script>
-    <script src="assets/defaults.js?v=20260908l"></script>
-    <script src="assets/storage.js?v=20260908l"></script>
-    <script src="assets/ui.js?v=20260908l"></script>
-    <script src="assets/inverter.js?v=20260908l"></script>
+    <script src="assets/calc.js?v=20260908n"></script>
+    <script src="assets/defaults.js?v=20260908n"></script>
+    <script src="assets/storage.js?v=20260908n"></script>
+    <script src="assets/ui.js?v=20260908n"></script>
+    <script src="assets/inverter.js?v=20260908n"></script>
   </body>
 </html>

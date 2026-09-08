@@ -444,6 +444,10 @@ input:focus-visible {
   gap: 0.75rem;
 }
 
+.loads-panel .field-hint + .appliance-list {
+  margin-top: 0.75rem;
+}
+
 .appliance-card {
   padding: 0.9rem;
 }
