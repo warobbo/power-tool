@@ -153,12 +153,129 @@ test("sanitise keeps later-slice keys on the shared profile", function () {
   var clean = storage.sanitiseProfile({
     version: 1,
     dailyPower: { appliances: [] },
-    battery: { usableAh: 200 },
+    battery: { daysAutonomy: 3, chemistry: "agm" },
     solar: { arrayWatts: 400 },
   });
-  assert.strictEqual(clean.battery.usableAh, 200);
+  assert.strictEqual(clean.battery.daysAutonomy, 3);
+  assert.strictEqual(clean.battery.chemistry, "agm");
   assert.strictEqual(clean.solar.arrayWatts, 400);
   assert.strictEqual(storage.STORAGE_KEY, "powertools.systemProfile");
+});
+
+test("battery bank is daily Wh × days ÷ usable fraction", function () {
+  var profile = {
+    dailyPower: {
+      inverterLossEnabled: false,
+      appliances: [{ watts: 100, hours: 10, qty: 1, enabled: true }],
+    },
+    battery: {
+      daysAutonomy: 2,
+      chemistry: "lifepo4",
+      contingencyPct: 0,
+      useManualWh: false,
+    },
+  };
+  var result = calc.calcBatteryBank(profile);
+  assert.strictEqual(result.dailyWh, 1000);
+  assert.strictEqual(result.daysWh, 2000);
+  assert.strictEqual(result.usablePct, 80);
+  assert.strictEqual(result.bankWh, 2500);
+  assert.strictEqual(result.ah12, 2500 / 12);
+  assert.strictEqual(result.ah24, 2500 / 24);
+  assert.strictEqual(result.source, "dailyPower");
+});
+
+test("battery bank adds optional contingency then applies chemistry", function () {
+  var profile = {
+    dailyPower: {
+      appliances: [{ watts: 100, hours: 10, qty: 1, enabled: true }],
+    },
+    battery: {
+      daysAutonomy: 2,
+      chemistry: "lifepo4",
+      contingencyPct: 10,
+      useManualWh: false,
+    },
+  };
+  var result = calc.calcBatteryBank(profile);
+  assert.strictEqual(result.energyNeededWh, 2200);
+  assert.strictEqual(result.bankWh, 2750);
+  assert.strictEqual(result.ah12, 2750 / 12);
+  assert.strictEqual(result.ah24, 2750 / 24);
+});
+
+test("AGM usable 50% needs a larger bank than LiFePO4", function () {
+  var daily = {
+    appliances: [{ watts: 100, hours: 10, qty: 1, enabled: true }],
+  };
+  var lithium = calc.calcBatteryBank({
+    dailyPower: daily,
+    battery: { daysAutonomy: 2, chemistry: "lifepo4", contingencyPct: 0 },
+  });
+  var agm = calc.calcBatteryBank({
+    dailyPower: daily,
+    battery: { daysAutonomy: 2, chemistry: "agm", contingencyPct: 0 },
+  });
+  assert.strictEqual(lithium.usablePct, 80);
+  assert.strictEqual(agm.usablePct, 50);
+  assert.strictEqual(agm.bankWh, 4000);
+  assert.ok(agm.bankWh > lithium.bankWh);
+});
+
+test("custom usable percentage and manual daily Wh", function () {
+  var result = calc.calcBatteryBank({
+    dailyPower: {
+      appliances: [{ watts: 100, hours: 10, qty: 1, enabled: true }],
+    },
+    battery: {
+      daysAutonomy: 2,
+      chemistry: "custom",
+      customUsablePct: 90,
+      contingencyPct: 0,
+      useManualWh: true,
+      manualWh: 800,
+    },
+  });
+  assert.strictEqual(result.source, "manual");
+  assert.strictEqual(result.dailyWh, 800);
+  assert.strictEqual(result.usablePct, 90);
+  assert.strictEqual(result.bankWh, 800 * 2 / 0.9);
+});
+
+test("battery defaults and sanitise clamp bad values", function () {
+  var profile = defaults.createDefaultProfile();
+  assert.strictEqual(profile.battery.daysAutonomy, 2);
+  assert.strictEqual(profile.battery.chemistry, "lifepo4");
+  assert.strictEqual(profile.battery.contingencyPct, 10);
+  assert.strictEqual(profile.battery.useManualWh, false);
+
+  var clean = storage.sanitiseBattery({
+    daysAutonomy: 99,
+    chemistry: "nickel",
+    customUsablePct: 3,
+    contingencyPct: -8,
+    useManualWh: "yes",
+    manualWh: -20,
+  });
+  assert.strictEqual(clean.daysAutonomy, 14);
+  assert.strictEqual(clean.chemistry, "lifepo4");
+  assert.strictEqual(clean.customUsablePct, 10);
+  assert.strictEqual(clean.contingencyPct, 0);
+  assert.strictEqual(clean.useManualWh, true);
+  assert.strictEqual(clean.manualWh, 0);
+});
+
+test("applying a daily-power preset keeps battery settings", function () {
+  var profile = defaults.createDefaultProfile();
+  profile.battery.daysAutonomy = 3;
+  profile.battery.chemistry = "agm";
+  profile.battery.contingencyPct = 5;
+
+  var weekend = storage.applyPreset(profile, "weekend");
+  assert.strictEqual(weekend.battery.daysAutonomy, 3);
+  assert.strictEqual(weekend.battery.chemistry, "agm");
+  assert.strictEqual(weekend.battery.contingencyPct, 5);
+  assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
 });
 
 test("full-time preset uses more energy than the weekend preset", function () {

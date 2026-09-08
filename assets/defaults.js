@@ -136,6 +136,40 @@
     },
   };
 
+  var CHEMISTRY_ORDER = ["lifepo4", "agm", "custom"];
+
+  var CHEMISTRY = {
+    lifepo4: {
+      id: "lifepo4",
+      label: "LiFePO4",
+      sublabel: "80% usable",
+      usablePct: 80,
+    },
+    agm: {
+      id: "agm",
+      label: "AGM / lead-acid",
+      sublabel: "50% usable",
+      usablePct: 50,
+    },
+    custom: {
+      id: "custom",
+      label: "Custom usable %",
+      sublabel: "You choose",
+      usablePct: null,
+    },
+  };
+
+  function createDefaultBattery() {
+    return {
+      daysAutonomy: 2,
+      chemistry: "lifepo4",
+      customUsablePct: 80,
+      contingencyPct: 10,
+      useManualWh: false,
+      manualWh: 0,
+    };
+  }
+
   function createDefaultProfile() {
     return {
       version: 1,
@@ -145,6 +179,7 @@
         activePreset: "defaults",
         appliances: starterSet(),
       },
+      battery: createDefaultBattery(),
     };
   }
 
@@ -164,7 +199,10 @@
     STARTER_IDS: STARTER_IDS,
     PRESET_ORDER: PRESET_ORDER,
     PRESETS: PRESETS,
+    CHEMISTRY_ORDER: CHEMISTRY_ORDER,
+    CHEMISTRY: CHEMISTRY,
     starterSet: starterSet,
+    createDefaultBattery: createDefaultBattery,
     createDefaultProfile: createDefaultProfile,
     newCustomAppliance: newCustomAppliance,
   };
