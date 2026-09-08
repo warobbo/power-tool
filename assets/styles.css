@@ -544,6 +544,74 @@ input:focus-visible {
   margin: 0.35rem 0 0;
 }
 
+.rotate-gate {
+  display: none;
+}
+
+.rotate-gate-card {
+  width: min(28rem, 100%);
+  padding: 1.35rem 1.25rem 1.4rem;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--card-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.rotate-gate-icon {
+  display: block;
+  width: 3.4rem;
+  height: 3.4rem;
+  margin: 0 auto 0.7rem;
+  color: var(--accent);
+}
+
+.rotate-gate-card h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.rotate-gate-card p {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+}
+
+/*
+  Phones held sideways only. iPad landscape is taller than this (768px+),
+  and wide desktop windows are excluded by max-width.
+*/
+@media (orientation: landscape) and (max-height: 540px) and (max-width: 1000px) {
+  html,
+  body {
+    overflow: hidden;
+    height: 100%;
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+
+  .skip-link,
+  .site-header,
+  .site-main,
+  .site-footer {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .rotate-gate {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(29, 42, 36, 0.92);
+    text-align: center;
+  }
+}
+
 @media (max-width: 420px) {
   .appliance-head,
   .appliance-card[data-id^="custom-"] .appliance-head {
