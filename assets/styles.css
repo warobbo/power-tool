@@ -159,6 +159,10 @@ body {
   margin-top: 0.9rem;
 }
 
+.panel > .field[hidden] {
+  display: none;
+}
+
 .next-tool {
   margin: 1rem 0 0;
 }
