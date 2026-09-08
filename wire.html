@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campervan Wire &amp; Fuse Size | Cable mm² | UK &amp; EU</title>
+    <meta name="description" content="Work out campervan cable size in mm² and fuse or breaker amps from current, one-way length and voltage drop. Free UK/EU planning estimate for 12V and 24V DC runs.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Wayne Robinson">
+    <meta property="og:title" content="Campervan Wire &amp; Fuse Size | Cable mm²">
+    <meta property="og:description" content="Turn current, cable length and allowed voltage drop into a recommended copper cable size in mm² and a fuse or breaker rating for UK and EU motorhomes and campervans.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#2f5d46">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <!-- ASSET_VERSION=20260908o — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908o">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is voltage drop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Voltage drop is the volts you lose along the cable. A long, thin cable wastes power as heat and the fridge or inverter can sag. This page aims for a small drop — 3% for important kit, 10% for everyday kit — then picks the next copper size you can buy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is the length doubled?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You type the one-way length — battery to the kit. The return cable is just as long, so the calculator uses twice that for voltage drop. A 2 m run is 4 m of cable in the maths."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the fuse protect the gadget or the cable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The fuse protects the cable. If something shorts, the fuse should blow before the cable overheats. Size the fuse a bit above the current you will draw, and not above what that cable can take. The gadget may have its own fuse as well."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "12V or 24V — does it change the cable size?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The same watts is about half the amps at 24 V, so you can often use thinner cable. Match the voltage to the leisure system you actually have. Do not mix 12 V and 24 V figures."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does an inverter need such thick cable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A kettle-class inverter at 12 V can draw well over 100 A from the leisure battery. That current needs fat, short cable and a large fuse near the battery. 24 V roughly halves the amps. This page is a planning size, not a wiring diagram."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are ANL, MEGA and MIDI fuses?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "They are larger DC fuses used on fat cables, often next to the battery on an inverter feed. A blade fuse is for smaller runs such as a fridge or pump. The amp figure matters more than the name. This page does not pick a fuse brand."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why not pick a thinner cable to save money?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A thin cable runs hot and wastes power. Lights can dim, a fridge can cut out, and in a bad case the cable can melt. Round up to the next size you can buy. Cable is cheaper than a fire or a ruined weekend."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I type amps or watts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Either. Watts divided by volts gives amps. For solar, the honest figure is often the current on the panel or controller label, not watts divided by 12 V. You can type that current instead."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use the Inverter watts as a starting point?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The Inverter DC feed preset can pull a current from your saved inverter size at 12 V or 24 V, including inverter waste. You can always type a different figure."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this safe to use as an installation guide?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. This is a planning estimate only. It is not an electrical design, installation certificate, or a claim of ISO or ABYC compliance. Cable type, temperature, how the cable is run, and the fuse holder all matter. Use a qualified installer for safety-critical work."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
+    <header class="site-header">
+      <p class="eyebrow no-print">Power Tools</p>
+      <nav class="tool-nav no-print" aria-label="Power Tools">
+        <a href="index.html">Daily Power</a>
+        <a href="battery.html">Battery</a>
+        <a href="solar.html">Solar</a>
+        <a href="inverter.html">Inverter</a>
+        <a href="wire.html" aria-current="page">Wire &amp; fuse</a>
+      </nav>
+      <h1>Wire &amp; fuse size calculator</h1>
+      <p class="lede no-print">
+        For UK and EU motorhome and campervan trips. Set the current or watts, the
+        one-way cable length, and how much voltage drop you will allow, then see a
+        recommended copper cable size in mm² — how UK cable is sold — plus a fuse
+        or breaker in amps.
+      </p>
+      <p class="print-only print-meta">Planning estimate · copper cable mm² and fuse or breaker amps</p>
+    </header>
+
+    <main id="calculator" class="site-main">
+      <div class="layout">
+        <div class="summary-stack">
+          <div class="totals-wrap">
+            <section class="totals wiring-totals" aria-live="polite">
+              <article class="total-card primary wiring-result">
+                <p class="label">Recommended cable</p>
+                <p class="value"><strong id="cable-mm2">0</strong><span>mm²</span></p>
+                <p class="wiring-kicker">copper cable to plan for</p>
+                <p class="wiring-fuse"><strong id="fuse-amps">0</strong> A fuse or breaker</p>
+                <p class="wiring-support">
+                  <span>about <strong id="wiring-amps">0</strong> A</span>
+                  <span><strong id="drop-v">0</strong> V drop</span>
+                  <span><strong id="drop-pct-out">0</strong>%</span>
+                </p>
+                <p class="hint" id="wiring-note"></p>
+              </article>
+            </section>
+          </div>
+
+          <section class="breakdown panel" aria-labelledby="breakdown-title">
+            <h2 id="breakdown-title">How this was worked out</h2>
+            <ol id="breakdown-list"></ol>
+          </section>
+        </div>
+
+        <div class="controls">
+          <section class="panel no-print" aria-labelledby="preset-title">
+            <div class="panel-head">
+              <div>
+                <h2 id="preset-title">Typical van run</h2>
+                <p class="save-state" id="save-state">Saved on this device</p>
+              </div>
+              <button type="button" class="print-btn" id="print-sheet">Print / save PDF</button>
+            </div>
+            <p class="lede tight">Pick a common DC run to start, then change any figure. The sizes above update as you type.</p>
+            <div id="presets" class="preset-row" role="group" aria-labelledby="preset-title"></div>
+            <p class="lede tight" id="source-note"></p>
+            <div class="action-row" id="source-actions"></div>
+          </section>
+
+          <section class="panel loads-panel no-print" aria-labelledby="settings-title">
+            <h2 id="settings-title">Cable settings</h2>
+            <p class="lede tight">Copper cable is assumed — the usual UK leisure cable.</p>
+
+            <h3 class="field-heading" id="voltage-title">Leisure-system voltage</h3>
+            <div id="voltages" class="preset-row" role="group" aria-labelledby="voltage-title"></div>
+            <p class="field-hint" id="voltage-hint"></p>
+
+            <label class="field" for="current-a">
+              <span>Current</span>
+              <span class="field-control">
+                <input id="current-a" type="number" inputmode="decimal" min="0" max="600" step="0.1" value="0">
+                <em>A</em>
+              </span>
+            </label>
+            <p class="field-hint">Amps on this run. Type watts below instead if that is what you have.</p>
+
+            <label class="field" for="watts">
+              <span>Or watts</span>
+              <span class="field-control">
+                <input id="watts" type="number" inputmode="decimal" min="0" max="20000" step="1" value="0">
+                <em>W</em>
+              </span>
+            </label>
+            <p class="field-hint">We convert with amps = watts ÷ volts. For solar, the label current is often better.</p>
+
+            <label class="field" for="one-way-length">
+              <span>One-way cable length</span>
+              <span class="field-control">
+                <input id="one-way-length" type="number" inputmode="decimal" min="0.1" max="50" step="0.1" value="2">
+                <em>m</em>
+              </span>
+            </label>
+            <p class="field-hint">Battery to the kit, not there and back. The return run is the same length, so voltage drop uses twice this figure.</p>
+
+            <h3 class="field-heading" id="drop-title">Allowed voltage drop</h3>
+            <div id="drops" class="preset-row" role="group" aria-labelledby="drop-title"></div>
+            <label class="field" for="drop-pct">
+              <span>Drop you will allow</span>
+              <span class="field-control">
+                <input id="drop-pct" type="number" inputmode="decimal" min="1" max="15" step="0.5" value="3">
+                <em>%</em>
+              </span>
+            </label>
+            <p class="field-hint" id="drop-hint"></p>
+          </section>
+        </div>
+      </div>
+
+      <section class="help-grid no-print" aria-labelledby="help-title">
+        <article class="help-card">
+          <h2 id="help-title">How to use</h2>
+          <ol>
+            <li>Pick a typical van run, or keep Inverter DC feed if you have already sized an inverter.</li>
+            <li>Set 12&nbsp;V or 24&nbsp;V, then type current in amps or watts. You can change the inverter starting figure.</li>
+            <li>Type the one-way length in metres. The calculator doubles it for the return cable.</li>
+            <li>Keep 3% drop for important kit, or 10% for everyday kit. The big figure is mm² — how UK copper cable is sold.</li>
+          </ol>
+        </article>
+      </section>
+
+      <section class="help-card faq-card no-print" aria-labelledby="faq-title">
+        <h2 id="faq-title">FAQ</h2>
+        <dl class="faq-list">
+          <div>
+            <dt>What is voltage drop?</dt>
+            <dd>
+              Voltage drop is the volts you lose along the cable. A long, thin cable wastes power as heat
+              and the fridge or inverter can sag. This page aims for a small drop — 3% for important kit,
+              10% for everyday kit — then picks the next copper size you can buy.
+            </dd>
+          </div>
+          <div>
+            <dt>Why is the length doubled?</dt>
+            <dd>
+              You type the one-way length — battery to the kit. The return cable is just as long, so the
+              calculator uses twice that for voltage drop. A 2&nbsp;m run is 4&nbsp;m of cable in the maths.
+            </dd>
+          </div>
+          <div>
+            <dt>Does the fuse protect the gadget or the cable?</dt>
+            <dd>
+              The fuse protects the cable. If something shorts, the fuse should blow before the cable
+              overheats. Size the fuse a bit above the current you will draw, and not above what that
+              cable can take. The gadget may have its own fuse as well.
+            </dd>
+          </div>
+          <div>
+            <dt>12V or 24V — does it change the cable size?</dt>
+            <dd>
+              Yes. The same watts is about half the amps at 24&nbsp;V, so you can often use thinner cable.
+              Match the voltage to the leisure system you actually have. Do not mix 12&nbsp;V and 24&nbsp;V
+              figures.
+            </dd>
+          </div>
+          <div>
+            <dt>Why does an inverter need such thick cable?</dt>
+            <dd>
+              A kettle-class inverter at 12&nbsp;V can draw well over 100&nbsp;A from the leisure battery.
+              That current needs fat, short cable and a large fuse near the battery. 24&nbsp;V roughly
+              halves the amps. This page is a planning size, not a wiring diagram.
+            </dd>
+          </div>
+          <div>
+            <dt>What are ANL, MEGA and MIDI fuses?</dt>
+            <dd>
+              They are larger DC fuses used on fat cables, often next to the battery on an inverter feed.
+              A blade fuse is for smaller runs such as a fridge or pump. The amp figure matters more than
+              the name. This page does not pick a fuse brand.
+            </dd>
+          </div>
+          <div>
+            <dt>Why not pick a thinner cable to save money?</dt>
+            <dd>
+              A thin cable runs hot and wastes power. Lights can dim, a fridge can cut out, and in a bad
+              case the cable can melt. Round up to the next size you can buy. Cable is cheaper than a fire
+              or a ruined weekend.
+            </dd>
+          </div>
+          <div>
+            <dt>Should I type amps or watts?</dt>
+            <dd>
+              Either. Watts divided by volts gives amps. For solar, the honest figure is often the current
+              on the panel or controller label, not watts divided by 12&nbsp;V. You can type that current
+              instead.
+            </dd>
+          </div>
+          <div>
+            <dt>Can I use the Inverter watts as a starting point?</dt>
+            <dd>
+              Yes. The Inverter DC feed preset can pull a current from your saved inverter size at
+              12&nbsp;V or 24&nbsp;V, including inverter waste. You can always type a different figure.
+            </dd>
+          </div>
+          <div>
+            <dt>Is this safe to use as an installation guide?</dt>
+            <dd>
+              No. This is a planning estimate only. It is not an electrical design, installation
+              certificate, or a claim of ISO or ABYC compliance. Cable type, temperature, how the cable
+              is run, and the fuse holder all matter. Use a qualified installer for safety-critical work.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <aside class="disclaimer" aria-label="Disclaimer">
+        <h2>Disclaimer</h2>
+        <p>
+          This calculator is a planning estimate only. It is not an electrical design, installation
+          guide, installation certificate, or a claim of legal compliance. It covers common copper DC
+          runs in a van. Check manufacturer ratings for every cable, fuse and appliance, and use a
+          qualified installer for safety-critical work.
+        </p>
+      </aside>
+
+      <section class="help-card next-tool no-print" aria-labelledby="next-tool-title">
+        <h2 id="next-tool-title">Also size the rest of the system</h2>
+        <p>
+          Cable is only one run. Open Inverter for continuous watts, Battery for a 12&nbsp;V Ah size
+          to buy, and Solar for panel watts. Your figures stay on this device.
+        </p>
+        <a class="add-btn next-tool-link" href="inverter.html">Open Inverter</a>
+        <a class="add-btn next-tool-link" href="battery.html">Open Battery</a>
+        <a class="add-btn next-tool-link" href="solar.html">Open Solar</a>
+      </section>
+    </main>
+
+    <footer class="site-footer no-print">
+      <p>Power Tools for Wayne Robinson. Daily Power, Battery, Solar, Inverter, and Wire &amp; fuse. No accounts and no server-side data.</p>
+    </footer>
+
+    <div
+      class="rotate-gate no-print"
+      id="rotate-gate"
+      role="alertdialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="rotate-gate-title"
+      aria-describedby="rotate-gate-text"
+    >
+      <div class="rotate-gate-card">
+        <svg class="rotate-gate-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="18" y="8" width="28" height="48" rx="5" fill="none" stroke="currentColor" stroke-width="3"></rect>
+          <circle cx="32" cy="48" r="2.2" fill="currentColor"></circle>
+          <path d="M50 28a18 18 0 0 1-28 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+          <path d="M46 22v8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h2 id="rotate-gate-title" tabindex="-1">Turn your phone upright</h2>
+        <p id="rotate-gate-text">This calculator is made for portrait. Rotate your phone back to keep using it.</p>
+      </div>
+    </div>
+
+    <script src="assets/calc.js?v=20260908o"></script>
+    <script src="assets/defaults.js?v=20260908o"></script>
+    <script src="assets/storage.js?v=20260908o"></script>
+    <script src="assets/ui.js?v=20260908o"></script>
+    <script src="assets/wire.js?v=20260908o"></script>
+  </body>
+</html>

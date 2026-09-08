@@ -1,7 +1,7 @@
 /**
  * Shared Power Tools system profile in localStorage.
- * Later slices (wiring) should reuse STORAGE_KEY
- * and add sibling keys beside `dailyPower`, `battery`, `solar`, and `inverter`
+ * Later slices should reuse STORAGE_KEY
+ * and add sibling keys beside `dailyPower`, `battery`, `solar`, `inverter`, and `wiring`
  * rather than creating new keys.
  */
 (function (root, factory) {
@@ -205,6 +205,79 @@
     };
   }
 
+  function sanitiseWiring(raw) {
+    var fallback = PowerDefaults.createDefaultWiring();
+    var source = raw && typeof raw === "object" ? raw : {};
+    var preset = PowerCalc.sanitiseWiringPreset(source.preset || fallback.preset);
+    var systemVoltage = PowerCalc.sanitiseSystemVoltage(
+      source.systemVoltage != null ? source.systemVoltage : fallback.systemVoltage
+    );
+    var inputMode = PowerCalc.sanitiseWiringInputMode(source.inputMode || fallback.inputMode);
+    var currentA = PowerCalc.clamp(
+      PowerCalc.toNumber(source.currentA, fallback.currentA),
+      0,
+      PowerCalc.MAX_WIRING_AMPS
+    );
+    var watts = PowerCalc.clamp(
+      PowerCalc.toNumber(source.watts, fallback.watts),
+      0,
+      PowerCalc.MAX_WIRING_WATTS
+    );
+
+    return {
+      preset: preset,
+      systemVoltage: systemVoltage,
+      inputMode: inputMode,
+      currentA: currentA,
+      watts: watts,
+      oneWayLengthM: PowerCalc.clamp(
+        PowerCalc.toNumber(source.oneWayLengthM, fallback.oneWayLengthM),
+        PowerCalc.MIN_WIRING_LENGTH_M,
+        PowerCalc.MAX_WIRING_LENGTH_M
+      ),
+      dropPct: PowerCalc.sanitiseDropPct(
+        source.dropPct != null ? source.dropPct : fallback.dropPct
+      ),
+      useInverterSuggestion: source.useInverterSuggestion != null
+        ? !!source.useInverterSuggestion
+        : fallback.useInverterSuggestion,
+    };
+  }
+
+  function applyWiringPreset(profile, presetId) {
+    var preset = PowerDefaults.WIRING_PRESETS[presetId];
+    if (!preset) return profile;
+
+    var next = sanitiseProfile(profile);
+    next.wiring.preset = preset.id;
+    next.wiring.oneWayLengthM = preset.oneWayLengthM;
+    next.wiring.dropPct = preset.dropPct;
+    next.wiring.inputMode = preset.inputMode || "amps";
+    next.wiring.useInverterSuggestion = !!preset.useInverterSuggestion;
+
+    if (preset.useInverterSuggestion) {
+      next.wiring.systemVoltage = next.inverter.systemVoltage;
+      var suggested = PowerCalc.resolveInverterSuggestedAmps(next, next.wiring.systemVoltage);
+      if (suggested > 0) {
+        next.wiring.currentA = suggested;
+        next.wiring.watts = PowerCalc.wattsFromCurrent(suggested, next.wiring.systemVoltage);
+      }
+      return next;
+    }
+
+    if (preset.typicalWatts != null) {
+      next.wiring.watts = preset.typicalWatts;
+      next.wiring.currentA = PowerCalc.currentFromWatts(preset.typicalWatts, next.wiring.systemVoltage);
+      next.wiring.inputMode = "watts";
+    }
+    if (preset.typicalAmps != null) {
+      next.wiring.currentA = preset.typicalAmps;
+      next.wiring.watts = PowerCalc.wattsFromCurrent(preset.typicalAmps, next.wiring.systemVoltage);
+      next.wiring.inputMode = "amps";
+    }
+    return next;
+  }
+
   function sanitiseProfile(raw) {
     var profile = {
       version: PROFILE_VERSION,
@@ -212,6 +285,7 @@
       battery: sanitiseBattery(raw && raw.battery),
       solar: sanitiseSolar(raw && raw.solar),
       inverter: sanitiseInverter(raw && raw.inverter),
+      wiring: sanitiseWiring(raw && raw.wiring),
     };
 
     if (raw && typeof raw === "object") {
@@ -221,7 +295,8 @@
           key !== "dailyPower" &&
           key !== "battery" &&
           key !== "solar" &&
-          key !== "inverter"
+          key !== "inverter" &&
+          key !== "wiring"
         ) {
           profile[key] = raw[key];
         }
@@ -282,6 +357,8 @@
     sanitiseBattery: sanitiseBattery,
     sanitiseSolar: sanitiseSolar,
     sanitiseInverter: sanitiseInverter,
+    sanitiseWiring: sanitiseWiring,
     applyPreset: applyPreset,
+    applyWiringPreset: applyWiringPreset,
   };
 });

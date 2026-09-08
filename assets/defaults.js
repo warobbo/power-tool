@@ -269,6 +269,127 @@
     };
   }
 
+  var WIRING_PRESET_ORDER = [
+    "inverter",
+    "solar-panel",
+    "solar-controller",
+    "fridge",
+    "heater-fan",
+    "water-pump",
+    "leisure",
+    "custom",
+  ];
+
+  var WIRING_PRESETS = {
+    inverter: {
+      id: "inverter",
+      label: "Inverter DC feed",
+      sublabel: "battery to inverter",
+      oneWayLengthM: 2,
+      dropPct: 3,
+      inputMode: "amps",
+      useInverterSuggestion: true,
+    },
+    "solar-panel": {
+      id: "solar-panel",
+      label: "Solar to controller",
+      sublabel: "panel cable",
+      oneWayLengthM: 5,
+      dropPct: 3,
+      inputMode: "watts",
+      typicalWatts: 400,
+      useInverterSuggestion: false,
+    },
+    "solar-controller": {
+      id: "solar-controller",
+      label: "Controller to battery",
+      sublabel: "charge cable",
+      oneWayLengthM: 1.5,
+      dropPct: 3,
+      inputMode: "watts",
+      typicalWatts: 400,
+      useInverterSuggestion: false,
+    },
+    fridge: {
+      id: "fridge",
+      label: "Fridge",
+      sublabel: "compressor",
+      oneWayLengthM: 3,
+      dropPct: 3,
+      inputMode: "watts",
+      typicalWatts: 45,
+      useInverterSuggestion: false,
+    },
+    "heater-fan": {
+      id: "heater-fan",
+      label: "Heater fan",
+      sublabel: "diesel heater",
+      oneWayLengthM: 3,
+      dropPct: 10,
+      inputMode: "watts",
+      typicalWatts: 22,
+      useInverterSuggestion: false,
+    },
+    "water-pump": {
+      id: "water-pump",
+      label: "Water pump",
+      sublabel: "12 V pump",
+      oneWayLengthM: 4,
+      dropPct: 10,
+      inputMode: "watts",
+      typicalWatts: 42,
+      useInverterSuggestion: false,
+    },
+    leisure: {
+      id: "leisure",
+      label: "Leisure general",
+      sublabel: "lights and sockets",
+      oneWayLengthM: 3,
+      dropPct: 10,
+      inputMode: "amps",
+      typicalAmps: 10,
+      useInverterSuggestion: false,
+    },
+    custom: {
+      id: "custom",
+      label: "Custom run",
+      sublabel: "you type the figures",
+      oneWayLengthM: 3,
+      dropPct: 3,
+      inputMode: "amps",
+      typicalAmps: 20,
+      useInverterSuggestion: false,
+    },
+  };
+
+  var DROP_ORDER = [3, 10];
+
+  var DROP_PRESETS = {
+    3: {
+      id: 3,
+      label: "3%",
+      sublabel: "important kit",
+    },
+    10: {
+      id: 10,
+      label: "10%",
+      sublabel: "everyday kit",
+    },
+  };
+
+  function createDefaultWiring() {
+    return {
+      preset: "inverter",
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 0,
+      watts: 0,
+      oneWayLengthM: 2,
+      dropPct: 3,
+      useInverterSuggestion: true,
+    };
+  }
+
   function createDefaultProfile() {
     return {
       version: 1,
@@ -281,6 +402,7 @@
       battery: createDefaultBattery(),
       solar: createDefaultSolar(),
       inverter: createDefaultInverter(),
+      wiring: createDefaultWiring(),
     };
   }
 
@@ -320,11 +442,16 @@
     RETIRED_INVERTER_LOAD_IDS: RETIRED_INVERTER_LOAD_IDS,
     VOLTAGE_ORDER: VOLTAGE_ORDER,
     VOLTAGES: VOLTAGES,
+    WIRING_PRESET_ORDER: WIRING_PRESET_ORDER,
+    WIRING_PRESETS: WIRING_PRESETS,
+    DROP_ORDER: DROP_ORDER,
+    DROP_PRESETS: DROP_PRESETS,
     starterSet: starterSet,
     inverterStarterSet: inverterStarterSet,
     createDefaultBattery: createDefaultBattery,
     createDefaultSolar: createDefaultSolar,
     createDefaultInverter: createDefaultInverter,
+    createDefaultWiring: createDefaultWiring,
     createDefaultProfile: createDefaultProfile,
     newCustomAppliance: newCustomAppliance,
     newCustomInverterLoad: newCustomInverterLoad,
