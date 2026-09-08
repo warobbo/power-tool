@@ -1,6 +1,7 @@
 /**
- * Pure daily-power, battery, and solar-array maths. Works in the browser and in Node tests.
+ * Pure daily-power, battery, solar-array, and inverter maths. Works in the browser and in Node tests.
  * Ah figures assume a simple Wh / system-voltage conversion (no Peukert).
+ * Inverter DC amps assume AC watts ÷ efficiency ÷ system voltage.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) {
@@ -30,6 +31,10 @@
     "spring-autumn": 3,
     winter: 1.2,
   };
+  var DEFAULT_INVERTER_EFFICIENCY_PCT = 88;
+  var DEFAULT_INVERTER_MARGIN_PCT = 20;
+  var MIN_INVERTER_EFFICIENCY_PCT = 50;
+  var MAX_INVERTER_EFFICIENCY_PCT = 100;
 
   function toNumber(value, fallback) {
     var n = typeof value === "number" ? value : parseFloat(value);
@@ -237,6 +242,107 @@
     };
   }
 
+  function sanitiseSystemVoltage(value) {
+    return toNumber(value, VOLTAGE_12) === VOLTAGE_24 ? VOLTAGE_24 : VOLTAGE_12;
+  }
+
+  function normaliseInverterLoad(raw) {
+    var watts = clamp(toNumber(raw && raw.watts, 0), 0, 20000);
+    var surgeFallback = raw && raw.surgeWatts != null ? raw.surgeWatts : watts;
+    return {
+      id: raw && raw.id ? String(raw.id) : "",
+      name: raw && raw.name ? String(raw.name) : "",
+      watts: watts,
+      surgeWatts: clamp(toNumber(surgeFallback, watts), 0, 40000),
+      qty: clamp(Math.round(toNumber(raw && raw.qty, 1)), 1, 99),
+      enabled: !!(raw && raw.enabled),
+      custom: !!(raw && raw.custom),
+    };
+  }
+
+  function inverterLoadRunningW(load) {
+    var item = normaliseInverterLoad(load);
+    if (!item.enabled) return 0;
+    return item.watts * item.qty;
+  }
+
+  function inverterLoadSurgeW(load) {
+    var item = normaliseInverterLoad(load);
+    if (!item.enabled) return 0;
+    return Math.max(item.surgeWatts, item.watts) * item.qty;
+  }
+
+  function calcInverter(profile) {
+    var settings = (profile && profile.inverter) || {};
+    var loads = Array.isArray(settings.loads) ? settings.loads : [];
+    var items = loads.map(function (load) {
+      var item = normaliseInverterLoad(load);
+      var runningW = item.enabled ? item.watts * item.qty : 0;
+      var surgeW = item.enabled ? Math.max(item.surgeWatts, item.watts) * item.qty : 0;
+      return {
+        id: item.id,
+        name: item.name,
+        enabled: item.enabled,
+        custom: item.custom,
+        watts: item.watts,
+        surgeWatts: item.surgeWatts,
+        qty: item.qty,
+        runningW: runningW,
+        surgeW: surgeW,
+      };
+    });
+
+    var continuousLoadW = items.reduce(function (sum, item) {
+      return sum + item.runningW;
+    }, 0);
+    var highestSurgeW = items.reduce(function (maxW, item) {
+      return Math.max(maxW, item.surgeW);
+    }, 0);
+    var combinedSurgeW = items.reduce(function (maxW, item) {
+      if (!item.enabled) return maxW;
+      return Math.max(maxW, continuousLoadW - item.runningW + item.surgeW);
+    }, continuousLoadW);
+
+    var efficiencyPct = clamp(
+      toNumber(settings.efficiencyPct, DEFAULT_INVERTER_EFFICIENCY_PCT),
+      MIN_INVERTER_EFFICIENCY_PCT,
+      MAX_INVERTER_EFFICIENCY_PCT
+    );
+    var marginPct = clamp(
+      toNumber(settings.marginPct, DEFAULT_INVERTER_MARGIN_PCT),
+      0,
+      50
+    );
+    var systemVoltage = sanitiseSystemVoltage(settings.systemVoltage);
+    var efficiency = efficiencyPct / 100;
+    var recommendedContinuousW = continuousLoadW * (1 + marginPct / 100);
+    var recommendedSurgeW = Math.max(combinedSurgeW, recommendedContinuousW);
+    var dcLoadW = efficiency > 0 ? continuousLoadW / efficiency : 0;
+    var dcRecommendedW = efficiency > 0 ? recommendedContinuousW / efficiency : 0;
+    var dcSurgeW = efficiency > 0 ? recommendedSurgeW / efficiency : 0;
+
+    return {
+      items: items,
+      continuousLoadW: continuousLoadW,
+      highestSurgeW: highestSurgeW,
+      combinedSurgeW: combinedSurgeW,
+      marginPct: marginPct,
+      marginW: recommendedContinuousW - continuousLoadW,
+      efficiencyPct: efficiencyPct,
+      systemVoltage: systemVoltage,
+      recommendedContinuousW: recommendedContinuousW,
+      recommendedSurgeW: recommendedSurgeW,
+      dcLoadW: dcLoadW,
+      dcRecommendedW: dcRecommendedW,
+      dcSurgeW: dcSurgeW,
+      amps12: dcLoadW / VOLTAGE_12,
+      amps24: dcLoadW / VOLTAGE_24,
+      surgeAmps12: dcSurgeW / VOLTAGE_12,
+      surgeAmps24: dcSurgeW / VOLTAGE_24,
+      selectedAmps: systemVoltage === VOLTAGE_24 ? dcLoadW / VOLTAGE_24 : dcLoadW / VOLTAGE_12,
+    };
+  }
+
   return {
     DEFAULT_INVERTER_LOSS_PCT: DEFAULT_INVERTER_LOSS_PCT,
     VOLTAGE_12: VOLTAGE_12,
@@ -270,5 +376,14 @@
     panelCounts: panelCounts,
     calcBatteryBank: calcBatteryBank,
     calcSolarArray: calcSolarArray,
+    DEFAULT_INVERTER_EFFICIENCY_PCT: DEFAULT_INVERTER_EFFICIENCY_PCT,
+    DEFAULT_INVERTER_MARGIN_PCT: DEFAULT_INVERTER_MARGIN_PCT,
+    MIN_INVERTER_EFFICIENCY_PCT: MIN_INVERTER_EFFICIENCY_PCT,
+    MAX_INVERTER_EFFICIENCY_PCT: MAX_INVERTER_EFFICIENCY_PCT,
+    sanitiseSystemVoltage: sanitiseSystemVoltage,
+    normaliseInverterLoad: normaliseInverterLoad,
+    inverterLoadRunningW: inverterLoadRunningW,
+    inverterLoadSurgeW: inverterLoadSurgeW,
+    calcInverter: calcInverter,
   };
 });

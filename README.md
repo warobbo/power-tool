@@ -33,7 +33,19 @@ Turn daily watt-hours into a recommended solar-panel size using:
 
 Results lead with array watts (how panels are sold), plus example 100 W / 200 W / 400 W panel counts and the watt-hours per day that array can support.
 
-Inverter sizing and wire/fuse tools are **not** in this slice.
+## Inverter (slice 4)
+
+Recommend an inverter size from 230 V loads using:
+
+- an editable load list (kettle, induction hob, microwave, hairdryer, laptop charger, TV, phone charger, water heater, plus custom rows)
+- optional start / surge watts on each load
+- leisure-system voltage 12 V or 24 V (changes the DC amp note, not the AC watt size)
+- inverter efficiency (default 88%)
+- an optional extra margin (default 20%)
+
+Results lead with continuous watts (how inverters are sold), plus surge watts and rough DC amps at 12 V and 24 V.
+
+Wire/fuse tools are **not** in this slice.
 
 The site is a static front-end: no backend, no accounts, and no APIs. It is meant to deploy on Render as a static site.
 
@@ -43,6 +55,7 @@ The site is a static front-end: no backend, no accounts, and no APIs. It is mean
 2. Open Battery. Daily watt-hours are filled in from what you just saved.
 3. Choose days without charging and LiFePO4 or AGM. Sizes update live.
 4. Open Solar. The same daily watt-hours are filled in. Pick a season or type peak sun hours. Watts update live.
+5. Open Inverter. Tick the 230 V kit you might run at the same time. Continuous watts and surge update live.
 
 Numbers are a **planning estimate only**.
 
@@ -58,7 +71,7 @@ From the repo root:
 python3 -m http.server 8080
 ```
 
-Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), and [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html).
+Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html), and [http://127.0.0.1:8080/inverter.html](http://127.0.0.1:8080/inverter.html).
 
 You can also open the HTML files directly in a browser. A local server is the more reliable option.
 
@@ -90,7 +103,7 @@ All Power Tools slices share one browser profile:
 | **localStorage key** | `powertools.systemProfile` |
 | **Current version** | `1` |
 
-Daily Power reads and writes `dailyPower`. Battery and Solar read that total and write `battery` and `solar` on the same object:
+Daily Power reads and writes `dailyPower`. Battery and Solar read that total and write `battery` and `solar` on the same object. Inverter writes `inverter` with its own 230 V load list:
 
 ```json
 {
@@ -115,15 +128,21 @@ Daily Power reads and writes `dailyPower`. Battery and Solar read that total and
     "marginPct": 10,
     "useManualWh": false,
     "manualWh": 0
+  },
+  "inverter": {
+    "systemVoltage": 12,
+    "efficiencyPct": 88,
+    "marginPct": 20,
+    "loads": []
   }
 }
 ```
 
-Later slices should add sibling keys on the **same object** (for example `inverter`, `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
+Later slices should add sibling keys on the **same object** (for example `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
 
 ## Out of scope
 
-Inverter sizing, wire/fuse calculations, shade modelling, payments, trip planner, Airtable, bots, DVLA lookups, and any claim of electrical compliance or certification.
+Wire/fuse calculations, shade modelling, payments, trip planner, Airtable, bots, DVLA lookups, and any claim of electrical compliance or certification.
 
 ## Disclaimer
 

@@ -1,7 +1,7 @@
 /**
  * Shared Power Tools system profile in localStorage.
- * Later slices (inverter, wiring) should reuse STORAGE_KEY
- * and add sibling keys beside `dailyPower`, `battery`, and `solar`
+ * Later slices (wiring) should reuse STORAGE_KEY
+ * and add sibling keys beside `dailyPower`, `battery`, `solar`, and `inverter`
  * rather than creating new keys.
  */
 (function (root, factory) {
@@ -138,12 +138,77 @@
     };
   }
 
+  function mergeStarterInverterLoads(saved) {
+    var starters = PowerDefaults.inverterStarterSet();
+    var starterIndex = {};
+    var savedById = {};
+    var extras = [];
+    var customs = [];
+
+    starters.forEach(function (item, index) {
+      starterIndex[item.id] = index;
+    });
+
+    saved.forEach(function (item) {
+      if (item.custom) {
+        customs.push(item);
+        return;
+      }
+      if (Object.prototype.hasOwnProperty.call(starterIndex, item.id)) {
+        savedById[item.id] = item;
+        return;
+      }
+      extras.push(item);
+    });
+
+    var merged = starters.map(function (starter) {
+      var existing = savedById[starter.id];
+      return existing || PowerCalc.normaliseInverterLoad(starter);
+    });
+
+    return merged.concat(extras, customs);
+  }
+
+  function sanitiseInverter(raw) {
+    var fallback = PowerDefaults.createDefaultInverter();
+    var source = raw && typeof raw === "object" ? raw : {};
+    var loads = Array.isArray(source.loads) ? source.loads : fallback.loads;
+    var normalised = loads.map(function (item, index) {
+      var next = PowerCalc.normaliseInverterLoad(item);
+      if (!next.id) {
+        next.id = "inverter-item-" + index;
+      }
+      if (item && item.custom) {
+        next.custom = true;
+      }
+      return next;
+    });
+
+    return {
+      systemVoltage: PowerCalc.sanitiseSystemVoltage(
+        source.systemVoltage != null ? source.systemVoltage : fallback.systemVoltage
+      ),
+      efficiencyPct: PowerCalc.clamp(
+        PowerCalc.toNumber(source.efficiencyPct, fallback.efficiencyPct),
+        PowerCalc.MIN_INVERTER_EFFICIENCY_PCT,
+        PowerCalc.MAX_INVERTER_EFFICIENCY_PCT
+      ),
+      marginPct: PowerCalc.clamp(
+        PowerCalc.toNumber(source.marginPct, fallback.marginPct),
+        0,
+        50
+      ),
+      loads: mergeStarterInverterLoads(normalised),
+    };
+  }
+
   function sanitiseProfile(raw) {
     var profile = {
       version: PROFILE_VERSION,
       dailyPower: sanitiseDailyPower(raw && raw.dailyPower),
       battery: sanitiseBattery(raw && raw.battery),
       solar: sanitiseSolar(raw && raw.solar),
+      inverter: sanitiseInverter(raw && raw.inverter),
     };
 
     if (raw && typeof raw === "object") {
@@ -152,7 +217,8 @@
           key !== "version" &&
           key !== "dailyPower" &&
           key !== "battery" &&
-          key !== "solar"
+          key !== "solar" &&
+          key !== "inverter"
         ) {
           profile[key] = raw[key];
         }
@@ -212,6 +278,7 @@
     sanitiseDailyPower: sanitiseDailyPower,
     sanitiseBattery: sanitiseBattery,
     sanitiseSolar: sanitiseSolar,
+    sanitiseInverter: sanitiseInverter,
     applyPreset: applyPreset,
   };
 });
