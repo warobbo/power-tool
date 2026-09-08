@@ -11,6 +11,9 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
+  // Increment when STARTER_IDS grow so saved profiles can pick up new rows.
+  var CATALOG_VERSION = 2;
+
   var STARTER_IDS = [
     "fridge",
     "lights",
@@ -115,7 +118,8 @@
 
   function createDefaultProfile() {
     return {
-      version: 1,
+      version: 2,
+      catalogVersion: CATALOG_VERSION,
       dailyPower: {
         inverterLossEnabled: false,
         inverterLossPct: 12,
@@ -137,6 +141,7 @@
   }
 
   return {
+    CATALOG_VERSION: CATALOG_VERSION,
     STARTER_IDS: STARTER_IDS,
     PRESETS: PRESETS,
     starterSet: starterSet,
