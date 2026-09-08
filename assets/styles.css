@@ -94,13 +94,31 @@ body {
   color: var(--muted);
 }
 
+.layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  display: contents;
+}
+
 .totals-wrap {
+  order: 1;
   position: sticky;
   top: 0;
   z-index: 5;
   padding: 0.65rem 0 0.85rem;
   background: linear-gradient(180deg, rgba(239, 230, 214, 0.96), rgba(239, 230, 214, 0.88));
   backdrop-filter: blur(10px);
+}
+
+.controls {
+  order: 2;
+}
+
+.breakdown {
+  order: 3;
 }
 
 .totals {
@@ -279,13 +297,22 @@ input:focus-visible {
 
 .appliance-head {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0.7rem;
   align-items: center;
 }
 
 .appliance-card[data-id^="custom-"] .appliance-head {
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+
+.appliance-title,
+.appliance-wh {
+  min-width: 0;
+}
+
+.appliance-title h3 {
+  overflow-wrap: anywhere;
 }
 
 .appliance-title h3,
@@ -298,6 +325,7 @@ input:focus-visible {
 .name-input,
 .field-control input {
   width: 100%;
+  min-width: 0;
   border: 1px solid var(--card-edge);
   border-radius: 12px;
   background: #fff;
@@ -460,6 +488,20 @@ input:focus-visible {
   margin: 0.35rem 0 0;
 }
 
+@media (max-width: 420px) {
+  .appliance-head,
+  .appliance-card[data-id^="custom-"] .appliance-head {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .appliance-wh,
+  .icon-btn {
+    grid-column: 2;
+    justify-self: end;
+  }
+}
+
 @media (min-width: 640px) {
   .appliance-fields {
     grid-template-columns: repeat(3, 1fr);
@@ -482,11 +524,28 @@ input:focus-visible {
     align-items: start;
   }
 
-  .totals-wrap {
+  .sidebar {
+    display: block;
+    grid-column: 1;
     position: sticky;
     top: 0.75rem;
+  }
+
+  .totals-wrap {
+    order: unset;
+    position: static;
     padding-top: 0;
     background: none;
+  }
+
+  .breakdown {
+    order: unset;
+    margin-top: 0.75rem;
+  }
+
+  .controls {
+    order: unset;
+    grid-column: 2;
   }
 
   .totals,
