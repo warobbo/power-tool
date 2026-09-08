@@ -583,7 +583,7 @@ test("inverter defaults and sanitise clamp bad values", function () {
   assert.strictEqual(profile.inverter.systemVoltage, 12);
   assert.strictEqual(profile.inverter.efficiencyPct, 88);
   assert.strictEqual(profile.inverter.marginPct, 20);
-  assert.ok(profile.inverter.loads.length >= 8);
+  assert.ok(profile.inverter.loads.length >= 5);
 
   var kettle = profile.inverter.loads.find(function (item) {
     return item.id === "kettle";
@@ -598,6 +598,25 @@ test("inverter defaults and sanitise clamp bad values", function () {
   assert.strictEqual(hob.watts, 1600);
   assert.strictEqual(hob.surgeWatts, 2000);
   assert.strictEqual(hob.enabled, false);
+
+  var inverterIds = profile.inverter.loads.map(function (item) {
+    return item.id;
+  });
+  defaults.RETIRED_INVERTER_LOAD_IDS.forEach(function (id) {
+    assert.ok(inverterIds.indexOf(id) === -1, id + " should not be an inverter starter");
+  });
+  var microwave = profile.inverter.loads.find(function (item) {
+    return item.id === "microwave";
+  });
+  var hairdryer = profile.inverter.loads.find(function (item) {
+    return item.id === "hairdryer";
+  });
+  assert.ok(microwave, "microwave is in the inverter starter list");
+  assert.ok(hairdryer, "hairdryer is in the inverter starter list");
+
+  var defaultResult = calc.calcInverter(profile);
+  assert.strictEqual(defaultResult.continuousLoadW, 1200);
+  assert.strictEqual(defaultResult.recommendedContinuousW, 1440);
 
   var clean = storage.sanitiseInverter({
     systemVoltage: 48,
@@ -619,6 +638,44 @@ test("inverter defaults and sanitise clamp bad values", function () {
   assert.strictEqual(extras[0].surgeWatts, 40000);
   assert.strictEqual(extras[0].qty, 1);
   assert.strictEqual(extras[0].enabled, true);
+});
+
+test("inverter merge drops retired 12 V starter loads and keeps Daily Power ones", function () {
+  var daily = defaults.starterSet();
+  assert.ok(daily.some(function (item) {
+    return item.id === "laptop";
+  }));
+  assert.ok(daily.some(function (item) {
+    return item.id === "tv";
+  }));
+  assert.ok(daily.some(function (item) {
+    return item.id === "phone";
+  }));
+
+  var clean = storage.sanitiseInverter({
+    systemVoltage: 12,
+    efficiencyPct: 88,
+    marginPct: 20,
+    loads: [
+      { id: "kettle", name: "Kettle", watts: 1200, surgeWatts: 1200, qty: 1, enabled: true },
+      { id: "laptop", name: "Laptop charger", watts: 65, surgeWatts: 65, qty: 1, enabled: true },
+      { id: "tv", name: "TV / monitor", watts: 40, surgeWatts: 40, qty: 1, enabled: true },
+      { id: "phone", name: "Phone / tablet charger", watts: 18, surgeWatts: 18, qty: 1, enabled: true },
+      { id: "custom-starlink", name: "Starlink", watts: 75, surgeWatts: 100, qty: 1, enabled: true, custom: true },
+    ],
+  });
+  var byId = {};
+  clean.loads.forEach(function (item) {
+    byId[item.id] = item;
+  });
+
+  defaults.RETIRED_INVERTER_LOAD_IDS.forEach(function (id) {
+    assert.ok(!byId[id], "retired inverter load " + id + " should be dropped");
+  });
+  assert.ok(byId.kettle, "kettle stays");
+  assert.ok(byId.microwave, "missing 230 V starters are still merged in");
+  assert.strictEqual(byId["custom-starlink"].name, "Starlink");
+  assert.strictEqual(calc.calcInverter({ inverter: clean }).continuousLoadW, 1275);
 });
 
 test("inverter load merge adds missing starters without overwriting saved rows", function () {

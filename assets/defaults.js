@@ -209,11 +209,11 @@
     "induction-hob",
     "microwave",
     "hairdryer",
-    "laptop",
-    "tv",
-    "phone",
     "water-heater",
   ];
+
+  // Older Inverter starter rows that belong on Daily Power as 12 V use.
+  var RETIRED_INVERTER_LOAD_IDS = ["laptop", "tv", "phone"];
 
   var VOLTAGE_ORDER = [12, 24];
 
@@ -248,9 +248,6 @@
       inverterLoad("induction-hob", "1-ring induction hob", 1600, 2000, 1, false),
       inverterLoad("microwave", "Microwave", 800, 1600, 1, false),
       inverterLoad("hairdryer", "Hairdryer", 1600, 1800, 1, false),
-      inverterLoad("laptop", "Laptop charger", 65, 65, 1, true),
-      inverterLoad("tv", "TV / monitor", 40, 40, 1, true),
-      inverterLoad("phone", "Phone / tablet charger", 18, 18, 1, true),
       inverterLoad("water-heater", "Water heater (electric)", 1000, 1000, 1, false),
     ];
   }
@@ -312,6 +309,7 @@
     SEASON_ORDER: SEASON_ORDER,
     SEASONS: SEASONS,
     INVERTER_LOAD_IDS: INVERTER_LOAD_IDS,
+    RETIRED_INVERTER_LOAD_IDS: RETIRED_INVERTER_LOAD_IDS,
     VOLTAGE_ORDER: VOLTAGE_ORDER,
     VOLTAGES: VOLTAGES,
     starterSet: starterSet,

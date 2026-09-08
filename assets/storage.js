@@ -158,6 +158,9 @@
         savedById[item.id] = item;
         return;
       }
+      if (PowerDefaults.RETIRED_INVERTER_LOAD_IDS.indexOf(item.id) !== -1) {
+        return;
+      }
       extras.push(item);
     });
 

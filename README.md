@@ -37,7 +37,7 @@ Results lead with array watts (how panels are sold), plus example 100 W / 200 W 
 
 Recommend an inverter size from 230 V loads using:
 
-- an editable load list (kettle, induction hob, microwave, hairdryer, laptop charger, TV, phone charger, water heater, plus custom rows)
+- an editable load list (kettle, induction hob, microwave, hairdryer, water heater, plus custom rows). Laptop chargers, TVs and phone chargers stay on Daily Power as 12 V use.
 - optional start / surge watts on each load
 - leisure-system voltage 12 V or 24 V (changes the DC amp note, not the AC watt size)
 - inverter efficiency (default 88%)
