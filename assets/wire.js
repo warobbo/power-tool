@@ -52,7 +52,7 @@
 
   function formatMm2(value) {
     if (!value) return "0";
-    return formatNumber(value, value < 10 ? 1 : 0);
+    return formatNumber(value, value % 1 === 0 ? 0 : 1);
   }
 
   function formatVolts(value) {
