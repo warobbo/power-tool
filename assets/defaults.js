@@ -204,6 +204,66 @@
     };
   }
 
+  var INVERTER_LOAD_IDS = [
+    "kettle",
+    "induction-hob",
+    "microwave",
+    "hairdryer",
+    "laptop",
+    "tv",
+    "phone",
+    "water-heater",
+  ];
+
+  var VOLTAGE_ORDER = [12, 24];
+
+  var VOLTAGES = {
+    12: {
+      id: 12,
+      label: "12 V",
+      sublabel: "common UK leisure",
+    },
+    24: {
+      id: 24,
+      label: "24 V",
+      sublabel: "half the DC amps",
+    },
+  };
+
+  function inverterLoad(id, name, watts, surgeWatts, qty, enabled) {
+    return {
+      id: id,
+      name: name,
+      watts: watts,
+      surgeWatts: surgeWatts,
+      qty: qty,
+      enabled: enabled,
+      custom: false,
+    };
+  }
+
+  function inverterStarterSet() {
+    return [
+      inverterLoad("kettle", "Kettle", 1200, 1200, 1, true),
+      inverterLoad("induction-hob", "1-ring induction hob", 1600, 2000, 1, false),
+      inverterLoad("microwave", "Microwave", 800, 1600, 1, false),
+      inverterLoad("hairdryer", "Hairdryer", 1600, 1800, 1, false),
+      inverterLoad("laptop", "Laptop charger", 65, 65, 1, true),
+      inverterLoad("tv", "TV / monitor", 40, 40, 1, true),
+      inverterLoad("phone", "Phone / tablet charger", 18, 18, 1, true),
+      inverterLoad("water-heater", "Water heater (electric)", 1000, 1000, 1, false),
+    ];
+  }
+
+  function createDefaultInverter() {
+    return {
+      systemVoltage: 12,
+      efficiencyPct: 88,
+      marginPct: 20,
+      loads: inverterStarterSet(),
+    };
+  }
+
   function createDefaultProfile() {
     return {
       version: 1,
@@ -215,6 +275,7 @@
       },
       battery: createDefaultBattery(),
       solar: createDefaultSolar(),
+      inverter: createDefaultInverter(),
     };
   }
 
@@ -230,6 +291,18 @@
     };
   }
 
+  function newCustomInverterLoad() {
+    return {
+      id: "custom-" + Date.now().toString(36) + "-" + Math.floor(Math.random() * 1000),
+      name: "",
+      watts: 100,
+      surgeWatts: 100,
+      qty: 1,
+      enabled: true,
+      custom: true,
+    };
+  }
+
   return {
     STARTER_IDS: STARTER_IDS,
     PRESET_ORDER: PRESET_ORDER,
@@ -238,10 +311,16 @@
     CHEMISTRY: CHEMISTRY,
     SEASON_ORDER: SEASON_ORDER,
     SEASONS: SEASONS,
+    INVERTER_LOAD_IDS: INVERTER_LOAD_IDS,
+    VOLTAGE_ORDER: VOLTAGE_ORDER,
+    VOLTAGES: VOLTAGES,
     starterSet: starterSet,
+    inverterStarterSet: inverterStarterSet,
     createDefaultBattery: createDefaultBattery,
     createDefaultSolar: createDefaultSolar,
+    createDefaultInverter: createDefaultInverter,
     createDefaultProfile: createDefaultProfile,
     newCustomAppliance: newCustomAppliance,
+    newCustomInverterLoad: newCustomInverterLoad,
   };
 });

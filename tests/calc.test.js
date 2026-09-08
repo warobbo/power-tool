@@ -154,13 +154,15 @@ test("sanitise keeps later-slice keys on the shared profile", function () {
     version: 1,
     dailyPower: { appliances: [] },
     battery: { daysAutonomy: 3, chemistry: "agm" },
-    inverter: { continuousWatts: 1500 },
+    wiring: { fuseAmps: 150 },
   });
   assert.strictEqual(clean.battery.daysAutonomy, 3);
   assert.strictEqual(clean.battery.chemistry, "agm");
   assert.strictEqual(clean.solar.season, "spring-autumn");
   assert.strictEqual(clean.solar.peakSunHours, 3);
-  assert.strictEqual(clean.inverter.continuousWatts, 1500);
+  assert.strictEqual(clean.inverter.systemVoltage, 12);
+  assert.strictEqual(clean.inverter.efficiencyPct, 88);
+  assert.strictEqual(clean.wiring.fuseAmps, 150);
   assert.strictEqual(storage.STORAGE_KEY, "powertools.systemProfile");
 });
 
@@ -507,6 +509,157 @@ test("applying a daily-power preset keeps solar settings", function () {
   assert.strictEqual(weekend.solar.peakSunHours, 1.2);
   assert.strictEqual(weekend.solar.lossPct, 30);
   assert.strictEqual(weekend.solar.marginPct, 5);
+  assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
+});
+
+test("inverter continuous is enabled running watts plus margin", function () {
+  var result = calc.calcInverter({
+    inverter: {
+      systemVoltage: 12,
+      efficiencyPct: 88,
+      marginPct: 20,
+      loads: [
+        { watts: 1200, surgeWatts: 1200, qty: 1, enabled: true },
+        { watts: 65, surgeWatts: 65, qty: 1, enabled: true },
+        { watts: 1600, surgeWatts: 2000, qty: 1, enabled: false },
+      ],
+    },
+  });
+  assert.strictEqual(result.continuousLoadW, 1265);
+  assert.strictEqual(result.recommendedContinuousW, 1265 * 1.2);
+  assert.strictEqual(result.highestSurgeW, 1200);
+  assert.strictEqual(result.combinedSurgeW, 1265);
+  assert.strictEqual(result.recommendedSurgeW, 1265 * 1.2);
+  assert.ok(Math.abs(result.dcLoadW - 1265 / 0.88) < 0.0001);
+  assert.ok(Math.abs(result.amps12 - 1265 / 0.88 / 12) < 0.0001);
+  assert.ok(Math.abs(result.amps24 - 1265 / 0.88 / 24) < 0.0001);
+  assert.strictEqual(result.selectedAmps, result.amps12);
+});
+
+test("inverter surge covers the highest start plus other running loads", function () {
+  var result = calc.calcInverter({
+    inverter: {
+      systemVoltage: 12,
+      efficiencyPct: 100,
+      marginPct: 0,
+      loads: [
+        { watts: 1200, surgeWatts: 1200, qty: 1, enabled: true },
+        { watts: 1600, surgeWatts: 2000, qty: 1, enabled: true },
+      ],
+    },
+  });
+  assert.strictEqual(result.continuousLoadW, 2800);
+  assert.strictEqual(result.highestSurgeW, 2000);
+  assert.strictEqual(result.combinedSurgeW, 3200);
+  assert.strictEqual(result.recommendedContinuousW, 2800);
+  assert.strictEqual(result.recommendedSurgeW, 3200);
+});
+
+test("inverter 24 V is half the DC amps of 12 V", function () {
+  var result = calc.calcInverter({
+    inverter: {
+      systemVoltage: 24,
+      efficiencyPct: 100,
+      marginPct: 0,
+      loads: [{ watts: 1200, surgeWatts: 1200, qty: 1, enabled: true }],
+    },
+  });
+  assert.strictEqual(result.systemVoltage, 24);
+  assert.strictEqual(result.amps12, 100);
+  assert.strictEqual(result.amps24, 50);
+  assert.strictEqual(result.selectedAmps, 50);
+  assert.strictEqual(result.recommendedContinuousW, 1200);
+});
+
+test("missing surge watts uses running watts", function () {
+  var item = calc.normaliseInverterLoad({ watts: 800, qty: 1, enabled: true });
+  assert.strictEqual(item.surgeWatts, 800);
+  assert.strictEqual(calc.inverterLoadSurgeW(item), 800);
+  assert.strictEqual(calc.inverterLoadRunningW({ watts: 800, enabled: false }), 0);
+});
+
+test("inverter defaults and sanitise clamp bad values", function () {
+  var profile = defaults.createDefaultProfile();
+  assert.strictEqual(profile.inverter.systemVoltage, 12);
+  assert.strictEqual(profile.inverter.efficiencyPct, 88);
+  assert.strictEqual(profile.inverter.marginPct, 20);
+  assert.ok(profile.inverter.loads.length >= 8);
+
+  var kettle = profile.inverter.loads.find(function (item) {
+    return item.id === "kettle";
+  });
+  var hob = profile.inverter.loads.find(function (item) {
+    return item.id === "induction-hob";
+  });
+  assert.ok(kettle, "kettle is in the inverter starter list");
+  assert.strictEqual(kettle.watts, 1200);
+  assert.strictEqual(kettle.enabled, true);
+  assert.ok(hob, "induction hob is in the inverter starter list");
+  assert.strictEqual(hob.watts, 1600);
+  assert.strictEqual(hob.surgeWatts, 2000);
+  assert.strictEqual(hob.enabled, false);
+
+  var clean = storage.sanitiseInverter({
+    systemVoltage: 48,
+    efficiencyPct: 10,
+    marginPct: 80,
+    loads: [{ watts: -20, surgeWatts: 90000, qty: 0, enabled: "yes" }],
+  });
+  assert.strictEqual(clean.systemVoltage, 12);
+  assert.strictEqual(clean.efficiencyPct, 50);
+  assert.strictEqual(clean.marginPct, 50);
+  assert.ok(clean.loads.some(function (item) {
+    return item.id === "kettle";
+  }));
+  var extras = clean.loads.filter(function (item) {
+    return defaults.INVERTER_LOAD_IDS.indexOf(item.id) === -1;
+  });
+  assert.strictEqual(extras.length, 1);
+  assert.strictEqual(extras[0].watts, 0);
+  assert.strictEqual(extras[0].surgeWatts, 40000);
+  assert.strictEqual(extras[0].qty, 1);
+  assert.strictEqual(extras[0].enabled, true);
+});
+
+test("inverter load merge adds missing starters without overwriting saved rows", function () {
+  var clean = storage.sanitiseInverter({
+    systemVoltage: 24,
+    efficiencyPct: 90,
+    marginPct: 10,
+    loads: [
+      { id: "kettle", name: "Travel kettle", watts: 900, surgeWatts: 900, qty: 1, enabled: true },
+      { id: "custom-mix", name: "Blender", watts: 400, surgeWatts: 700, qty: 1, enabled: true, custom: true },
+    ],
+  });
+  var byId = {};
+  clean.loads.forEach(function (item) {
+    byId[item.id] = item;
+  });
+
+  defaults.INVERTER_LOAD_IDS.forEach(function (id) {
+    assert.ok(byId[id], "missing inverter starter " + id);
+  });
+  assert.strictEqual(byId.kettle.watts, 900);
+  assert.strictEqual(byId.kettle.name, "Travel kettle");
+  assert.strictEqual(byId["induction-hob"].watts, 1600);
+  assert.strictEqual(byId["induction-hob"].enabled, false);
+  assert.strictEqual(byId["custom-mix"].name, "Blender");
+  assert.strictEqual(byId["custom-mix"].custom, true);
+  assert.strictEqual(clean.systemVoltage, 24);
+  assert.strictEqual(clean.efficiencyPct, 90);
+  assert.strictEqual(clean.loads[clean.loads.length - 1].id, "custom-mix");
+});
+
+test("applying a daily-power preset keeps inverter settings", function () {
+  var profile = defaults.createDefaultProfile();
+  profile.inverter.systemVoltage = 24;
+  profile.inverter.efficiencyPct = 90;
+  profile.inverter.marginPct = 15;
+
+  var weekend = storage.applyPreset(profile, "weekend");
+  assert.strictEqual(weekend.inverter.systemVoltage, 24);
+  assert.strictEqual(weekend.inverter.efficiencyPct, 90);
+  assert.strictEqual(weekend.inverter.marginPct, 15);
   assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
 });
 

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campervan Inverter Size | Continuous Watts | UK &amp; EU</title>
+    <meta name="description" content="Work out campervan inverter size in continuous watts from 230V loads, plus surge watts and DC amps at 12V and 24V. Free UK/EU planning estimate.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Wayne Robinson">
+    <meta property="og:title" content="Campervan Inverter Size | Continuous Watts">
+    <meta property="og:description" content="Turn kettle, induction and other 230V loads into a recommended inverter size in continuous watts, plus surge and battery current, for UK and EU motorhomes and campervans.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#2f5d46">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <!-- ASSET_VERSION=20260908l — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260908l">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the difference between continuous watts and surge watts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Continuous watts are what the inverter can run for a long time. Surge or start watts are a short extra burst some kit needs when it first switches on. Shop with the big continuous figure, then check the surge figure covers your highest start."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a pure sine inverter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usually yes for induction hobs, microwaves, laptop chargers, TVs and most modern electronics. Modified sine can run a simple kettle or heater, but it often makes electronics buzz, run hot, or refuse to start. This page is not a product list — if in doubt, choose pure sine."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "12V or 24V — does it change the inverter watt size?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The 230 V watt size stays the same. Voltage changes the current on the battery side. The same load is about half the amps at 24 V, so cables and connections have an easier job. Match the inverter to the leisure-system voltage you actually have."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do a kettle or induction hob need such a big inverter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "They draw a lot of watts for a short time. A 1,200 W kettle plus a little extra margin is already a 1,500 W class inverter. Add a 1,600 W hob and you are into 3,000 W territory if you might run them together. Tick only what you will run at the same time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does an inverter use power when nothing is plugged in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Many van inverters sip a few watts to tens of watts while they sit on. That idle drain is small compared with a kettle, but it adds up overnight. Switch the inverter off when you do not need 230 V, or use a model with a low idle figure."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I run the inverter straight from the solar panels?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The inverter takes power from the leisure battery. Solar charges that battery during the day. Size the inverter for the 230 V kit, size the battery for how long you want to last, and size solar to put energy back. They are three different jobs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is inverter size the same as battery size?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Inverter size is watts — how hard you can pull right now. Battery size is amp-hours — how long the energy lasts. A small battery can still feed a large inverter for a few minutes, then go flat. Use this page for the inverter, and Battery for the Ah size to buy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does the efficiency percentage mean?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Inverters waste some power as heat. At 88% efficiency, a 1,200 W kettle needs about 1,364 W from the battery. That is what drives the DC amp figures. 88% is a typical everyday number, not a lab rating. A poorer inverter or a heavy load can be worse."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I buy the exact watt figure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Treat it as a planning size, then round up to an inverter you can actually buy — often 1,000 W, 1,500 W, 2,000 W or 3,000 W. The default extra margin is there so you do not buy a unit that is only just big enough. Check surge as well as continuous watts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this safe to use as an installation guide?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. This is a planning estimate only. Cables, fuses, ventilation and battery limits matter, and they are not calculated here. A large inverter at 12 V can draw well over 100 A. Use a qualified installer for safety-critical work and follow the maker’s instructions."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
+    <header class="site-header">
+      <p class="eyebrow no-print">Power Tools</p>
+      <nav class="tool-nav no-print" aria-label="Power Tools">
+        <a href="index.html">Daily Power</a>
+        <a href="battery.html">Battery</a>
+        <a href="solar.html">Solar</a>
+        <a href="inverter.html" aria-current="page">Inverter</a>
+      </nav>
+      <h1>Inverter size calculator</h1>
+      <p class="lede no-print">
+        For UK and EU motorhome and campervan trips. Tick the 230&nbsp;V kit you might run
+        at the same time, and see a recommended inverter size in continuous watts —
+        how inverters are sold — plus surge watts and a rough battery current at
+        12&nbsp;V and 24&nbsp;V.
+      </p>
+      <p class="print-only print-meta">Planning estimate · inverter continuous watts, surge watts, and DC amps</p>
+    </header>
+
+    <main id="calculator" class="site-main">
+      <div class="layout">
+        <div class="summary-stack">
+          <div class="totals-wrap">
+            <section class="totals inverter-totals" aria-live="polite">
+              <article class="total-card primary inverter-result">
+                <p class="label">Recommended inverter</p>
+                <p class="value"><strong id="inverter-continuous">0</strong><span>W</span></p>
+                <p class="inverter-kicker">continuous watts to plan for</p>
+                <p class="inverter-support">
+                  <span><strong id="inverter-surge">0</strong> W surge</span>
+                  <span>about <strong id="inverter-amps12">0</strong> A at 12&nbsp;V</span>
+                  <span>about <strong id="inverter-amps24">0</strong> A at 24&nbsp;V</span>
+                </p>
+                <p class="hint" id="inverter-note"></p>
+              </article>
+            </section>
+          </div>
+
+          <section class="breakdown panel" aria-labelledby="breakdown-title">
+            <h2 id="breakdown-title">How this was worked out</h2>
+            <ol id="breakdown-list"></ol>
+          </section>
+        </div>
+
+        <div class="controls">
+          <section class="panel no-print" aria-labelledby="settings-title">
+            <div class="panel-head">
+              <div>
+                <h2 id="settings-title">Inverter settings</h2>
+                <p class="save-state" id="save-state">Saved on this device</p>
+              </div>
+              <button type="button" class="print-btn" id="print-sheet">Print / save PDF</button>
+            </div>
+            <p class="lede tight">Change voltage, efficiency, or extra margin. The watts above update as you type.</p>
+
+            <h3 class="field-heading" id="voltage-title">Leisure-system voltage</h3>
+            <div id="voltages" class="preset-row" role="group" aria-labelledby="voltage-title"></div>
+            <p class="field-hint" id="voltage-hint"></p>
+
+            <label class="field" for="efficiency-pct">
+              <span>Inverter efficiency</span>
+              <span class="field-control">
+                <input id="efficiency-pct" type="number" inputmode="decimal" min="50" max="100" step="1" value="88">
+                <em>%</em>
+              </span>
+            </label>
+            <p class="field-hint">How much of the battery power becomes 230&nbsp;V. 88% is a typical everyday figure, not a lab rating. This changes the DC amp notes, not the AC watt size.</p>
+
+            <label class="field" for="margin-pct">
+              <span>Extra margin (optional)</span>
+              <span class="field-control">
+                <input id="margin-pct" type="number" inputmode="decimal" min="0" max="50" step="1" value="20">
+                <em>%</em>
+              </span>
+            </label>
+            <p class="field-hint">So you do not buy an inverter that is only just big enough. 20% is a common start. Set 0 to skip.</p>
+          </section>
+
+          <section class="panel loads-panel no-print" aria-labelledby="loads-title">
+            <h2 id="loads-title">230 V loads</h2>
+            <p class="lede tight">Tick only what you might run at the same time. Set watts from the label. Add start / surge if the maker lists a higher figure.</p>
+            <div id="load-list" class="appliance-list"></div>
+            <button type="button" class="add-btn" id="add-custom">Add custom load</button>
+          </section>
+        </div>
+      </div>
+
+      <section class="help-grid no-print" aria-labelledby="help-title">
+        <article class="help-card">
+          <h2 id="help-title">How to use</h2>
+          <ol>
+            <li>Tick the 230&nbsp;V kit you might run at the same time. Leave the hob off if you never use it with the kettle.</li>
+            <li>Set watts from the appliance label or manual. Use start / surge only if the maker gives a higher start figure.</li>
+            <li>Pick 12&nbsp;V or 24&nbsp;V to see battery current. Keep 88% efficiency and 20% extra margin unless you have a reason to change them.</li>
+            <li>The big figure is continuous watts — how inverters are sold. Check the surge figure too, then round up to a size you can buy.</li>
+          </ol>
+        </article>
+      </section>
+
+      <section class="help-card faq-card no-print" aria-labelledby="faq-title">
+        <h2 id="faq-title">FAQ</h2>
+        <dl class="faq-list">
+          <div>
+            <dt>What is the difference between continuous watts and surge watts?</dt>
+            <dd>
+              Continuous watts are what the inverter can run for a long time. Surge or start watts are a short
+              extra burst some kit needs when it first switches on. Shop with the big continuous figure, then
+              check the surge figure covers your highest start.
+            </dd>
+          </div>
+          <div>
+            <dt>Do I need a pure sine inverter?</dt>
+            <dd>
+              Usually yes for induction hobs, microwaves, laptop chargers, TVs and most modern electronics.
+              Modified sine can run a simple kettle or heater, but it often makes electronics buzz, run hot,
+              or refuse to start. This page is not a product list — if in doubt, choose pure sine.
+            </dd>
+          </div>
+          <div>
+            <dt>12V or 24V — does it change the inverter watt size?</dt>
+            <dd>
+              The 230&nbsp;V watt size stays the same. Voltage changes the current on the battery side. The same
+              load is about half the amps at 24&nbsp;V, so cables and connections have an easier job. Match the
+              inverter to the leisure-system voltage you actually have.
+            </dd>
+          </div>
+          <div>
+            <dt>Why do a kettle or induction hob need such a big inverter?</dt>
+            <dd>
+              They draw a lot of watts for a short time. A 1,200&nbsp;W kettle plus a little extra margin is
+              already a 1,500&nbsp;W class inverter. Add a 1,600&nbsp;W hob and you are into 3,000&nbsp;W
+              territory if you might run them together. Tick only what you will run at the same time.
+            </dd>
+          </div>
+          <div>
+            <dt>Does an inverter use power when nothing is plugged in?</dt>
+            <dd>
+              Yes. Many van inverters sip a few watts to tens of watts while they sit on. That idle drain is
+              small compared with a kettle, but it adds up overnight. Switch the inverter off when you do not
+              need 230&nbsp;V, or use a model with a low idle figure.
+            </dd>
+          </div>
+          <div>
+            <dt>Can I run the inverter straight from the solar panels?</dt>
+            <dd>
+              No. The inverter takes power from the leisure battery. Solar charges that battery during the day.
+              Size the inverter for the 230&nbsp;V kit, size the battery for how long you want to last, and size
+              solar to put energy back. They are three different jobs.
+            </dd>
+          </div>
+          <div>
+            <dt>Is inverter size the same as battery size?</dt>
+            <dd>
+              No. Inverter size is watts — how hard you can pull right now. Battery size is amp-hours — how
+              long the energy lasts. A small battery can still feed a large inverter for a few minutes, then
+              go flat. Use this page for the inverter, and Battery for the Ah size to buy.
+            </dd>
+          </div>
+          <div>
+            <dt>What does the efficiency percentage mean?</dt>
+            <dd>
+              Inverters waste some power as heat. At 88% efficiency, a 1,200&nbsp;W kettle needs about
+              1,364&nbsp;W from the battery. That is what drives the DC amp figures. 88% is a typical everyday
+              number, not a lab rating. A poorer inverter or a heavy load can be worse.
+            </dd>
+          </div>
+          <div>
+            <dt>Should I buy the exact watt figure?</dt>
+            <dd>
+              Treat it as a planning size, then round up to an inverter you can actually buy — often
+              1,000&nbsp;W, 1,500&nbsp;W, 2,000&nbsp;W or 3,000&nbsp;W. The default extra margin is there so you
+              do not buy a unit that is only just big enough. Check surge as well as continuous watts.
+            </dd>
+          </div>
+          <div>
+            <dt>Is this safe to use as an installation guide?</dt>
+            <dd>
+              No. This is a planning estimate only. Cables, fuses, ventilation and battery limits matter, and
+              they are not calculated here. A large inverter at 12&nbsp;V can draw well over 100&nbsp;A. Use a
+              qualified installer for safety-critical work and follow the maker’s instructions.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <aside class="disclaimer" aria-label="Disclaimer">
+        <h2>Disclaimer</h2>
+        <p>
+          This calculator is a planning estimate only. It is not an electrical design, installation guide,
+          or certification. It does not size cables or fuses. Check manufacturer ratings for every inverter,
+          appliance, battery and cable, and use a qualified installer for safety-critical work.
+        </p>
+      </aside>
+
+      <section class="help-card next-tool no-print" aria-labelledby="next-tool-title">
+        <h2 id="next-tool-title">Also size a battery and solar</h2>
+        <p>
+          The inverter is only the 230&nbsp;V watt rating. Open Battery for a 12&nbsp;V Ah size to buy,
+          and Solar for panel watts. Your Daily Power figures stay on this device.
+        </p>
+        <a class="add-btn next-tool-link" href="battery.html">Open Battery</a>
+        <a class="add-btn next-tool-link" href="solar.html">Open Solar</a>
+      </section>
+    </main>
+
+    <footer class="site-footer no-print">
+      <p>Power Tools for Wayne Robinson. Daily Power, Battery, Solar, and Inverter. No accounts and no server-side data.</p>
+    </footer>
+
+    <div
+      class="rotate-gate no-print"
+      id="rotate-gate"
+      role="alertdialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="rotate-gate-title"
+      aria-describedby="rotate-gate-text"
+    >
+      <div class="rotate-gate-card">
+        <svg class="rotate-gate-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="18" y="8" width="28" height="48" rx="5" fill="none" stroke="currentColor" stroke-width="3"></rect>
+          <circle cx="32" cy="48" r="2.2" fill="currentColor"></circle>
+          <path d="M50 28a18 18 0 0 1-28 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+          <path d="M46 22v8h8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h2 id="rotate-gate-title" tabindex="-1">Turn your phone upright</h2>
+        <p id="rotate-gate-text">This calculator is made for portrait. Rotate your phone back to keep using it.</p>
+      </div>
+    </div>
+
+    <script src="assets/calc.js?v=20260908l"></script>
+    <script src="assets/defaults.js?v=20260908l"></script>
+    <script src="assets/storage.js?v=20260908l"></script>
+    <script src="assets/ui.js?v=20260908l"></script>
+    <script src="assets/inverter.js?v=20260908l"></script>
+  </body>
+</html>
