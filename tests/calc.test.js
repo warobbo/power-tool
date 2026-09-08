@@ -157,6 +157,74 @@ test("sanitise keeps later-slice keys on the shared profile", function () {
   assert.strictEqual(clean.battery.usableAh, 200);
   assert.strictEqual(clean.solar.arrayWatts, 400);
   assert.strictEqual(storage.STORAGE_KEY, "powertools.systemProfile");
+  assert.strictEqual(clean.version, storage.PROFILE_VERSION);
+  assert.strictEqual(clean.catalogVersion, defaults.CATALOG_VERSION);
+});
+
+test("load merge adds missing starter appliances without overwriting saved rows", function () {
+  var oldProfile = {
+    version: 1,
+    dailyPower: {
+      inverterLossEnabled: true,
+      inverterLossPct: 12,
+      appliances: [
+        { id: "fridge", name: "Compressor fridge", watts: 55, hours: 14, qty: 1, enabled: true },
+        { id: "lights", name: "LED lights", watts: 8, hours: 4, qty: 1, enabled: true },
+        { id: "pump", name: "Water pump", watts: 42, hours: 0.25, qty: 1, enabled: true },
+        { id: "heater", name: "Diesel heater / fan (low draw)", watts: 18, hours: 4, qty: 1, enabled: true },
+        { id: "phone", name: "Phone / tablet charge", watts: 10, hours: 2, qty: 2, enabled: true },
+        { id: "laptop", name: "Laptop", watts: 60, hours: 2, qty: 1, enabled: true },
+        { id: "fan", name: "MaxxFan / roof fan", watts: 24, hours: 3, qty: 1, enabled: true },
+        { id: "water-heater", name: "Water heater (electric when used)", watts: 1000, hours: 0.25, qty: 1, enabled: false },
+        { id: "tv", name: "TV / monitor", watts: 28, hours: 2, qty: 1, enabled: true },
+        { id: "inverter-idle", name: "Inverter idle / phantom load", watts: 8, hours: 8, qty: 1, enabled: true },
+        { id: "custom-test", name: "Starlink", watts: 50, hours: 8, qty: 1, enabled: true, custom: true },
+      ],
+    },
+  };
+
+  var clean = storage.sanitiseProfile(oldProfile);
+  var appliances = clean.dailyPower.appliances;
+  var byId = {};
+  appliances.forEach(function (item) {
+    byId[item.id] = item;
+  });
+
+  var starterIds = defaults.STARTER_IDS;
+  starterIds.forEach(function (id) {
+    assert.ok(byId[id], "missing starter " + id);
+  });
+
+  assert.strictEqual(byId.fridge.watts, 55);
+  assert.strictEqual(byId.fridge.hours, 14);
+  assert.strictEqual(byId.fridge.enabled, true);
+  assert.strictEqual(byId.kettle.watts, 1200);
+  assert.strictEqual(byId.kettle.hours, 0.15);
+  assert.strictEqual(byId.kettle.enabled, false);
+  assert.strictEqual(byId["induction-hob"].watts, 1600);
+  assert.strictEqual(byId["induction-hob"].hours, 0.4);
+  assert.strictEqual(byId["induction-hob"].enabled, false);
+  assert.strictEqual(byId["custom-test"].name, "Starlink");
+  assert.strictEqual(byId["custom-test"].custom, true);
+
+  starterIds.forEach(function (id, index) {
+    assert.strictEqual(appliances[index].id, id);
+  });
+  assert.strictEqual(appliances[appliances.length - 1].id, "custom-test");
+
+  var reset = storage.applyPreset(clean, "defaults");
+  assert.strictEqual(
+    reset.dailyPower.appliances.some(function (item) {
+      return item.custom;
+    }),
+    false
+  );
+  assert.strictEqual(
+    reset.dailyPower.appliances.find(function (item) {
+      return item.id === "fridge";
+    }).hours,
+    10
+  );
 });
 
 test("full-time preset uses more energy than the weekend preset", function () {

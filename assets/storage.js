@@ -13,16 +13,57 @@
   "use strict";
 
   var STORAGE_KEY = "powertools.systemProfile";
-  var PROFILE_VERSION = 1;
+  var PROFILE_VERSION = 2;
 
   function emptyDailyPower() {
     return PowerDefaults.createDefaultProfile().dailyPower;
+  }
+
+  function mergeStarterAppliances(saved) {
+    var starters = PowerDefaults.starterSet();
+    var starterIndex = {};
+    var savedById = {};
+    var extras = [];
+    var customs = [];
+
+    starters.forEach(function (item, index) {
+      starterIndex[item.id] = index;
+    });
+
+    saved.forEach(function (item) {
+      if (item.custom) {
+        customs.push(item);
+        return;
+      }
+      if (Object.prototype.hasOwnProperty.call(starterIndex, item.id)) {
+        savedById[item.id] = item;
+        return;
+      }
+      extras.push(item);
+    });
+
+    var merged = starters.map(function (starter) {
+      var existing = savedById[starter.id];
+      return existing || PowerCalc.normaliseAppliance(starter);
+    });
+
+    return merged.concat(extras, customs);
   }
 
   function sanitiseDailyPower(raw) {
     var fallback = emptyDailyPower();
     var source = raw && typeof raw === "object" ? raw : {};
     var appliances = Array.isArray(source.appliances) ? source.appliances : fallback.appliances;
+    var normalised = appliances.map(function (item, index) {
+      var next = PowerCalc.normaliseAppliance(item);
+      if (!next.id) {
+        next.id = "item-" + index;
+      }
+      if (item && item.custom) {
+        next.custom = true;
+      }
+      return next;
+    });
 
     return {
       inverterLossEnabled: !!source.inverterLossEnabled,
@@ -31,28 +72,20 @@
         0,
         50
       ),
-      appliances: appliances.map(function (item, index) {
-        var normalised = PowerCalc.normaliseAppliance(item);
-        if (!normalised.id) {
-          normalised.id = "item-" + index;
-        }
-        if (item && item.custom) {
-          normalised.custom = true;
-        }
-        return normalised;
-      }),
+      appliances: mergeStarterAppliances(normalised),
     };
   }
 
   function sanitiseProfile(raw) {
     var profile = {
       version: PROFILE_VERSION,
+      catalogVersion: PowerDefaults.CATALOG_VERSION,
       dailyPower: sanitiseDailyPower(raw && raw.dailyPower),
     };
 
     if (raw && typeof raw === "object") {
       Object.keys(raw).forEach(function (key) {
-        if (key !== "version" && key !== "dailyPower") {
+        if (key !== "version" && key !== "catalogVersion" && key !== "dailyPower") {
           profile[key] = raw[key];
         }
       });

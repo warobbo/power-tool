@@ -61,13 +61,15 @@ All Power Tools slices should share one browser profile:
 | Item | Value |
 | --- | --- |
 | **localStorage key** | `powertools.systemProfile` |
-| **Current version** | `1` |
+| **Profile version** | `2` |
+| **Catalog version** | `2` |
 
-Slice 1 reads and writes `dailyPower`:
+Slice 1 reads and writes `dailyPower`. On load, missing **non-custom** starter appliances (matched by `id`) are merged in from the current `starterSet()`. Existing rows keep their watts, hours, quantity, and enabled state. Custom rows are kept. **Reset to defaults** still replaces the whole list.
 
 ```json
 {
-  "version": 1,
+  "version": 2,
+  "catalogVersion": 2,
   "dailyPower": {
     "inverterLossEnabled": false,
     "inverterLossPct": 12,
@@ -86,7 +88,7 @@ Slice 1 reads and writes `dailyPower`:
 }
 ```
 
-Later slices should add sibling keys on the **same object** (for example `battery`, `solar`, `inverter`, `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
+Later slices should add sibling keys on the **same object** (for example `battery`, `solar`, `inverter`, `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. Bump `catalogVersion` when the starter appliance list grows so returning visitors pick up new rows without a Reset. The loader already preserves unknown sibling keys.
 
 ## Out of scope (slice 1)
 
