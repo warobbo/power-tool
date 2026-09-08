@@ -186,7 +186,8 @@ test("family week preset is heavier than a light weekend", function () {
   });
 
   assert.ok(family, "family week preset exists");
-  assert.strictEqual(family.label, "Full week — 4 people (2 adults + 2 children)");
+  assert.strictEqual(family.label, "Full week — 4 people");
+  assert.strictEqual(family.sublabel, "2 adults + 2 children");
   assert.strictEqual(family.inverterLossEnabled, true);
   assert.strictEqual(phone.qty, 4);
   assert.strictEqual(kettle.enabled, true);

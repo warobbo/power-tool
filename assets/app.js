@@ -86,11 +86,21 @@
     if (!els.presets) return;
     els.presets.innerHTML = defaults.PRESET_ORDER.map(function (id) {
       var preset = defaults.PRESETS[id];
+      var fullLabel = preset.sublabel
+        ? preset.label + " (" + preset.sublabel + ")"
+        : preset.label;
+      var inner = '<span class="preset-label">' + escapeHtml(preset.label) + "</span>";
+      if (preset.sublabel) {
+        inner +=
+          '<span class="preset-sublabel">' + escapeHtml(preset.sublabel) + "</span>";
+      }
       return (
         '<button type="button" data-preset="' +
         escapeHtml(id) +
-        '" aria-pressed="false">' +
-        escapeHtml(preset.label) +
+        '" aria-pressed="false" aria-label="' +
+        escapeHtml(fullLabel) +
+        '">' +
+        inner +
         "</button>"
       );
     }).join("");

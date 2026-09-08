@@ -94,7 +94,8 @@
       }),
     },
     family: {
-      label: "Full week — 4 people (2 adults + 2 children)",
+      label: "Full week — 4 people",
+      sublabel: "2 adults + 2 children",
       inverterLossEnabled: true,
       inverterLossPct: 12,
       keepCustom: true,

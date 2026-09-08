@@ -242,12 +242,22 @@ body {
 }
 
 .preset-row button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
   max-width: 100%;
   padding: 0.6rem 1.05rem;
   text-align: left;
   line-height: 1.3;
   text-wrap: pretty;
   white-space: normal;
+}
+
+.preset-sublabel {
+  display: block;
+  font-size: 0.82em;
+  font-weight: 600;
+  opacity: 0.82;
 }
 
 .preset-row button.is-selected,
@@ -559,6 +569,31 @@ input:focus-visible {
 
   .ah-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Phone landscape and other short windows: do not pin totals over the page. */
+@media (max-height: 699px) {
+  .totals-wrap {
+    position: static;
+    z-index: auto;
+    padding: 0.4rem 0 0.55rem;
+  }
+
+  .totals {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .ah-grid {
+    display: contents;
+  }
+
+  .total-card {
+    padding: 0.7rem 0.8rem 0.75rem;
+  }
+
+  .total-card .value strong {
+    font-size: clamp(1.35rem, 5.5vw, 2.1rem);
   }
 }
 
