@@ -19,7 +19,7 @@ Turn daily watt-hours into a recommended leisure-battery size using:
 - chemistry: LiFePO4 (80% usable), AGM / lead-acid (50% usable), or a custom percentage
 - an optional extra margin
 
-Results are the battery size to buy in Wh plus Ah at 12 V and 24 V.
+Results lead with the 12 V Ah size to buy (how UK leisure batteries are sold), plus 24 V Ah and the Wh total.
 
 Solar, inverter sizing, and wire/fuse tools are **not** in this slice.
 

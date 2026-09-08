@@ -187,11 +187,11 @@
 
     steps.push({
       label: chemLabel + " planned at " + formatNumber(result.usablePct, 0) + "% usable",
-      value: formatWh(result.bankWh) + " Wh to buy",
+      value: formatAh(result.ah12) + " Ah at 12 V to buy",
     });
     steps.push({
-      label: "Amp-hours",
-      value: formatAh(result.ah12) + " Ah at 12 V · " + formatAh(result.ah24) + " Ah at 24 V",
+      label: "Same size in other units",
+      value: formatAh(result.ah24) + " Ah at 24 V · about " + formatWh(result.bankWh) + " Wh",
     });
 
     els.breakdownList.innerHTML = steps
