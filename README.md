@@ -52,7 +52,8 @@ Recommend a copper cable size and fuse for a common van DC run using:
 - typical-run presets (inverter DC feed, solar to controller, controller to battery, fridge, heater fan, water pump, leisure general, or custom)
 - system voltage 12 V or 24 V
 - current in amps, or watts converted with amps = watts ÷ volts
-- an optional starting current from the saved Inverter recommendation (continuous watts at 12 V or 24 V, including inverter waste), with a manual override
+- an optional starting current from the saved Inverter recommendation (continuous AC watts ÷ battery volts — not also divided by inverter efficiency), with a manual override
+- high-current sizes assume thick flexible copper battery / welding-style cable, not thin chassis cable
 - one-way cable length in metres (the maths uses twice that for voltage drop)
 - allowed voltage drop: 3% for important kit, 10% for everyday kit
 

@@ -12,8 +12,8 @@
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#2f5d46">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <!-- ASSET_VERSION=20260908o — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260908o">
+    <!-- ASSET_VERSION=20260909a — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260909a">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -56,7 +56,15 @@
           "name": "Why does an inverter need such thick cable?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A kettle-class inverter at 12 V can draw well over 100 A from the leisure battery. That current needs fat, short cable and a large fuse near the battery. 24 V roughly halves the amps. This page is a planning size, not a wiring diagram."
+            "text": "A 12 V inverter run can draw hundreds of amps from the leisure battery. That current needs fat, short, flexible copper battery or welding-style cable — not thin chassis wire — and a large fuse near the battery. 24 V roughly halves the amps, so the cable can often be thinner. This page is a planning size, not a wiring diagram."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What sort of cable is this for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Copper is assumed. Fridge, pump and solar runs can use ordinary leisure cable. An inverter battery feed assumes thick flexible copper battery or welding-style cable, not thin chassis or thinwall cable. Those thin cables cannot carry inverter amps."
           }
         },
         {
@@ -88,7 +96,7 @@
           "name": "Can I use the Inverter watts as a starting point?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. The Inverter DC feed preset can pull a current from your saved inverter size at 12 V or 24 V, including inverter waste. You can always type a different figure."
+            "text": "Yes. The Inverter DC feed preset uses inverter AC watts divided by battery volts — the usual cable-chart method. It does not also add inverter waste on top. You can always type a different figure."
           }
         },
         {
@@ -167,7 +175,7 @@
 
           <section class="panel loads-panel no-print" aria-labelledby="settings-title">
             <h2 id="settings-title">Cable settings</h2>
-            <p class="lede tight">Copper cable is assumed — the usual UK leisure cable.</p>
+            <p class="lede tight">Copper is assumed. An inverter feed means thick flexible battery or welding-style cable, not thin chassis wire.</p>
 
             <h3 class="field-heading" id="voltage-title">Leisure-system voltage</h3>
             <div id="voltages" class="preset-row" role="group" aria-labelledby="voltage-title"></div>
@@ -219,9 +227,9 @@
           <h2 id="help-title">How to use</h2>
           <ol>
             <li>Pick a typical van run, or keep Inverter DC feed if you have already sized an inverter.</li>
-            <li>Set 12&nbsp;V or 24&nbsp;V, then type current in amps or watts. You can change the inverter starting figure.</li>
+            <li>Set 12&nbsp;V or 24&nbsp;V, then type current in amps or watts. You can change the inverter starting figure. A 12&nbsp;V inverter needs fat cable; 24&nbsp;V is about half the amps.</li>
             <li>Type the one-way length in metres. The calculator doubles it for the return cable.</li>
-            <li>Keep 3% drop for important kit, or 10% for everyday kit. The big figure is mm² — how UK copper cable is sold.</li>
+            <li>Keep 3% drop for important kit, or 10% for everyday kit. The big figure is mm² — how UK copper cable is sold. Inverter feeds use thick flexible copper, not thin chassis cable.</li>
           </ol>
         </article>
       </section>
@@ -263,9 +271,18 @@
           <div>
             <dt>Why does an inverter need such thick cable?</dt>
             <dd>
-              A kettle-class inverter at 12&nbsp;V can draw well over 100&nbsp;A from the leisure battery.
-              That current needs fat, short cable and a large fuse near the battery. 24&nbsp;V roughly
-              halves the amps. This page is a planning size, not a wiring diagram.
+              A 12&nbsp;V inverter run can draw hundreds of amps from the leisure battery. That current
+              needs fat, short, flexible copper battery or welding-style cable — not thin chassis wire —
+              and a large fuse near the battery. 24&nbsp;V roughly halves the amps, so the cable can
+              often be thinner. This page is a planning size, not a wiring diagram.
+            </dd>
+          </div>
+          <div>
+            <dt>What sort of cable is this for?</dt>
+            <dd>
+              Copper is assumed. Fridge, pump and solar runs can use ordinary leisure cable. An inverter
+              battery feed assumes thick flexible copper battery or welding-style cable, not thin chassis
+              or thinwall cable. Those thin cables cannot carry inverter amps.
             </dd>
           </div>
           <div>
@@ -295,8 +312,9 @@
           <div>
             <dt>Can I use the Inverter watts as a starting point?</dt>
             <dd>
-              Yes. The Inverter DC feed preset can pull a current from your saved inverter size at
-              12&nbsp;V or 24&nbsp;V, including inverter waste. You can always type a different figure.
+              Yes. The Inverter DC feed preset uses inverter AC watts divided by battery volts — the
+              usual cable-chart method. It does not also add inverter waste on top. You can always type
+              a different figure.
             </dd>
           </div>
           <div>
@@ -357,10 +375,10 @@
       </div>
     </div>
 
-    <script src="assets/calc.js?v=20260908o"></script>
-    <script src="assets/defaults.js?v=20260908o"></script>
-    <script src="assets/storage.js?v=20260908o"></script>
-    <script src="assets/ui.js?v=20260908o"></script>
-    <script src="assets/wire.js?v=20260908o"></script>
+    <script src="assets/calc.js?v=20260909a"></script>
+    <script src="assets/defaults.js?v=20260909a"></script>
+    <script src="assets/storage.js?v=20260909a"></script>
+    <script src="assets/ui.js?v=20260909a"></script>
+    <script src="assets/wire.js?v=20260909a"></script>
   </body>
 </html>

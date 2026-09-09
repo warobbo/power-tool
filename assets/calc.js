@@ -4,6 +4,8 @@
  * Ah figures assume a simple Wh / system-voltage conversion (no Peukert).
  * Inverter DC amps assume AC watts ÷ efficiency ÷ system voltage.
  * Cable voltage drop assumes copper, one-way length × 2 for the return run.
+ * High-current ampacity is flexible copper battery / welding-style cable,
+ * not thin chassis / thinwall ratings.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) {
@@ -45,22 +47,26 @@
   var MAX_WIRING_LENGTH_M = 50;
   var MAX_WIRING_AMPS = 600;
   var MAX_WIRING_WATTS = 20000;
-  var DEFAULT_FUSE_MARGIN = 1.25;
+  var DEFAULT_FUSE_MARGIN = 1.1;
+  // Small sizes stay close to everyday leisure/chassis cable. From ~25 mm² up,
+  // ratings are thick flexible copper battery / welding-style inverter cable.
   var CABLE_STEPS = [
     { mm2: 1.5, amps: 16 },
     { mm2: 2.5, amps: 21 },
-    { mm2: 4, amps: 28 },
-    { mm2: 6, amps: 37 },
-    { mm2: 10, amps: 50 },
-    { mm2: 16, amps: 70 },
-    { mm2: 25, amps: 100 },
-    { mm2: 35, amps: 135 },
-    { mm2: 50, amps: 175 },
-    { mm2: 70, amps: 215 },
-    { mm2: 95, amps: 260 },
-    { mm2: 120, amps: 300 },
+    { mm2: 4, amps: 32 },
+    { mm2: 6, amps: 40 },
+    { mm2: 10, amps: 60 },
+    { mm2: 16, amps: 85 },
+    { mm2: 25, amps: 125 },
+    { mm2: 35, amps: 175 },
+    { mm2: 50, amps: 270 },
+    { mm2: 70, amps: 400 },
+    { mm2: 95, amps: 500 },
+    { mm2: 120, amps: 580 },
+    { mm2: 150, amps: 650 },
+    { mm2: 185, amps: 750 },
   ];
-  var FUSE_STEPS = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 100, 125, 150, 175, 200, 250, 300, 350, 400];
+  var FUSE_STEPS = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 100, 125, 150, 175, 200, 250, 300, 350, 400, 500, 600];
   var WIRING_PRESET_IDS = [
     "inverter",
     "solar-panel",
@@ -412,7 +418,9 @@
         ? voltage
         : profile && profile.wiring && profile.wiring.systemVoltage
     );
-    return v === VOLTAGE_24 ? result.recommendedAmps24 : result.recommendedAmps12;
+    // Inverter AC watts ÷ battery volts. Do not also divide by efficiency —
+    // that stacked two allowances and oversized inverter battery cable.
+    return result.recommendedContinuousW / v;
   }
 
   function resolveWiringCurrent(profile) {
@@ -493,9 +501,8 @@
     var dropV = currentA > 0 ? cableVoltageDropV(currentA, oneWayLengthM, cable.mm2) : 0;
     var estimatedDropPct = systemVoltage > 0 ? (dropV / systemVoltage) * 100 : 0;
     var fuseAmps = recommendFuseAmps(currentA, cable.amps);
-    var overLimit =
-      currentA > CABLE_STEPS[CABLE_STEPS.length - 1].amps ||
-      requiredMm2 > CABLE_STEPS[CABLE_STEPS.length - 1].mm2;
+    var maxCable = CABLE_STEPS[CABLE_STEPS.length - 1];
+    var overLimit = currentA > maxCable.amps || requiredMm2 > maxCable.mm2;
 
     return {
       preset: preset,
@@ -517,6 +524,9 @@
       dropV: dropV,
       estimatedDropPct: estimatedDropPct,
       conductor: "copper",
+      cableKind: "flexible-copper-battery",
+      maxCableMm2: maxCable.mm2,
+      maxCableAmps: maxCable.amps,
       overLimit: overLimit,
       source: usedInverterSuggestion ? "inverter" : inputMode,
     };

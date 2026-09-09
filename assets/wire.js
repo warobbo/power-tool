@@ -98,9 +98,9 @@
 
   function voltageHint(voltage) {
     if (voltage === 24) {
-      return "The same watts is about half the amps at 24 V, so the cable can often be thinner.";
+      return "24 V halves the amps for the same watts, so the cable can often be thinner. A 12 V inverter run still needs fat cable.";
     }
-    return "Most UK leisure systems are 12 V. High-watt kit such as an inverter needs thick cable.";
+    return "Most UK leisure systems are 12 V. A 12 V inverter run needs fat, short cable; 24 V is about half the amps.";
   }
 
   function dropHint(dropPct) {
@@ -159,11 +159,11 @@
       els.sourceNote.textContent =
         "Using about " +
         formatAmps(result.currentA) +
-        " A from your Inverter size (" +
+        " A — " +
         formatWatts(inverter.recommendedContinuousW) +
-        " W continuous at " +
+        " W continuous ÷ " +
         formatNumber(result.systemVoltage, 0) +
-        " V, including inverter waste). You can change it.";
+        " V. That is inverter AC watts divided by battery volts, not also inverter waste. You can change it.";
       actions.push(
         '<button type="button" class="text-btn" data-action="use-manual">Enter a different current</button>'
       );
@@ -248,8 +248,13 @@
 
     if (result.overLimit) {
       steps.push({
-        label: "This run is unusually heavy",
-        value: "Ask a qualified installer",
+        label:
+          "Above the largest size we list (" +
+          formatMm2(result.maxCableMm2) +
+          " mm² / about " +
+          formatAmps(result.maxCableAmps) +
+          " A)",
+        value: "Ask a qualified installer — or try 24 V",
       });
     }
 
@@ -288,7 +293,14 @@
       els.wiringNote.textContent = "Add a current or watts figure to get a cable and fuse size.";
     } else if (result.overLimit) {
       els.wiringNote.textContent =
-        "This current or run is very heavy. Treat this as a starting point and get a qualified installer.";
+        "This run is above the largest size we list (" +
+        formatMm2(result.maxCableMm2) +
+        " mm², about " +
+        formatAmps(result.maxCableAmps) +
+        " A). Parallel cables or 24 V may be needed — ask a qualified installer.";
+    } else if (result.preset === "inverter" || result.currentA >= 80) {
+      els.wiringNote.textContent =
+        "Inverter battery cable (thick flexible copper), not thin chassis cable. The fuse protects the cable.";
     } else {
       els.wiringNote.textContent =
         "The fuse protects the cable. Pick a fuse a bit above the load, and not above what that cable can take.";
