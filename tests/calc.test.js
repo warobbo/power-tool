@@ -154,7 +154,7 @@ test("sanitise keeps later-slice keys on the shared profile", function () {
     version: 1,
     dailyPower: { appliances: [] },
     battery: { daysAutonomy: 3, chemistry: "agm" },
-    wiring: { fuseAmps: 150 },
+    futureSlice: { note: "keep me" },
   });
   assert.strictEqual(clean.battery.daysAutonomy, 3);
   assert.strictEqual(clean.battery.chemistry, "agm");
@@ -162,7 +162,9 @@ test("sanitise keeps later-slice keys on the shared profile", function () {
   assert.strictEqual(clean.solar.peakSunHours, 3);
   assert.strictEqual(clean.inverter.systemVoltage, 12);
   assert.strictEqual(clean.inverter.efficiencyPct, 88);
-  assert.strictEqual(clean.wiring.fuseAmps, 150);
+  assert.strictEqual(clean.wiring.preset, "inverter");
+  assert.strictEqual(clean.wiring.useInverterSuggestion, true);
+  assert.strictEqual(clean.futureSlice.note, "keep me");
   assert.strictEqual(storage.STORAGE_KEY, "powertools.systemProfile");
 });
 
@@ -750,6 +752,214 @@ test("applying a daily-power preset keeps inverter settings", function () {
   assert.strictEqual(weekend.inverter.systemVoltage, 24);
   assert.strictEqual(weekend.inverter.efficiencyPct, 90);
   assert.strictEqual(weekend.inverter.marginPct, 15);
+  assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
+});
+
+test("voltage drop uses twice the one-way length on copper", function () {
+  var dropV = calc.cableVoltageDropV(100, 2, 25);
+  assert.ok(Math.abs(dropV - (2 * 100 * 2 * calc.COPPER_RESISTIVITY) / 25) < 0.0001);
+  assert.ok(Math.abs(dropV - 0.28) < 0.0001);
+  assert.ok(Math.abs(calc.requiredCableMm2(100, 2, 0.36) - 19.444444) < 0.001);
+});
+
+test("wiring rounds up to the next practical UK mm²", function () {
+  var result = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 100,
+      oneWayLengthM: 2,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.ok(result.requiredMm2 > 16 && result.requiredMm2 < 25);
+  assert.strictEqual(result.cableMm2, 25);
+  assert.strictEqual(result.roundTripLengthM, 4);
+  assert.ok(Math.abs(result.dropV - 0.28) < 0.0001);
+  assert.ok(Math.abs(result.estimatedDropPct - (0.28 / 12) * 100) < 0.0001);
+  assert.ok(result.fuseAmps >= 100);
+  assert.ok(result.fuseAmps <= result.cableAmps);
+});
+
+test("24 V needs thinner cable than 12 V for the same watts", function () {
+  var at12 = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "watts",
+      watts: 1200,
+      oneWayLengthM: 3,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  var at24 = calc.calcWiring({
+    wiring: {
+      systemVoltage: 24,
+      inputMode: "watts",
+      watts: 1200,
+      oneWayLengthM: 3,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.strictEqual(at12.currentA, 100);
+  assert.strictEqual(at24.currentA, 50);
+  assert.ok(at24.cableMm2 < at12.cableMm2);
+});
+
+test("longer cable or tighter drop needs a larger mm²", function () {
+  var short = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 40,
+      oneWayLengthM: 1,
+      dropPct: 10,
+      useInverterSuggestion: false,
+    },
+  });
+  var long = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 40,
+      oneWayLengthM: 8,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.ok(long.cableMm2 > short.cableMm2);
+  assert.ok(long.requiredMm2 > short.requiredMm2);
+});
+
+test("cable is also sized so its rating covers the current", function () {
+  var result = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 110,
+      oneWayLengthM: 0.5,
+      dropPct: 10,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.ok(result.requiredMm2 < 10);
+  assert.ok(result.cableMm2 >= 35);
+  assert.ok(result.cableAmps >= 110);
+});
+
+test("fuse sits above the load and within the cable rating", function () {
+  assert.strictEqual(calc.recommendFuseAmps(10, 16), 15);
+  assert.strictEqual(calc.recommendFuseAmps(100, 135), 125);
+  assert.strictEqual(calc.recommendFuseAmps(0, 16), 0);
+  var fridge = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "watts",
+      watts: 45,
+      oneWayLengthM: 3,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.strictEqual(fridge.cableMm2, 1.5);
+  assert.ok(fridge.fuseAmps > fridge.currentA);
+  assert.ok(fridge.fuseAmps <= fridge.cableAmps);
+});
+
+test("zero current gives no cable or fuse", function () {
+  var result = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 0,
+      oneWayLengthM: 2,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.strictEqual(result.cableMm2, 0);
+  assert.strictEqual(result.fuseAmps, 0);
+  assert.strictEqual(result.dropV, 0);
+});
+
+test("inverter suggestion uses recommended watts, efficiency and voltage", function () {
+  var profile = defaults.createDefaultProfile();
+  var inverter = calc.calcInverter(profile);
+  assert.strictEqual(inverter.recommendedContinuousW, 1440);
+  var suggested12 = calc.resolveInverterSuggestedAmps(profile, 12);
+  var suggested24 = calc.resolveInverterSuggestedAmps(profile, 24);
+  assert.ok(Math.abs(suggested12 - 1440 / 0.88 / 12) < 0.0001);
+  assert.ok(Math.abs(suggested24 - suggested12 / 2) < 0.0001);
+
+  var wired = calc.calcWiring(profile);
+  assert.strictEqual(wired.usedInverterSuggestion, true);
+  assert.ok(Math.abs(wired.currentA - suggested12) < 0.0001);
+  assert.ok(wired.cableMm2 >= 35);
+});
+
+test("wiring defaults and sanitise clamp bad values", function () {
+  var profile = defaults.createDefaultProfile();
+  assert.strictEqual(profile.wiring.preset, "inverter");
+  assert.strictEqual(profile.wiring.systemVoltage, 12);
+  assert.strictEqual(profile.wiring.oneWayLengthM, 2);
+  assert.strictEqual(profile.wiring.dropPct, 3);
+  assert.strictEqual(profile.wiring.useInverterSuggestion, true);
+
+  var clean = storage.sanitiseWiring({
+    preset: "mains-cu",
+    systemVoltage: 48,
+    inputMode: "horsepower",
+    currentA: 900,
+    watts: -20,
+    oneWayLengthM: 0,
+    dropPct: 80,
+    useInverterSuggestion: "yes",
+  });
+  assert.strictEqual(clean.preset, "inverter");
+  assert.strictEqual(clean.systemVoltage, 12);
+  assert.strictEqual(clean.inputMode, "amps");
+  assert.strictEqual(clean.currentA, 600);
+  assert.strictEqual(clean.watts, 0);
+  assert.strictEqual(clean.oneWayLengthM, 0.1);
+  assert.strictEqual(clean.dropPct, 15);
+  assert.strictEqual(clean.useInverterSuggestion, true);
+});
+
+test("wiring presets set length, drop and a typical current", function () {
+  var profile = defaults.createDefaultProfile();
+  var fridge = storage.applyWiringPreset(profile, "fridge");
+  assert.strictEqual(fridge.wiring.preset, "fridge");
+  assert.strictEqual(fridge.wiring.useInverterSuggestion, false);
+  assert.strictEqual(fridge.wiring.watts, 45);
+  assert.strictEqual(fridge.wiring.oneWayLengthM, 3);
+  assert.strictEqual(fridge.wiring.dropPct, 3);
+
+  var pump = storage.applyWiringPreset(fridge, "water-pump");
+  assert.strictEqual(pump.wiring.preset, "water-pump");
+  assert.strictEqual(pump.wiring.watts, 42);
+  assert.strictEqual(pump.wiring.dropPct, 10);
+  assert.strictEqual(pump.wiring.oneWayLengthM, 4);
+
+  var inverter = storage.applyWiringPreset(pump, "inverter");
+  assert.strictEqual(inverter.wiring.preset, "inverter");
+  assert.strictEqual(inverter.wiring.useInverterSuggestion, true);
+  assert.ok(inverter.wiring.currentA > 100);
+});
+
+test("applying a daily-power preset keeps wiring settings", function () {
+  var profile = defaults.createDefaultProfile();
+  profile.wiring.preset = "fridge";
+  profile.wiring.oneWayLengthM = 4;
+  profile.wiring.dropPct = 10;
+  profile.wiring.useInverterSuggestion = false;
+
+  var weekend = storage.applyPreset(profile, "weekend");
+  assert.strictEqual(weekend.wiring.preset, "fridge");
+  assert.strictEqual(weekend.wiring.oneWayLengthM, 4);
+  assert.strictEqual(weekend.wiring.dropPct, 10);
+  assert.strictEqual(weekend.wiring.useInverterSuggestion, false);
   assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
 });
 

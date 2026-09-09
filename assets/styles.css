@@ -139,6 +139,10 @@ body {
   margin-top: 0.85rem;
 }
 
+#source-note {
+  margin-top: 0.85rem;
+}
+
 .field-heading {
   margin: 1.1rem 0 0.45rem;
   font-size: 0.8rem;
@@ -179,6 +183,7 @@ body {
   width: auto;
   min-width: 12rem;
   margin-top: 0.85rem;
+  margin-right: 0.55rem;
   text-decoration: none;
 }
 
@@ -282,22 +287,36 @@ body {
 
 .totals.battery-totals,
 .totals.solar-totals,
-.totals.inverter-totals {
+.totals.inverter-totals,
+.totals.wiring-totals {
   grid-template-columns: 1fr;
 }
 
 .battery-voltage,
 .solar-kicker,
-.inverter-kicker {
+.inverter-kicker,
+.wiring-kicker {
   margin: 0.35rem 0 0;
   font-size: 0.95rem;
   font-weight: 650;
   opacity: 0.88;
 }
 
+.wiring-fuse {
+  margin: 0.55rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.wiring-fuse strong {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.25rem;
+}
+
 .battery-support,
 .solar-support,
-.inverter-support {
+.inverter-support,
+.wiring-support {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 0.55rem;
@@ -307,7 +326,8 @@ body {
 
 .battery-support span,
 .solar-support span,
-.inverter-support span {
+.inverter-support span,
+.wiring-support span {
   display: inline-flex;
   align-items: baseline;
   gap: 0.2rem;
@@ -318,7 +338,8 @@ body {
 
 .battery-support strong,
 .solar-support strong,
-.inverter-support strong {
+.inverter-support strong,
+.wiring-support strong {
   font-variant-numeric: tabular-nums;
 }
 
@@ -774,7 +795,8 @@ input:focus-visible {
 
   .totals.battery-totals,
   .totals.solar-totals,
-  .totals.inverter-totals {
+  .totals.inverter-totals,
+  .totals.wiring-totals {
     grid-template-columns: 1fr;
   }
 
@@ -801,7 +823,8 @@ input:focus-visible {
 
   .totals.battery-totals,
   .totals.solar-totals,
-  .totals.inverter-totals {
+  .totals.inverter-totals,
+  .totals.wiring-totals {
     grid-template-columns: 1fr;
   }
 
@@ -1025,7 +1048,8 @@ input:focus-visible {
 
   .battery-support span,
   .solar-support span,
-  .inverter-support span {
+  .inverter-support span,
+  .wiring-support span {
     background: #f3f3f3;
     border: 1px solid #ccc;
   }

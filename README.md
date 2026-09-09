@@ -45,7 +45,18 @@ Recommend an inverter size from 230 V loads using:
 
 Results lead with continuous watts (how inverters are sold), plus surge watts and rough DC amps at 12 V and 24 V.
 
-Wire/fuse tools are **not** in this slice.
+## Wire & fuse (slice 5)
+
+Recommend a copper cable size and fuse for a common van DC run using:
+
+- typical-run presets (inverter DC feed, solar to controller, controller to battery, fridge, heater fan, water pump, leisure general, or custom)
+- system voltage 12 V or 24 V
+- current in amps, or watts converted with amps = watts ÷ volts
+- an optional starting current from the saved Inverter recommendation (continuous watts at 12 V or 24 V, including inverter waste), with a manual override
+- one-way cable length in metres (the maths uses twice that for voltage drop)
+- allowed voltage drop: 3% for important kit, 10% for everyday kit
+
+Results lead with cable size in mm² (how UK cable is sold) and a fuse or breaker in amps, plus calculated current and estimated voltage drop.
 
 The site is a static front-end: no backend, no accounts, and no APIs. It is meant to deploy on Render as a static site.
 
@@ -56,6 +67,7 @@ The site is a static front-end: no backend, no accounts, and no APIs. It is mean
 3. Choose days without charging and LiFePO4 or AGM. Sizes update live.
 4. Open Solar. The same daily watt-hours are filled in. Pick a season or type peak sun hours. Watts update live.
 5. Open Inverter. Tick the 230 V kit you might run at the same time. Continuous watts and surge update live.
+6. Open Wire & fuse. Pick a typical run, set amps or watts and the one-way length. Cable mm² and fuse amps update live.
 
 Numbers are a **planning estimate only**.
 
@@ -71,7 +83,7 @@ From the repo root:
 python3 -m http.server 8080
 ```
 
-Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html), and [http://127.0.0.1:8080/inverter.html](http://127.0.0.1:8080/inverter.html).
+Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html), [http://127.0.0.1:8080/inverter.html](http://127.0.0.1:8080/inverter.html), and [http://127.0.0.1:8080/wire.html](http://127.0.0.1:8080/wire.html).
 
 You can also open the HTML files directly in a browser. A local server is the more reliable option.
 
@@ -103,7 +115,7 @@ All Power Tools slices share one browser profile:
 | **localStorage key** | `powertools.systemProfile` |
 | **Current version** | `1` |
 
-Daily Power reads and writes `dailyPower`. Battery and Solar read that total and write `battery` and `solar` on the same object. Inverter writes `inverter` with its own 230 V load list:
+Daily Power reads and writes `dailyPower`. Battery and Solar read that total and write `battery` and `solar` on the same object. Inverter writes `inverter` with its own 230 V load list. Wire & fuse writes `wiring` and can read the saved inverter size:
 
 ```json
 {
@@ -134,15 +146,25 @@ Daily Power reads and writes `dailyPower`. Battery and Solar read that total and
     "efficiencyPct": 88,
     "marginPct": 20,
     "loads": []
+  },
+  "wiring": {
+    "preset": "inverter",
+    "systemVoltage": 12,
+    "inputMode": "amps",
+    "currentA": 0,
+    "watts": 0,
+    "oneWayLengthM": 2,
+    "dropPct": 3,
+    "useInverterSuggestion": true
   }
 }
 ```
 
-Later slices should add sibling keys on the **same object** (for example `wiring`) instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
+Later slices should add sibling keys on the **same object** instead of creating new localStorage keys. Bump `version` only if a breaking migration is required. The loader already preserves unknown sibling keys.
 
 ## Out of scope
 
-Wire/fuse calculations, shade modelling, payments, trip planner, Airtable, bots, DVLA lookups, and any claim of electrical compliance or certification.
+AC mains consumer-unit design, full ISO / ABYC compliance claims, shade modelling, payments, trip planner, Airtable, bots, DVLA lookups, and any claim of electrical certification.
 
 ## Disclaimer
 
