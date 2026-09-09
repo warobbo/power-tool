@@ -838,15 +838,15 @@ test("cable is also sized so its rating covers the current", function () {
     wiring: {
       systemVoltage: 12,
       inputMode: "amps",
-      currentA: 110,
+      currentA: 380,
       oneWayLengthM: 0.5,
       dropPct: 10,
       useInverterSuggestion: false,
     },
   });
   assert.ok(result.requiredMm2 < 10);
-  assert.ok(result.cableMm2 >= 35);
-  assert.ok(result.cableAmps >= 110);
+  assert.strictEqual(result.cableMm2, 70);
+  assert.ok(result.cableAmps >= 380);
 });
 
 test("fuse sits above the load and within the cable rating", function () {
@@ -884,19 +884,19 @@ test("zero current gives no cable or fuse", function () {
   assert.strictEqual(result.dropV, 0);
 });
 
-test("inverter suggestion uses recommended watts, efficiency and voltage", function () {
+test("inverter suggestion uses recommended watts divided by voltage", function () {
   var profile = defaults.createDefaultProfile();
   var inverter = calc.calcInverter(profile);
   assert.strictEqual(inverter.recommendedContinuousW, 1440);
   var suggested12 = calc.resolveInverterSuggestedAmps(profile, 12);
   var suggested24 = calc.resolveInverterSuggestedAmps(profile, 24);
-  assert.ok(Math.abs(suggested12 - 1440 / 0.88 / 12) < 0.0001);
+  assert.ok(Math.abs(suggested12 - 1440 / 12) < 0.0001);
   assert.ok(Math.abs(suggested24 - suggested12 / 2) < 0.0001);
 
   var wired = calc.calcWiring(profile);
   assert.strictEqual(wired.usedInverterSuggestion, true);
   assert.ok(Math.abs(wired.currentA - suggested12) < 0.0001);
-  assert.ok(wired.cableMm2 >= 35);
+  assert.ok(wired.cableMm2 >= 25);
 });
 
 test("wiring defaults and sanitise clamp bad values", function () {
@@ -941,11 +941,84 @@ test("wiring presets set length, drop and a typical current", function () {
   assert.strictEqual(pump.wiring.watts, 42);
   assert.strictEqual(pump.wiring.dropPct, 10);
   assert.strictEqual(pump.wiring.oneWayLengthM, 4);
+  assert.strictEqual(calc.calcWiring(fridge).cableMm2, 1.5);
+  assert.strictEqual(calc.calcWiring(pump).cableMm2, 1.5);
+
+  var solar = storage.applyWiringPreset(profile, "solar-panel");
+  var solarResult = calc.calcWiring(solar);
+  assert.ok(solarResult.cableMm2 >= 16 && solarResult.cableMm2 <= 25);
 
   var inverter = storage.applyWiringPreset(pump, "inverter");
   assert.strictEqual(inverter.wiring.preset, "inverter");
   assert.strictEqual(inverter.wiring.useInverterSuggestion, true);
   assert.ok(inverter.wiring.currentA > 100);
+});
+
+test("4300 W at 12 V uses about 70 mm² on a short run, 95 mm² if longer", function () {
+  var short = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "watts",
+      watts: 4300,
+      oneWayLengthM: 1.5,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.ok(Math.abs(short.currentA - 4300 / 12) < 0.0001);
+  assert.ok(short.requiredMm2 < 70);
+  assert.strictEqual(short.cableMm2, 70);
+  assert.ok(short.cableAmps >= short.currentA);
+  assert.strictEqual(short.fuseAmps, 400);
+  assert.strictEqual(short.overLimit, false);
+
+  var mid = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "watts",
+      watts: 4300,
+      oneWayLengthM: 2.5,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.strictEqual(mid.cableMm2, 95);
+  assert.ok(mid.fuseAmps >= 400);
+  assert.ok(mid.fuseAmps <= mid.cableAmps);
+
+  var fromInverter = calc.calcWiring({
+    inverter: {
+      systemVoltage: 12,
+      efficiencyPct: 88,
+      marginPct: 0,
+      loads: [{ watts: 4300, surgeWatts: 4300, qty: 1, enabled: true }],
+    },
+    wiring: {
+      systemVoltage: 12,
+      useInverterSuggestion: true,
+      oneWayLengthM: 1.5,
+      dropPct: 3,
+    },
+  });
+  assert.ok(Math.abs(fromInverter.currentA - 4300 / 12) < 0.0001);
+  assert.strictEqual(fromInverter.cableMm2, 70);
+  assert.strictEqual(fromInverter.fuseAmps, 400);
+});
+
+test("over-limit run names the largest listed cable", function () {
+  var result = calc.calcWiring({
+    wiring: {
+      systemVoltage: 12,
+      inputMode: "amps",
+      currentA: 600,
+      oneWayLengthM: 20,
+      dropPct: 3,
+      useInverterSuggestion: false,
+    },
+  });
+  assert.strictEqual(result.overLimit, true);
+  assert.strictEqual(result.maxCableMm2, 185);
+  assert.ok(result.maxCableAmps >= 600);
 });
 
 test("applying a daily-power preset keeps wiring settings", function () {
