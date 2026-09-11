@@ -15,8 +15,8 @@
     <link rel="icon" href="assets/favicon-32.png?v=20260911a" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260911a" sizes="180x180">
     <link rel="icon" href="assets/icon-512.png?v=20260911a" type="image/png" sizes="512x512">
-    <!-- ASSET_VERSION=20260911a — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260911a">
+    <!-- ASSET_VERSION=20260911c — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260911c">
   </head>
   <body>
     <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
@@ -113,55 +113,53 @@
 
       <section class="help-card faq-card no-print" aria-labelledby="faq-title">
         <h2 id="faq-title">FAQ</h2>
-        <dl class="faq-list">
-          <div>
-            <dt>How many amp hours does a campervan use per day?</dt>
-            <dd>
-              There is no single number. A light weekend for two people is often a few tens of Ah at 12&nbsp;V.
+        <details>
+          <summary>How many amp hours does a campervan use per day?</summary>
+          <p>
+            There is no single number. A light weekend for two people is often a few tens of Ah at 12&nbsp;V.
               A family week with a kettle or induction hob through an inverter can be a few hundred Ah.
               Use the totals above for your own kit rather than a rule of thumb.
-            </dd>
-          </div>
-          <div>
-            <dt>Wh vs Ah — what’s the difference?</dt>
-            <dd>
-              Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by battery voltage:
+          </p>
+        </details>
+        <details>
+          <summary>Wh vs Ah — what’s the difference?</summary>
+          <p>
+            Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by battery voltage:
               Ah = Wh ÷ volts. Wh is useful for comparing loads. Ah is useful once you know whether the
               battery is 12&nbsp;V or 24&nbsp;V.
-            </dd>
-          </div>
-          <div>
-            <dt>12V or 24V — which Ah number do I use?</dt>
-            <dd>
-              Use the Ah figure that matches your leisure-battery voltage. The same daily Wh is half the Ah
+          </p>
+        </details>
+        <details>
+          <summary>12V or 24V — which Ah number do I use?</summary>
+          <p>
+            Use the Ah figure that matches your leisure-battery voltage. The same daily Wh is half the Ah
               on 24&nbsp;V (Wh ÷ 24) compared with 12&nbsp;V (Wh ÷ 12). Do not mix the two.
-            </dd>
-          </div>
-          <div>
-            <dt>Why is the fridge often the biggest load?</dt>
-            <dd>
-              A compressor fridge may only draw 40–60&nbsp;W, but it cycles for many hours. That daily
+          </p>
+        </details>
+        <details>
+          <summary>Why is the fridge often the biggest load?</summary>
+          <p>
+            A compressor fridge may only draw 40–60&nbsp;W, but it cycles for many hours. That daily
               watt-hour total often beats lights, phones and a laptop combined. Hours here means compressor
               run-time, not time the fridge is switched on.
-            </dd>
-          </div>
-          <div>
-            <dt>Is this calculator accurate enough for battery sizing?</dt>
-            <dd>
-              It is a planning estimate, not a design or a guarantee. Weather, fridge duty cycle, cable
+          </p>
+        </details>
+        <details>
+          <summary>Is this calculator accurate enough for battery sizing?</summary>
+          <p>
+            It is a planning estimate, not a design or a guarantee. Weather, fridge duty cycle, cable
               losses, battery age and inverter efficiency all change the real figure. Use it to compare
               setups and leave a margin; get a qualified installer for safety-critical work.
-            </dd>
-          </div>
-          <div>
-            <dt>Should I add inverter loss?</dt>
-            <dd>
-              Tick it if you run 230&nbsp;V kit (kettle, hob, laptop brick) through an inverter. The extra
+          </p>
+        </details>
+        <details>
+          <summary>Should I add inverter loss?</summary>
+          <p>
+            Tick it if you run 230&nbsp;V kit (kettle, hob, laptop brick) through an inverter. The extra
               12% is a simple allowance, not a measured efficiency. 12&nbsp;V loads such as the fridge do
               not need it on their own.
-            </dd>
-          </div>
-        </dl>
+          </p>
+        </details>
       </section>
 
       <aside class="disclaimer" aria-label="Disclaimer">

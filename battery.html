@@ -15,8 +15,8 @@
     <link rel="icon" href="assets/favicon-32.png?v=20260911a" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260911a" sizes="180x180">
     <link rel="icon" href="assets/icon-512.png?v=20260911a" type="image/png" sizes="512x512">
-    <!-- ASSET_VERSION=20260911a — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260911a">
+    <!-- ASSET_VERSION=20260911c — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260911c">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -249,111 +249,109 @@
 
       <section class="help-card faq-card no-print" aria-labelledby="faq-title">
         <h2 id="faq-title">FAQ</h2>
-        <dl class="faq-list">
-          <div>
-            <dt>What does “days without charging” mean?</dt>
-            <dd>
-              It is how long you want the batteries to last if the solar is poor or you are not on hook-up.
+        <details>
+          <summary>What does “days without charging” mean?</summary>
+          <p>
+            It is how long you want the batteries to last if the solar is poor or you are not on hook-up.
               Two days covers a dull weekend for many people. Add more if you camp for longer without charging.
-            </dd>
-          </div>
-          <div>
-            <dt>Why is a LiFePO4 battery smaller than AGM?</dt>
-            <dd>
-              You can use more of a lithium battery’s rated size. This calculator plans LiFePO4 at 80% usable
+          </p>
+        </details>
+        <details>
+          <summary>Why is a LiFePO4 battery smaller than AGM?</summary>
+          <p>
+            You can use more of a lithium battery’s rated size. This calculator plans LiFePO4 at 80% usable
               and AGM / lead-acid at 50%, so the AGM battery needs to be larger for the same daily use.
-            </dd>
-          </div>
-          <div>
-            <dt>12V or 24V — which Ah number do I use?</dt>
-            <dd>
-              Shop with the big 12&nbsp;V Ah figure if your leisure battery is 12&nbsp;V — that is how most UK
+          </p>
+        </details>
+        <details>
+          <summary>12V or 24V — which Ah number do I use?</summary>
+          <p>
+            Shop with the big 12&nbsp;V Ah figure if your leisure battery is 12&nbsp;V — that is how most UK
               packs are sold, such as 12&nbsp;V 460&nbsp;Ah. Use the 24&nbsp;V Ah chip only if the leisure system
               is 24&nbsp;V. The same energy is half the Ah at 24&nbsp;V (Wh ÷ 24 versus Wh ÷ 12). Do not mix them.
-            </dd>
-          </div>
-          <div>
-            <dt>Should I buy the exact Ah figure?</dt>
-            <dd>
-              Treat it as a planning size, then round up to a 12&nbsp;V leisure battery you can actually buy.
+          </p>
+        </details>
+        <details>
+          <summary>Should I buy the exact Ah figure?</summary>
+          <p>
+            Treat it as a planning size, then round up to a 12&nbsp;V leisure battery you can actually buy.
               Weather, fridge run-time, cable losses and battery age all change the real figure. Leave a margin
               and get a qualified installer for safety-critical work.
-            </dd>
-          </div>
-          <div>
-            <dt>Can I change the daily watt-hours here?</dt>
-            <dd>
-              Yes. Use “Enter a different figure” if you do not want the Daily Power total. Your Daily Power
+          </p>
+        </details>
+        <details>
+          <summary>Can I change the daily watt-hours here?</summary>
+          <p>
+            Yes. Use “Enter a different figure” if you do not want the Daily Power total. Your Daily Power
               list stays as you left it. Switch back any time to use that saved total again.
-            </dd>
-          </div>
-          <div>
-            <dt>Wh vs Ah — what’s the difference, and why show both?</dt>
-            <dd>
-              Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by voltage: Ah = Wh ÷ volts.
+          </p>
+        </details>
+        <details>
+          <summary>Wh vs Ah — what’s the difference, and why show both?</summary>
+          <p>
+            Watt-hours (Wh) measure energy. Amp-hours (Ah) are that energy divided by voltage: Ah = Wh ÷ volts.
               UK and EU leisure batteries are usually sold in Ah at 12&nbsp;V, so that is the big number.
               We still show 24&nbsp;V Ah and the Wh total so you can compare systems.
-            </dd>
-          </div>
-          <div>
-            <dt>What’s the difference between usable capacity and the size printed on the battery?</dt>
-            <dd>
-              The printed size is the full rated capacity. You should not plan to use all of it. This calculator
+          </p>
+        </details>
+        <details>
+          <summary>What’s the difference between usable capacity and the size printed on the battery?</summary>
+          <p>
+            The printed size is the full rated capacity. You should not plan to use all of it. This calculator
               treats LiFePO4 as 80% usable and AGM / lead-acid as 50% usable, so the size to buy is larger than
               the energy you will actually use. That keeps a reserve and helps the battery last longer.
-            </dd>
-          </div>
-          <div>
-            <dt>Can I put batteries in parallel or series?</dt>
-            <dd>
-              In simple terms, parallel keeps the same voltage and adds Ah; series raises the voltage
+          </p>
+        </details>
+        <details>
+          <summary>Can I put batteries in parallel or series?</summary>
+          <p>
+            In simple terms, parallel keeps the same voltage and adds Ah; series raises the voltage
               (for example two 12&nbsp;V batteries to 24&nbsp;V) and does not add Ah. Matching batteries, cables
               and protection matter. This page only estimates a total size — get a qualified installer to design
               a parallel or series setup.
-            </dd>
-          </div>
-          <div>
-            <dt>How should I set days without charging for hook-up versus wild camping?</dt>
-            <dd>
-              If you are on hook-up most nights, one day or less can be enough as a buffer. For wild camping or
+          </p>
+        </details>
+        <details>
+          <summary>How should I set days without charging for hook-up versus wild camping?</summary>
+          <p>
+            If you are on hook-up most nights, one day or less can be enough as a buffer. For wild camping or
               poor solar, two days is a common start; add more if you stay off-grid longer. Raise the days figure
               and the 12&nbsp;V Ah size grows with it.
-            </dd>
-          </div>
-          <div>
-            <dt>Does this include the starter battery?</dt>
-            <dd>
-              No. This is for the leisure battery that runs the fridge, lights and other living loads. Do not
+          </p>
+        </details>
+        <details>
+          <summary>Does this include the starter battery?</summary>
+          <p>
+            No. This is for the leisure battery that runs the fridge, lights and other living loads. Do not
               count the vehicle starter battery as part of this size, and do not flatten it to power the
               habitation side.
-            </dd>
-          </div>
-          <div>
-            <dt>Will solar change how big a battery I need?</dt>
-            <dd>
-              Solar can top the battery up in the day, so you may get away with fewer days without charging in
+          </p>
+        </details>
+        <details>
+          <summary>Will solar change how big a battery I need?</summary>
+          <p>
+            Solar can top the battery up in the day, so you may get away with fewer days without charging in
               good weather. Size the leisure battery first for the dull days you still want to cover. Then open
               Solar to turn the same daily watt-hours into a recommended panel size.
-            </dd>
-          </div>
-          <div>
-            <dt>What about winter and cold weather?</dt>
-            <dd>
-              Cold weather can cut available capacity, and AGM / lead-acid usually suffer more than lithium.
+          </p>
+        </details>
+        <details>
+          <summary>What about winter and cold weather?</summary>
+          <p>
+            Cold weather can cut available capacity, and AGM / lead-acid usually suffer more than lithium.
               Fridges and heaters also run longer in winter. Treat this as a mild-weather planning estimate and
               leave extra margin, or ask an installer, if you camp in frost.
-            </dd>
-          </div>
-          <div>
-            <dt>Do I need a BMS, or can I use a drop-in LiFePO4?</dt>
-            <dd>
-              Most leisure LiFePO4 batteries sold as a complete 12&nbsp;V pack include a BMS inside. “Drop-in”
+          </p>
+        </details>
+        <details>
+          <summary>Do I need a BMS, or can I use a drop-in LiFePO4?</summary>
+          <p>
+            Most leisure LiFePO4 batteries sold as a complete 12&nbsp;V pack include a BMS inside. “Drop-in”
               means it is built to replace a similar-size leisure battery, but chargers, cables and protection
               still have to suit lithium. This page only estimates size — check the maker’s instructions and use
               a qualified installer for safety-critical work.
-            </dd>
-          </div>
-        </dl>
+          </p>
+        </details>
       </section>
 
       <aside class="disclaimer" aria-label="Disclaimer">

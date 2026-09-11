@@ -15,8 +15,8 @@
     <link rel="icon" href="assets/favicon-32.png?v=20260911a" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260911a" sizes="180x180">
     <link rel="icon" href="assets/icon-512.png?v=20260911a" type="image/png" sizes="512x512">
-    <!-- ASSET_VERSION=20260911a — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260911a">
+    <!-- ASSET_VERSION=20260911c — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260911c">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -242,96 +242,94 @@
 
       <section class="help-card faq-card no-print" aria-labelledby="faq-title">
         <h2 id="faq-title">FAQ</h2>
-        <dl class="faq-list">
-          <div>
-            <dt>What is voltage drop?</dt>
-            <dd>
-              Voltage drop is the volts you lose along the cable. A long, thin cable wastes power as heat
+        <details>
+          <summary>What is voltage drop?</summary>
+          <p>
+            Voltage drop is the volts you lose along the cable. A long, thin cable wastes power as heat
               and the fridge or inverter can sag. This page aims for a small drop — 3% for important kit,
               10% for everyday kit — then picks the next copper size you can buy.
-            </dd>
-          </div>
-          <div>
-            <dt>Why is the length doubled?</dt>
-            <dd>
-              You type the one-way length — battery to the kit. The return cable is just as long, so the
+          </p>
+        </details>
+        <details>
+          <summary>Why is the length doubled?</summary>
+          <p>
+            You type the one-way length — battery to the kit. The return cable is just as long, so the
               calculator uses twice that for voltage drop. A 2&nbsp;m run is 4&nbsp;m of cable in the maths.
-            </dd>
-          </div>
-          <div>
-            <dt>Does the fuse protect the gadget or the cable?</dt>
-            <dd>
-              The fuse protects the cable. If something shorts, the fuse should blow before the cable
+          </p>
+        </details>
+        <details>
+          <summary>Does the fuse protect the gadget or the cable?</summary>
+          <p>
+            The fuse protects the cable. If something shorts, the fuse should blow before the cable
               overheats. Size the fuse a bit above the current you will draw, and not above what that
               cable can take. The gadget may have its own fuse as well.
-            </dd>
-          </div>
-          <div>
-            <dt>12V or 24V — does it change the cable size?</dt>
-            <dd>
-              Yes. The same watts is about half the amps at 24&nbsp;V, so you can often use thinner cable.
+          </p>
+        </details>
+        <details>
+          <summary>12V or 24V — does it change the cable size?</summary>
+          <p>
+            Yes. The same watts is about half the amps at 24&nbsp;V, so you can often use thinner cable.
               Match the voltage to the leisure system you actually have. Do not mix 12&nbsp;V and 24&nbsp;V
               figures.
-            </dd>
-          </div>
-          <div>
-            <dt>Why does an inverter need such thick cable?</dt>
-            <dd>
-              A 12&nbsp;V inverter run can draw hundreds of amps from the leisure battery. That current
+          </p>
+        </details>
+        <details>
+          <summary>Why does an inverter need such thick cable?</summary>
+          <p>
+            A 12&nbsp;V inverter run can draw hundreds of amps from the leisure battery. That current
               needs fat, short, flexible copper battery or welding-style cable — not thin chassis wire —
               and a large fuse near the battery. 24&nbsp;V roughly halves the amps, so the cable can
               often be thinner. This page is a planning size, not a wiring diagram.
-            </dd>
-          </div>
-          <div>
-            <dt>What sort of cable is this for?</dt>
-            <dd>
-              Copper is assumed. Fridge, pump and solar runs can use ordinary leisure cable. An inverter
+          </p>
+        </details>
+        <details>
+          <summary>What sort of cable is this for?</summary>
+          <p>
+            Copper is assumed. Fridge, pump and solar runs can use ordinary leisure cable. An inverter
               battery feed assumes thick flexible copper battery or welding-style cable, not thin chassis
               or thinwall cable. Those thin cables cannot carry inverter amps.
-            </dd>
-          </div>
-          <div>
-            <dt>What are ANL, MEGA and MIDI fuses?</dt>
-            <dd>
-              They are larger DC fuses used on fat cables, often next to the battery on an inverter feed.
+          </p>
+        </details>
+        <details>
+          <summary>What are ANL, MEGA and MIDI fuses?</summary>
+          <p>
+            They are larger DC fuses used on fat cables, often next to the battery on an inverter feed.
               A blade fuse is for smaller runs such as a fridge or pump. The amp figure matters more than
               the name. This page does not pick a fuse brand.
-            </dd>
-          </div>
-          <div>
-            <dt>Why not pick a thinner cable to save money?</dt>
-            <dd>
-              A thin cable runs hot and wastes power. Lights can dim, a fridge can cut out, and in a bad
+          </p>
+        </details>
+        <details>
+          <summary>Why not pick a thinner cable to save money?</summary>
+          <p>
+            A thin cable runs hot and wastes power. Lights can dim, a fridge can cut out, and in a bad
               case the cable can melt. Round up to the next size you can buy. Cable is cheaper than a fire
               or a ruined weekend.
-            </dd>
-          </div>
-          <div>
-            <dt>Should I type amps or watts?</dt>
-            <dd>
-              Either. Watts divided by volts gives amps. For solar, the honest figure is often the current
+          </p>
+        </details>
+        <details>
+          <summary>Should I type amps or watts?</summary>
+          <p>
+            Either. Watts divided by volts gives amps. For solar, the honest figure is often the current
               on the panel or controller label, not watts divided by 12&nbsp;V. You can type that current
               instead.
-            </dd>
-          </div>
-          <div>
-            <dt>Can I use the Inverter watts as a starting point?</dt>
-            <dd>
-              Yes. The Inverter DC feed preset uses inverter AC watts divided by battery volts — the
+          </p>
+        </details>
+        <details>
+          <summary>Can I use the Inverter watts as a starting point?</summary>
+          <p>
+            Yes. The Inverter DC feed preset uses inverter AC watts divided by battery volts — the
               usual cable-chart method. It does not also add inverter waste on top. You can always type
               a different figure.
-            </dd>
-          </div>
-          <div>
-            <dt>Is this safe to use as an installation guide?</dt>
-            <dd>
-              No. This is a planning estimate only. It is not an electrical design, installation
+          </p>
+        </details>
+        <details>
+          <summary>Is this safe to use as an installation guide?</summary>
+          <p>
+            No. This is a planning estimate only. It is not an electrical design, installation
               certificate, or a claim of ISO or ABYC compliance. Cable type, temperature, how the cable
               is run, and the fuse holder all matter. Use a qualified installer for safety-critical work.
-            </dd>
-          </div>
-        </dl>
+          </p>
+        </details>
       </section>
 
       <aside class="disclaimer" aria-label="Disclaimer">
