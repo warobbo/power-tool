@@ -15,8 +15,8 @@
     <link rel="icon" href="assets/favicon-32.png?v=20260911a" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260911a" sizes="180x180">
     <link rel="icon" href="assets/icon-512.png?v=20260911a" type="image/png" sizes="512x512">
-    <!-- ASSET_VERSION=20260911a — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260911a">
+    <!-- ASSET_VERSION=20260911c — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260911c">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -226,89 +226,87 @@
 
       <section class="help-card faq-card no-print" aria-labelledby="faq-title">
         <h2 id="faq-title">FAQ</h2>
-        <dl class="faq-list">
-          <div>
-            <dt>What are peak sun hours?</dt>
-            <dd>
-              Peak sun hours are not clock hours of daylight. They are the equivalent hours of strong midday
+        <details>
+          <summary>What are peak sun hours?</summary>
+          <p>
+            Peak sun hours are not clock hours of daylight. They are the equivalent hours of strong midday
               sun that produce the same energy as a whole day. A dull UK day can have many daylight hours but
               only one or two peak sun hours.
-            </dd>
-          </div>
-          <div>
-            <dt>Why is winter UK solar so low?</dt>
-            <dd>
-              The sun is low, days are short, and cloud is common. Southern England in November to February
+          </p>
+        </details>
+        <details>
+          <summary>Why is winter UK solar so low?</summary>
+          <p>
+            The sun is low, days are short, and cloud is common. Southern England in November to February
               is often around one peak sun hour. Scotland and the north are lower still. Winter camping usually
               needs a bigger array, more battery days, or hook-up.
-            </dd>
-          </div>
-          <div>
-            <dt>MPPT or PWM — does it change this number?</dt>
-            <dd>
-              This page uses one loss figure for dirt, angle, controller and cable. An MPPT controller usually
+          </p>
+        </details>
+        <details>
+          <summary>MPPT or PWM — does it change this number?</summary>
+          <p>
+            This page uses one loss figure for dirt, angle, controller and cable. An MPPT controller usually
               wastes less than PWM, especially in cold or poor light. If you know you will use PWM, raise the
               losses a little. The watt figure is still only a planning size.
-            </dd>
-          </div>
-          <div>
-            <dt>Will these panels fit on my roof?</dt>
-            <dd>
-              This calculator does not measure roof space. A typical rigid 100&nbsp;W panel is about
+          </p>
+        </details>
+        <details>
+          <summary>Will these panels fit on my roof?</summary>
+          <p>
+            This calculator does not measure roof space. A typical rigid 100&nbsp;W panel is about
               1.2&nbsp;m by 0.55&nbsp;m; 200&nbsp;W and 400&nbsp;W panels are larger. Hatches, vents, aerials
               and walkways steal space. Use the panel counts as a shopping hint, then check the actual roof.
-            </dd>
-          </div>
-          <div>
-            <dt>Flexible or rigid panels?</dt>
-            <dd>
-              Rigid glass panels usually last longer and stay cooler. Flexible panels can suit a curved roof
+          </p>
+        </details>
+        <details>
+          <summary>Flexible or rigid panels?</summary>
+          <p>
+            Rigid glass panels usually last longer and stay cooler. Flexible panels can suit a curved roof
               or a hire van where you must not drill, but they often run hotter and wear sooner. The watt size
               here is the same either way — pick the type that fits the roof and how long you will keep the van.
-            </dd>
-          </div>
-          <div>
-            <dt>Does charging while driving replace solar?</dt>
-            <dd>
-              A vehicle charger only works while the engine is running, and many vans only put a modest charge
+          </p>
+        </details>
+        <details>
+          <summary>Does charging while driving replace solar?</summary>
+          <p>
+            A vehicle charger only works while the engine is running, and many vans only put a modest charge
               into the leisure battery. It helps on travel days. It will not cover a parked weekend the way
               solar can. Plan solar for the days you stay put; treat driving charge as a bonus.
-            </dd>
-          </div>
-          <div>
-            <dt>Does this replace battery sizing?</dt>
-            <dd>
-              No. Solar puts energy in during the day. The leisure battery covers the night and dull spells.
+          </p>
+        </details>
+        <details>
+          <summary>Does this replace battery sizing?</summary>
+          <p>
+            No. Solar puts energy in during the day. The leisure battery covers the night and dull spells.
               Size the battery for the days you want to last without charging, then size solar to put that
               daily use back. Use both tools. They share the same daily watt-hours on this device.
-            </dd>
-          </div>
-          <div>
-            <dt>I am on hook-up most nights — do I still need this much solar?</dt>
-            <dd>
-              If you plug in most nights, you can plan a smaller array or skip solar. Use this page for the
+          </p>
+        </details>
+        <details>
+          <summary>I am on hook-up most nights — do I still need this much solar?</summary>
+          <p>
+            If you plug in most nights, you can plan a smaller array or skip solar. Use this page for the
               nights you stay off-grid. A small panel can still top phones and a fridge on a sunny day, but
               hook-up is doing the heavy charging.
-            </dd>
-          </div>
-          <div>
-            <dt>What do the losses cover?</dt>
-            <dd>
-              The default 25% is a simple allowance for dirt, a less-than-ideal roof angle, the solar
+          </p>
+        </details>
+        <details>
+          <summary>What do the losses cover?</summary>
+          <p>
+            The default 25% is a simple allowance for dirt, a less-than-ideal roof angle, the solar
               controller, and cable losses. It is not a lab measurement. Raise it if the roof is shaded or
               flat in winter; lower it a little if panels are clean, well aimed, and on an MPPT controller.
-            </dd>
-          </div>
-          <div>
-            <dt>Should I buy the exact watt figure?</dt>
-            <dd>
-              Treat it as a planning size, then round up to panels you can actually buy and fit. Weather,
+          </p>
+        </details>
+        <details>
+          <summary>Should I buy the exact watt figure?</summary>
+          <p>
+            Treat it as a planning size, then round up to panels you can actually buy and fit. Weather,
               shade, fridge run-time and roof angle all change the real figure. The 100&nbsp;W, 200&nbsp;W
               and 400&nbsp;W counts are examples only — not a shop. Leave a margin and use a qualified
               installer for safety-critical work.
-            </dd>
-          </div>
-        </dl>
+          </p>
+        </details>
       </section>
 
       <aside class="disclaimer" aria-label="Disclaimer">
