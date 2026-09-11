@@ -72,6 +72,26 @@ body {
   padding: 1.25rem 0 0.75rem;
 }
 
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 0.1rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-brand img {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+}
+
+.site-brand .eyebrow {
+  margin: 0;
+}
+
 .eyebrow {
   margin: 0 0 0.35rem;
   color: var(--accent);
@@ -427,6 +447,7 @@ body {
 .icon-btn:focus-visible,
 .add-btn:focus-visible,
 .print-btn:focus-visible,
+.site-brand:focus-visible,
 .tool-nav a:focus-visible,
 .text-btn:focus-visible,
 input:focus-visible {
