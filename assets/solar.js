@@ -149,7 +149,7 @@
         '<button type="button" class="text-btn" data-action="use-manual">Enter a different figure</button>'
       );
     }
-    actions.push('<a class="text-btn" href="index.html">Open Daily Power</a>');
+    actions.push('<a class="text-btn" href="/">Open Daily Power</a>');
     els.dailyActions.innerHTML = actions.join("");
   }
 
