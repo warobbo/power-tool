@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 Disallow:
 
-# When the live domain is known, add a Sitemap line pointing at /sitemap.xml
-# on that domain. Do not use a placeholder host.
+Sitemap: https://motorhomepower.co.uk/sitemap.xml
