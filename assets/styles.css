@@ -667,9 +667,19 @@ input:focus-visible {
 .help-grid,
 .faq-card,
 .disclaimer,
-.next-tool {
+.next-tool,
+.guides-strip {
   position: relative;
   z-index: 1;
+}
+
+.guides-strip {
+  margin: 1rem 0 0;
+}
+
+.guides-strip p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
 }
 
 .help-grid {
@@ -776,6 +786,19 @@ input:focus-visible {
 
 .site-footer p {
   margin: 0.35rem 0 0;
+}
+
+.site-footer .tool-nav + .tool-nav {
+  margin-top: 0.55rem;
+}
+
+.footer-legal {
+  margin: 0.55rem 0 0;
+}
+
+.footer-legal a {
+  color: inherit;
+  text-underline-offset: 0.15em;
 }
 
 .rotate-gate {
