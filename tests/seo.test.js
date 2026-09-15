@@ -91,6 +91,33 @@ test("homepage og:image uses the public icon PNG", function () {
   assert.ok(fs.existsSync(path.join(root, "assets", "icon-512.png")));
 });
 
+test("logo and favicon SVG use pine #1e4f43, not the old green", function () {
+  var logo = load("assets/logo.svg");
+  var favicon = load("assets/favicon.svg");
+  assert.ok(/#1e4f43/i.test(logo), "logo.svg should use pine #1e4f43");
+  assert.ok(/#1e4f43/i.test(favicon), "favicon.svg should use pine #1e4f43");
+  assert.ok(!/#2f5d46/i.test(logo + favicon), "must not keep old green #2f5d46");
+});
+
+pages.forEach(function (file) {
+  var html = load(file);
+  test(file + " icon and logo links are cache-busted", function () {
+    assert.ok(
+      /assets\/favicon\.svg\?v=/.test(html),
+      "missing favicon.svg?v="
+    );
+    assert.ok(
+      /assets\/logo\.svg\?v=/.test(html),
+      "missing logo.svg?v="
+    );
+    assert.ok(
+      /assets\/icon-512\.png\?v=/.test(html),
+      "missing icon-512.png?v="
+    );
+    assert.ok(!/\?v=20260911[ab]/.test(html), "stale 20260911 icon cache-bust");
+  });
+});
+
 test("homepage og:title and og:description are sensible", function () {
   var html = load("index.html");
   var title = attr(html, "meta", "og:title");
