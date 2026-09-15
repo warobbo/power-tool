@@ -18,8 +18,54 @@
     <link rel="icon" href="assets/favicon-32.png?v=20260911a" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260911a" sizes="180x180">
     <link rel="icon" href="assets/icon-512.png?v=20260911a" type="image/png" sizes="512x512">
-    <!-- ASSET_VERSION=20260912a — bump this query on CSS/JS below to force-refresh cached assets. -->
-    <link rel="stylesheet" href="assets/styles.css?v=20260912a">
+    <!-- ASSET_VERSION=20260915c — bump this query on CSS/JS below to force-refresh cached assets. -->
+    <link rel="stylesheet" href="assets/styles.css?v=20260915c">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "Campervan Daily Power Calculator",
+          "alternateName": "Daily power consumption calculator",
+          "url": "https://motorhomepower.co.uk/",
+          "description": "Work out campervan and motorhome daily power use in Wh and Ah at 12V and 24V. Free UK/EU planning estimate for fridge, lights, heater and more.",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Any",
+          "browserRequirements": "Requires JavaScript. Works in modern mobile and desktop browsers.",
+          "inLanguage": "en-GB",
+          "isAccessibleForFree": true,
+          "author": {
+            "@type": "Person",
+            "name": "Wayne Robinson"
+          },
+          "featureList": [
+            "Daily watt-hours from appliances and hours of use",
+            "Amp-hours at 12 V and 24 V",
+            "Optional inverter-loss allowance",
+            "Figures stay on this device"
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Motorhome Tools",
+              "item": "https://motorhometools.co.uk/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Daily Power",
+              "item": "https://motorhomepower.co.uk/"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <a class="skip-link no-print" href="#calculator">Skip to calculator</a>
@@ -188,13 +234,31 @@
         <a class="add-btn next-tool-link" href="inverter.html">Open Inverter</a>
         <a class="add-btn next-tool-link" href="wire.html">Open Wire &amp; fuse</a>
       </section>
+
+      <section class="help-card guides-strip no-print" id="guides" aria-labelledby="guides-title">
+        <h2 id="guides-title">Guides</h2>
+        <p>Short reads on Motorhome Tools. They do not change the numbers on this calculator.</p>
+        <nav class="tool-nav" aria-label="Guides">
+          <a href="https://motorhometools.co.uk/guides/daily-power-budget.html">Daily power</a>
+          <a href="https://motorhometools.co.uk/guides/battery-size-plain-english.html">Battery</a>
+          <a href="https://motorhometools.co.uk/guides/solar-reality-check.html">Solar</a>
+          <a href="https://motorhometools.co.uk/guides/">All guides</a>
+        </nav>
+      </section>
     </main>
 
     <footer class="site-footer no-print">
       <nav class="tool-nav hub-home" aria-label="Motorhome Tools">
         <a href="https://motorhometools.co.uk/">Home</a>
       </nav>
+      <nav class="tool-nav" aria-label="Guides">
+        <a href="https://motorhometools.co.uk/guides/daily-power-budget.html">Daily power</a>
+        <a href="https://motorhometools.co.uk/guides/battery-size-plain-english.html">Battery</a>
+        <a href="https://motorhometools.co.uk/guides/solar-reality-check.html">Solar</a>
+        <a href="https://motorhometools.co.uk/guides/">All guides</a>
+      </nav>
       <p>Power Tools for Wayne Robinson. Daily Power, Battery, Solar, Inverter, and Wire &amp; fuse. No accounts and no server-side data.</p>
+      <p class="footer-legal">Full legal pages live on the tools home site: <a href="https://motorhometools.co.uk/privacy.html">Privacy</a>, <a href="https://motorhometools.co.uk/cookies.html">Cookies</a>, <a href="https://motorhometools.co.uk/disclaimer.html">Disclaimer</a>.</p>
     </footer>
 
     <div
