@@ -3,6 +3,14 @@ services:
     runtime: static
     name: power-tools
     staticPublishPath: .
+    routes:
+      - type: redirect
+        source: /index.html
+        destination: /
+    headers:
+      - path: /index.html
+        name: Link
+        value: <https://motorhomepower.co.uk/>; rel="canonical"
     envVars:
       - key: SKIP_INSTALL_DEPS
         value: "true"
