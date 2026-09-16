@@ -99,6 +99,16 @@ test("logo and favicon SVG use pine #1e4f43, not the old green", function () {
   assert.ok(!/#2f5d46/i.test(logo + favicon), "must not keep old green #2f5d46");
 });
 
+test("nav glyphs exist and use pine #1e4f43", function () {
+  ["daily", "battery", "solar", "inverter", "wire"].forEach(function (name) {
+    var file = "assets/glyph-" + name + ".svg";
+    assert.ok(fs.existsSync(path.join(root, file)), "missing " + file);
+    var svg = load(file);
+    assert.ok(/#1e4f43/i.test(svg), file + " should use pine #1e4f43");
+    assert.ok(/#fff|#ffffff/i.test(svg), file + " should include a white glyph");
+  });
+});
+
 pages.forEach(function (file) {
   var html = load(file);
   test(file + " icon and logo links are cache-busted", function () {
@@ -115,6 +125,28 @@ pages.forEach(function (file) {
       "missing icon-512.png?v="
     );
     assert.ok(!/\?v=20260911[ab]/.test(html), "stale 20260911 icon cache-bust");
+    assert.ok(
+      /assets\/styles\.css\?v=/.test(html),
+      "missing styles.css?v="
+    );
+    assert.ok(
+      /assets\/glyph-daily\.svg\?v=/.test(html),
+      "missing glyph-daily.svg?v="
+    );
+  });
+
+  test(file + " Power Tools nav has glyphs before each label", function () {
+    var nav = html.match(/<nav class="tool-nav no-print" aria-label="Power Tools">[\s\S]*?<\/nav>/);
+    assert.ok(nav, "missing Power Tools nav");
+    assert.ok(/glyph-daily\.svg/.test(nav[0]), "Daily Power missing glyph");
+    assert.ok(/glyph-battery\.svg/.test(nav[0]), "Battery missing glyph");
+    assert.ok(/glyph-solar\.svg/.test(nav[0]), "Solar missing glyph");
+    assert.ok(/glyph-inverter\.svg/.test(nav[0]), "Inverter missing glyph");
+    assert.ok(/glyph-wire\.svg/.test(nav[0]), "Wire missing glyph");
+    assert.ok(
+      /<img class="tool-glyph"[^>]*width="24"[^>]*height="24"/.test(nav[0]),
+      "nav glyphs should be 24px"
+    );
   });
 });
 
