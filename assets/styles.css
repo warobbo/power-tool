@@ -152,6 +152,19 @@ body {
   cursor: pointer;
 }
 
+.tool-nav a {
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+}
+
+.tool-glyph {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  border-radius: 0.4rem;
+}
+
 .tool-nav a[aria-current="page"],
 .tool-nav a.is-current {
   background: var(--accent);
@@ -213,11 +226,18 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.45rem;
   width: auto;
   min-width: 12rem;
   margin-top: 0.85rem;
   margin-right: 0.55rem;
   text-decoration: none;
+}
+
+.next-tool-link .tool-glyph {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-basis: 1.75rem;
 }
 
 /* Phones: keep document order totals → appliances → breakdown. */
