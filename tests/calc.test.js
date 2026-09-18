@@ -1120,6 +1120,16 @@ test("parseDailyPowerPrefillQuery accepts 0/1/true/false and field-id aliases", 
   assert.strictEqual(fieldIds.watts, 640);
 });
 
+function enabledIds(dailyPower) {
+  return dailyPower.appliances
+    .filter(function (item) {
+      return item.enabled;
+    })
+    .map(function (item) {
+      return item.id;
+    });
+}
+
 test("applyDailyPowerPrefill enables Wave 3 at 640 W for asked hours", function () {
   var daily = defaults.createDefaultProfile().dailyPower;
   var fridgeHours = daily.appliances.find(function (item) {
@@ -1136,14 +1146,104 @@ test("applyDailyPowerPrefill enables Wave 3 at 640 W for asked hours", function 
   assert.strictEqual(wave3.hours, 4);
   assert.strictEqual(calc.applianceWh(wave3), 2560);
   assert.strictEqual(next.activePreset, "");
+  assert.strictEqual(next.askShareFocus, "wave3");
 
   var fridge = next.appliances.find(function (item) {
     return item.id === "fridge";
   });
   assert.strictEqual(fridge.hours, fridgeHours);
+  assert.strictEqual(fridge.enabled, false);
   assert.strictEqual(daily.appliances.find(function (item) {
     return item.id === "wave3";
   }).enabled, false);
+});
+
+test("Ask ?wave3=1 isolates Wave 3 so only that row is enabled", function () {
+  var daily = defaults.createDefaultProfile().dailyPower;
+  daily.appliances.push({
+    id: "custom-ask",
+    name: "Custom load",
+    watts: 100,
+    hours: 2,
+    qty: 1,
+    enabled: true,
+    custom: true,
+  });
+  var starterEnabled = enabledIds(daily);
+  assert.ok(starterEnabled.indexOf("fridge") !== -1);
+  assert.ok(starterEnabled.indexOf("fan") !== -1);
+  assert.ok(starterEnabled.indexOf("custom-ask") !== -1);
+  assert.ok(starterEnabled.indexOf("wave3") === -1);
+
+  var next = calc.applyDailyPowerPrefill(daily, "?wave3=1");
+  assert.deepStrictEqual(enabledIds(next), ["wave3"]);
+  var wave3 = next.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.strictEqual(wave3.watts, 640);
+  assert.strictEqual(wave3.hours, 0);
+  assert.strictEqual(calc.calcTotals(next).totalWh, 0);
+  assert.strictEqual(next.askShareFocus, "wave3");
+  assert.strictEqual(calc.isWave3AskHandoff("?wave3=1"), true);
+  assert.strictEqual(calc.isWave3AskHandoff("?wave3=true"), true);
+});
+
+test("Ask ?wave3=1&hours=4 totals 2560 Wh from Wave 3 alone", function () {
+  var daily = defaults.createDefaultProfile().dailyPower;
+  var bareWh = calc.calcTotals(daily).totalWh;
+  assert.ok(bareWh > 800 && bareWh < 1100);
+
+  var next = calc.applyDailyPowerPrefill(daily, "?wave3=1&hours=4");
+  assert.deepStrictEqual(enabledIds(next), ["wave3"]);
+  var totals = calc.calcTotals(next);
+  assert.strictEqual(totals.totalWh, 2560);
+  assert.strictEqual(totals.loadWh, 2560);
+  assert.strictEqual(
+    totals.items.find(function (item) {
+      return item.id === "wave3";
+    }).wh,
+    2560
+  );
+  assert.ok(
+    totals.items.every(function (item) {
+      return item.id === "wave3" || item.wh === 0;
+    })
+  );
+});
+
+test("bare defaults and wave3-absent prefill do not mass-disable", function () {
+  var daily = defaults.createDefaultProfile().dailyPower;
+  var bareIds = enabledIds(daily);
+  assert.ok(bareIds.indexOf("fridge") !== -1);
+  assert.ok(bareIds.indexOf("wave3") === -1);
+  assert.ok(calc.calcTotals(daily).totalWh > 800);
+
+  assert.strictEqual(calc.applyDailyPowerPrefill(daily, ""), null);
+  assert.strictEqual(calc.applyDailyPowerPrefill(daily, "/"), null);
+  assert.strictEqual(calc.isWave3AskHandoff(""), false);
+  assert.strictEqual(calc.isWave3AskHandoff("/"), false);
+  assert.strictEqual(calc.isWave3AskHandoff("?hours=4"), false);
+  assert.strictEqual(calc.isWave3AskHandoff("?wave3=0"), false);
+  assert.strictEqual(calc.isWave3AskHandoff("?wave3=false"), false);
+
+  var hoursOnly = calc.applyDailyPowerPrefill(daily, "?hours=4");
+  assert.deepStrictEqual(enabledIds(hoursOnly), bareIds);
+  assert.strictEqual(
+    hoursOnly.appliances.find(function (item) {
+      return item.id === "wave3";
+    }).hours,
+    4
+  );
+  assert.strictEqual(hoursOnly.askShareFocus, undefined);
+
+  var off = calc.applyDailyPowerPrefill(daily, "?wave3=0");
+  assert.deepStrictEqual(enabledIds(off), bareIds);
+  assert.strictEqual(
+    off.appliances.find(function (item) {
+      return item.id === "wave3";
+    }).enabled,
+    false
+  );
 });
 
 test("applyDailyPowerPrefill does not invent hours or watts", function () {

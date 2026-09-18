@@ -551,9 +551,16 @@
    *   640 W DC (EcoFlow UK rated cooling electrical draw), hours 0,
    *   enabled false. Bare page totals do not include air-con.
    *
-   * Example Ask: /?wave3=1&hours=4 → enable Wave 3 at 640 W for 4 h.
+   * Ask/share handoff (`wave3=1` or `true`): enable Wave 3 and disable
+   * every other Daily Power appliance (starters + customs) so totals
+   * are Wave 3 only. Missing hours stay 0 (0 Wh). Do not persist that
+   * focused view on first paint — the visitor’s saved full kit must
+   * survive until they edit. `wave3` absent: no mass-disable.
+   *
+   * Example Ask: /?wave3=1&hours=4 → Wave 3 only, 640 W × 4 h = 2560 Wh.
    * Parse with parseDailyPowerPrefillQuery(search).
    * Apply with applyDailyPowerPrefill(dailyPower, search).
+   * Detect the handoff with isWave3AskHandoff(search).
    */
   var WAVE3_ID = "wave3";
   var DAILY_POWER_PREFILL_KEYS = ["wave3", "hours", "watts", "hours-wave3", "watts-wave3"];
@@ -667,6 +674,11 @@
     };
   }
 
+  function isWave3AskHandoff(search) {
+    var patch = parseDailyPowerPrefillQuery(search);
+    return !!(patch && patch.enabled === true);
+  }
+
   function applyDailyPowerPrefill(dailyPower, search) {
     var patch = parseDailyPowerPrefillQuery(search);
     if (!patch) return null;
@@ -682,6 +694,14 @@
     if (patch.hours != null) target.hours = patch.hours;
     if (patch.watts != null) target.watts = patch.watts;
 
+    // Ask/share Wave 3 handoff: isolate Wave 3 so totals are air-con only.
+    if (patch.enabled === true) {
+      next.appliances.forEach(function (item) {
+        if (item.id !== WAVE3_ID) item.enabled = false;
+      });
+      next.askShareFocus = "wave3";
+    }
+
     next.appliances = next.appliances.map(normaliseAppliance);
     next.activePreset = "";
     return next;
@@ -690,6 +710,7 @@
   return {
     WAVE3_ID: WAVE3_ID,
     parseDailyPowerPrefillQuery: parseDailyPowerPrefillQuery,
+    isWave3AskHandoff: isWave3AskHandoff,
     applyDailyPowerPrefill: applyDailyPowerPrefill,
     DEFAULT_INVERTER_LOSS_PCT: DEFAULT_INVERTER_LOSS_PCT,
     VOLTAGE_12: VOLTAGE_12,

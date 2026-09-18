@@ -7,6 +7,9 @@
 
   var profile = storage.loadProfile();
   // URL prefill (Ask / share links) patches dailyPower after defaults.
+  // Wave 3 Ask handoff is a focused overlay: do not persist() it on first
+  // paint, or a visitor’s saved full kit would be overwritten as Wave 3 only.
+  var askWave3Focus = calc.isWave3AskHandoff(window.location.search);
   var prefilled = calc.applyDailyPowerPrefill(profile.dailyPower, window.location.search);
   if (prefilled) {
     profile.dailyPower = prefilled;
@@ -372,6 +375,12 @@
 
   renderPresetButtons();
   render();
-  persist();
+  if (askWave3Focus) {
+    if (els.saveState) {
+      els.saveState.textContent = "Ask share · Wave 3 only · not saved until you edit";
+    }
+  } else {
+    persist();
+  }
   if (window.PowerUI) window.PowerUI.setupRotateGate();
 })();
