@@ -79,6 +79,57 @@ test("starter list includes kettle and 1-ring induction hob", function () {
   assert.ok(defaults.STARTER_IDS.indexOf("induction-hob") !== -1);
 });
 
+test("starter list includes EcoFlow Wave 3 at 640 W, hours 0, off", function () {
+  var appliances = defaults.starterSet();
+  var wave3 = appliances.find(function (item) {
+    return item.id === defaults.WAVE3_ID;
+  });
+
+  assert.ok(wave3, "Wave 3 is in the starter list");
+  assert.strictEqual(wave3.id, "wave3");
+  assert.ok(/EcoFlow/i.test(wave3.name), "name cites EcoFlow");
+  assert.ok(/Wave 3/i.test(wave3.name), "name cites Wave 3");
+  assert.strictEqual(wave3.watts, 640);
+  assert.strictEqual(wave3.watts, defaults.WAVE3_WATTS);
+  assert.strictEqual(wave3.hours, 0);
+  assert.strictEqual(wave3.qty, 1);
+  assert.strictEqual(wave3.enabled, false);
+  assert.notStrictEqual(wave3.watts, 1800);
+  assert.notStrictEqual(wave3.watts, 6100);
+  assert.ok(defaults.STARTER_IDS.indexOf("wave3") !== -1);
+  assert.strictEqual(calc.applianceWh(wave3), 0);
+});
+
+test("defaults and presets do not invent Wave 3 hours", function () {
+  var profile = defaults.createDefaultProfile();
+  var wave3 = profile.dailyPower.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.ok(wave3);
+  assert.strictEqual(wave3.hours, 0);
+  assert.strictEqual(wave3.enabled, false);
+  assert.strictEqual(wave3.watts, 640);
+
+  var bareTotals = calc.calcTotals(profile.dailyPower);
+  var withoutWave3 = {
+    inverterLossEnabled: profile.dailyPower.inverterLossEnabled,
+    appliances: profile.dailyPower.appliances.filter(function (item) {
+      return item.id !== "wave3";
+    }),
+  };
+  assert.strictEqual(bareTotals.totalWh, calc.calcTotals(withoutWave3).totalWh);
+
+  ["defaults", "weekend", "family", "fulltime"].forEach(function (id) {
+    var presetWave3 = defaults.PRESETS[id].appliances.find(function (item) {
+      return item.id === "wave3";
+    });
+    assert.ok(presetWave3, id + " includes Wave 3");
+    assert.strictEqual(presetWave3.hours, 0, id + " must not invent Wave 3 hours");
+    assert.strictEqual(presetWave3.enabled, false, id + " leaves Wave 3 off");
+    assert.strictEqual(presetWave3.watts, 640);
+  });
+});
+
 test("weekend leaves kettle and hob off; full-time uses them", function () {
   var weekendKettle = defaults.PRESETS.weekend.appliances.find(function (item) {
     return item.id === "kettle";
@@ -1034,6 +1085,125 @@ test("applying a daily-power preset keeps wiring settings", function () {
   assert.strictEqual(weekend.wiring.dropPct, 10);
   assert.strictEqual(weekend.wiring.useInverterSuggestion, false);
   assert.strictEqual(weekend.dailyPower.activePreset, "weekend");
+});
+
+test("parseDailyPowerPrefillQuery reads the Ask Wave 3 contract", function () {
+  var patch = calc.parseDailyPowerPrefillQuery("/?wave3=1&hours=4");
+  assert.ok(patch);
+  assert.strictEqual(patch.enabled, true);
+  assert.strictEqual(patch.hours, 4);
+  assert.strictEqual(patch.watts, undefined);
+});
+
+test("parseDailyPowerPrefillQuery ignores unknown keys and invalid values", function () {
+  assert.strictEqual(calc.parseDailyPowerPrefillQuery(""), null);
+  assert.strictEqual(calc.parseDailyPowerPrefillQuery("?foo=bar&utm_source=ask"), null);
+  var patch = calc.parseDailyPowerPrefillQuery(
+    "?wave3=maybe&hours=nope&watts=abc&hours-wave3=4&utm_campaign=ask"
+  );
+  assert.ok(patch);
+  assert.strictEqual(patch.hours, 4);
+  assert.strictEqual(patch.enabled, undefined);
+  assert.strictEqual(patch.watts, undefined);
+});
+
+test("parseDailyPowerPrefillQuery accepts 0/1/true/false and field-id aliases", function () {
+  var on = calc.parseDailyPowerPrefillQuery("?wave3=true&hours-wave3=3&watts-wave3=640");
+  assert.strictEqual(on.enabled, true);
+  assert.strictEqual(on.hours, 3);
+  assert.strictEqual(on.watts, 640);
+  var off = calc.parseDailyPowerPrefillQuery("?wave3=0&hours=0");
+  assert.strictEqual(off.enabled, false);
+  assert.strictEqual(off.hours, 0);
+  var fieldIds = calc.parseDailyPowerPrefillQuery("?hours=9&hours-wave3=2&watts=100&watts-wave3=640");
+  assert.strictEqual(fieldIds.hours, 2);
+  assert.strictEqual(fieldIds.watts, 640);
+});
+
+test("applyDailyPowerPrefill enables Wave 3 at 640 W for asked hours", function () {
+  var daily = defaults.createDefaultProfile().dailyPower;
+  var fridgeHours = daily.appliances.find(function (item) {
+    return item.id === "fridge";
+  }).hours;
+
+  var next = calc.applyDailyPowerPrefill(daily, "?wave3=1&hours=4");
+  assert.ok(next);
+  var wave3 = next.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.strictEqual(wave3.enabled, true);
+  assert.strictEqual(wave3.watts, 640);
+  assert.strictEqual(wave3.hours, 4);
+  assert.strictEqual(calc.applianceWh(wave3), 2560);
+  assert.strictEqual(next.activePreset, "");
+
+  var fridge = next.appliances.find(function (item) {
+    return item.id === "fridge";
+  });
+  assert.strictEqual(fridge.hours, fridgeHours);
+  assert.strictEqual(daily.appliances.find(function (item) {
+    return item.id === "wave3";
+  }).enabled, false);
+});
+
+test("applyDailyPowerPrefill does not invent hours or watts", function () {
+  var daily = defaults.createDefaultProfile().dailyPower;
+  var enabledOnly = calc.applyDailyPowerPrefill(daily, "?wave3=1");
+  var wave3 = enabledOnly.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.strictEqual(wave3.enabled, true);
+  assert.strictEqual(wave3.hours, 0);
+  assert.strictEqual(wave3.watts, 640);
+  assert.strictEqual(calc.applianceWh(wave3), 0);
+
+  var badWatts = calc.applyDailyPowerPrefill(daily, "?wave3=1&hours=4&watts=nope");
+  var patched = badWatts.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.strictEqual(patched.watts, 640);
+  assert.strictEqual(patched.hours, 4);
+
+  assert.strictEqual(calc.applyDailyPowerPrefill(daily, ""), null);
+  assert.strictEqual(calc.applyDailyPowerPrefill(daily, "?foo=1&hours=abc&wave3=maybe"), null);
+});
+
+test("applyDailyPowerPrefill watts override only when valid", function () {
+  var daily = defaults.createDefaultProfile().dailyPower;
+  var next = calc.applyDailyPowerPrefill(daily, "?wave3=1&hours=2&watts=500");
+  var wave3 = next.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.strictEqual(wave3.watts, 500);
+  assert.strictEqual(wave3.hours, 2);
+  assert.strictEqual(calc.applianceWh(wave3), 1000);
+
+  var clamped = calc.applyDailyPowerPrefill(daily, "?watts-wave3=30000&hours=1");
+  assert.strictEqual(
+    clamped.appliances.find(function (item) {
+      return item.id === "wave3";
+    }).watts,
+    20000
+  );
+});
+
+test("old profiles merge Wave 3 at 640 W with hours 0 and off", function () {
+  var clean = storage.sanitiseProfile({
+    version: 1,
+    dailyPower: {
+      appliances: [
+        { id: "fridge", name: "Compressor fridge", watts: 55, hours: 14, qty: 1, enabled: true },
+      ],
+    },
+  });
+  var wave3 = clean.dailyPower.appliances.find(function (item) {
+    return item.id === "wave3";
+  });
+  assert.ok(wave3);
+  assert.strictEqual(wave3.watts, 640);
+  assert.strictEqual(wave3.hours, 0);
+  assert.strictEqual(wave3.enabled, false);
+  assert.ok(/EcoFlow/i.test(wave3.name));
 });
 
 if (failed) {

@@ -532,7 +532,165 @@
     };
   }
 
+  /**
+   * Daily Power URL prefill contract (Ask / share links).
+   *
+   * Recognised query params — unknown keys are ignored. A param only
+   * overrides the Wave 3 starter row when it is present and valid.
+   * Apply the patch onto dailyPower after defaults, then
+   * normaliseAppliance; do not invent watts or hours.
+   *
+   *   wave3     0 | 1 | true | false   enable the EcoFlow Wave 3 row
+   *             (aliases: the appliance id as a flag)
+   *   hours     number 0–24            Wave 3 hours / day
+   *             (aliases: hours-wave3, matching the Hours / day field id)
+   *   watts     number 0–20000         Wave 3 watts override
+   *             (aliases: watts-wave3, matching the Watts field id)
+   *
+   * Page default for Wave 3 (starterSet / createDefaultProfile):
+   *   640 W DC (EcoFlow UK rated cooling electrical draw), hours 0,
+   *   enabled false. Bare page totals do not include air-con.
+   *
+   * Example Ask: /?wave3=1&hours=4 → enable Wave 3 at 640 W for 4 h.
+   * Parse with parseDailyPowerPrefillQuery(search).
+   * Apply with applyDailyPowerPrefill(dailyPower, search).
+   */
+  var WAVE3_ID = "wave3";
+  var DAILY_POWER_PREFILL_KEYS = ["wave3", "hours", "watts", "hours-wave3", "watts-wave3"];
+
+  function decodeQueryPart(value) {
+    try {
+      return decodeURIComponent(String(value).replace(/\+/g, " "));
+    } catch (err) {
+      return String(value).replace(/\+/g, " ");
+    }
+  }
+
+  function queryParamsFromSearch(input) {
+    if (input == null || input === "") return {};
+    if (typeof input === "object") {
+      if (typeof input.get === "function") {
+        var fromSearch = {};
+        if (typeof input.forEach === "function") {
+          input.forEach(function (value, key) {
+            fromSearch[key] = value;
+          });
+          return fromSearch;
+        }
+        DAILY_POWER_PREFILL_KEYS.forEach(function (key) {
+          if (typeof input.has === "function" && input.has(key)) {
+            fromSearch[key] = input.get(key);
+          }
+        });
+        return fromSearch;
+      }
+      return input;
+    }
+
+    var search = String(input);
+    var qMark = search.indexOf("?");
+    if (qMark >= 0) search = search.slice(qMark + 1);
+    var hash = search.indexOf("#");
+    if (hash >= 0) search = search.slice(0, hash);
+    var out = {};
+    if (!search) return out;
+    search.split("&").forEach(function (pair) {
+      if (!pair) return;
+      var eq = pair.indexOf("=");
+      var rawKey = eq >= 0 ? pair.slice(0, eq) : pair;
+      var rawValue = eq >= 0 ? pair.slice(eq + 1) : "";
+      var key = decodeQueryPart(rawKey);
+      if (key) out[key] = decodeQueryPart(rawValue);
+    });
+    return out;
+  }
+
+  function hasOwnParam(params, key) {
+    return !!(params && Object.prototype.hasOwnProperty.call(params, key));
+  }
+
+  function parseQueryNumber(value) {
+    if (value == null) return undefined;
+    var trimmed = String(value).trim();
+    if (trimmed === "") return undefined;
+    var n = Number(trimmed);
+    return Number.isFinite(n) ? n : undefined;
+  }
+
+  function parseQueryBool(value) {
+    if (value == null) return undefined;
+    var s = String(value).trim().toLowerCase();
+    if (s === "1" || s === "true") return true;
+    if (s === "0" || s === "false") return false;
+    return undefined;
+  }
+
+  function firstPrefillNumber(params, keys) {
+    var i;
+    for (i = 0; i < keys.length; i += 1) {
+      if (!hasOwnParam(params, keys[i])) continue;
+      var parsed = parseQueryNumber(params[keys[i]]);
+      if (parsed != null) return parsed;
+    }
+    return undefined;
+  }
+
+  function parseDailyPowerPrefillQuery(search) {
+    var params = queryParamsFromSearch(search);
+    var patch = {};
+
+    if (hasOwnParam(params, "wave3")) {
+      var enabled = parseQueryBool(params.wave3);
+      if (enabled != null) patch.enabled = enabled;
+    }
+
+    var hours = firstPrefillNumber(params, ["hours-wave3", "hours"]);
+    if (hours != null) patch.hours = hours;
+
+    var watts = firstPrefillNumber(params, ["watts-wave3", "watts"]);
+    if (watts != null) patch.watts = watts;
+
+    return Object.keys(patch).length ? patch : null;
+  }
+
+  function copyDailyPower(raw) {
+    var source = raw && typeof raw === "object" ? raw : {};
+    return {
+      inverterLossEnabled: !!source.inverterLossEnabled,
+      inverterLossPct: source.inverterLossPct,
+      activePreset: source.activePreset || "",
+      appliances: Array.isArray(source.appliances)
+        ? source.appliances.map(function (item) {
+            return Object.assign({}, item);
+          })
+        : [],
+    };
+  }
+
+  function applyDailyPowerPrefill(dailyPower, search) {
+    var patch = parseDailyPowerPrefillQuery(search);
+    if (!patch) return null;
+
+    var next = copyDailyPower(dailyPower);
+    var target = null;
+    next.appliances.forEach(function (item) {
+      if (item.id === WAVE3_ID) target = item;
+    });
+    if (!target) return null;
+
+    if (patch.enabled != null) target.enabled = patch.enabled;
+    if (patch.hours != null) target.hours = patch.hours;
+    if (patch.watts != null) target.watts = patch.watts;
+
+    next.appliances = next.appliances.map(normaliseAppliance);
+    next.activePreset = "";
+    return next;
+  }
+
   return {
+    WAVE3_ID: WAVE3_ID,
+    parseDailyPowerPrefillQuery: parseDailyPowerPrefillQuery,
+    applyDailyPowerPrefill: applyDailyPowerPrefill,
     DEFAULT_INVERTER_LOSS_PCT: DEFAULT_INVERTER_LOSS_PCT,
     VOLTAGE_12: VOLTAGE_12,
     VOLTAGE_24: VOLTAGE_24,

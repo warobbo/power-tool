@@ -6,6 +6,12 @@
   var storage = window.PowerStorage;
 
   var profile = storage.loadProfile();
+  // URL prefill (Ask / share links) patches dailyPower after defaults.
+  var prefilled = calc.applyDailyPowerPrefill(profile.dailyPower, window.location.search);
+  if (prefilled) {
+    profile.dailyPower = prefilled;
+    profile.dailyPower.activePreset = "";
+  }
   var lastSaved = "";
 
   var els = {

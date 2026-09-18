@@ -11,6 +11,10 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
+  var WAVE3_ID = "wave3";
+  // EcoFlow UK Wave 3 rated cooling electrical draw (DC). Not cooling capacity.
+  var WAVE3_WATTS = 640;
+
   var STARTER_IDS = [
     "fridge",
     "lights",
@@ -19,6 +23,7 @@
     "phone",
     "laptop",
     "fan",
+    WAVE3_ID,
     "water-heater",
     "kettle",
     "induction-hob",
@@ -47,6 +52,7 @@
       appliance("phone", "Phone / tablet charge", 10, 2, 2, true),
       appliance("laptop", "Laptop", 60, 2, 1, true),
       appliance("fan", "MaxxFan / roof fan", 24, 3, 1, true),
+      appliance(WAVE3_ID, "EcoFlow Wave 3 portable air-con (cooling)", WAVE3_WATTS, 0, 1, false),
       appliance("water-heater", "Water heater (electric when used)", 1000, 0.25, 1, false),
       appliance("kettle", "Kettle", 1200, 0.15, 1, false),
       appliance("induction-hob", "1-ring induction hob", 1600, 0.4, 1, false),
@@ -431,6 +437,8 @@
   }
 
   return {
+    WAVE3_ID: WAVE3_ID,
+    WAVE3_WATTS: WAVE3_WATTS,
     STARTER_IDS: STARTER_IDS,
     PRESET_ORDER: PRESET_ORDER,
     PRESETS: PRESETS,
