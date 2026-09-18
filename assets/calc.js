@@ -558,9 +558,11 @@
    * survive until they edit. `wave3` absent: no mass-disable.
    *
    * Example Ask: /?wave3=1&hours=4 → Wave 3 only, 640 W × 4 h = 2560 Wh.
+   * Ask can also deep-link the card: /?wave3=1#wave3 or #appliance-wave3.
    * Parse with parseDailyPowerPrefillQuery(search).
    * Apply with applyDailyPowerPrefill(dailyPower, search).
    * Detect the handoff with isWave3AskHandoff(search).
+   * Detect the card fragment with isWave3FocusHash(hash).
    */
   var WAVE3_ID = "wave3";
   var DAILY_POWER_PREFILL_KEYS = ["wave3", "hours", "watts", "hours-wave3", "watts-wave3"];
@@ -679,6 +681,19 @@
     return !!(patch && patch.enabled === true);
   }
 
+  /**
+   * Ask / share fragment for the Wave 3 appliance card.
+   * Matches #wave3 and #appliance-wave3 only — bare / and other hashes
+   * must not trigger the post-render scroll/focus.
+   */
+  function isWave3FocusHash(hash) {
+    var raw = hash == null ? "" : String(hash);
+    var mark = raw.lastIndexOf("#");
+    if (mark >= 0) raw = raw.slice(mark + 1);
+    raw = raw.split("?")[0].split("&")[0].toLowerCase();
+    return raw === "wave3" || raw === "appliance-wave3";
+  }
+
   function applyDailyPowerPrefill(dailyPower, search) {
     var patch = parseDailyPowerPrefillQuery(search);
     if (!patch) return null;
@@ -711,6 +726,7 @@
     WAVE3_ID: WAVE3_ID,
     parseDailyPowerPrefillQuery: parseDailyPowerPrefillQuery,
     isWave3AskHandoff: isWave3AskHandoff,
+    isWave3FocusHash: isWave3FocusHash,
     applyDailyPowerPrefill: applyDailyPowerPrefill,
     DEFAULT_INVERTER_LOSS_PCT: DEFAULT_INVERTER_LOSS_PCT,
     VOLTAGE_12: VOLTAGE_12,

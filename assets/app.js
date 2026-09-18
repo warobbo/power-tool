@@ -195,12 +195,17 @@
         '" aria-label="Remove custom appliance">Remove</button>'
       : "";
 
+    var wave3Anchor = item.id === calc.WAVE3_ID ? ' id="appliance-wave3"' : "";
+
     return (
       '<article class="appliance-card' +
       (item.enabled ? "" : " is-off") +
-      '" data-id="' +
+      '"' +
+      wave3Anchor +
+      ' data-id="' +
       escapeHtml(item.id) +
       '">' +
+      (item.id === calc.WAVE3_ID ? '<span id="wave3" hidden></span>' : "") +
       '<div class="appliance-head">' +
       '<label class="check">' +
       '<input type="checkbox" data-field="enabled" data-id="' +
@@ -373,6 +378,45 @@
     });
   }
 
+  function focusWave3Appliance() {
+    var card =
+      document.getElementById("appliance-wave3") ||
+      document.getElementById("wave3") ||
+      (els.applianceList &&
+        els.applianceList.querySelector('[data-id="' + CSS.escape(calc.WAVE3_ID) + '"]'));
+    if (!card) return;
+
+    if (typeof card.scrollIntoView === "function") {
+      try {
+        card.scrollIntoView({ block: "center", inline: "nearest" });
+      } catch (err) {
+        card.scrollIntoView(true);
+      }
+    }
+
+    var hours = document.getElementById("hours-" + calc.WAVE3_ID);
+    var watts = document.getElementById("watts-" + calc.WAVE3_ID);
+    var input = hours || watts;
+    if (!input || typeof input.focus !== "function") return;
+    try {
+      input.focus({ preventScroll: true });
+    } catch (err) {
+      input.focus();
+    }
+  }
+
+  function scheduleWave3Focus() {
+    if (!askWave3Focus && !calc.isWave3FocusHash(window.location.hash)) return;
+    var run = function () {
+      focusWave3Appliance();
+    };
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(run);
+    } else {
+      setTimeout(run, 0);
+    }
+  }
+
   renderPresetButtons();
   render();
   if (askWave3Focus) {
@@ -382,5 +426,6 @@
   } else {
     persist();
   }
+  scheduleWave3Focus();
   if (window.PowerUI) window.PowerUI.setupRotateGate();
 })();
