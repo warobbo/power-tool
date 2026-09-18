@@ -205,7 +205,6 @@
       ' data-id="' +
       escapeHtml(item.id) +
       '">' +
-      (item.id === calc.WAVE3_ID ? '<span id="wave3" hidden></span>' : "") +
       '<div class="appliance-head">' +
       '<label class="check">' +
       '<input type="checkbox" data-field="enabled" data-id="' +
@@ -411,10 +410,15 @@
       focusWave3Appliance();
     };
     if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(run);
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(run);
+      });
     } else {
       setTimeout(run, 0);
     }
+    // Native fragment navigation can steal focus after first paint
+    // when Ask links as /?wave3=1#wave3 or #appliance-wave3.
+    setTimeout(run, 50);
   }
 
   renderPresetButtons();
@@ -427,5 +431,8 @@
     persist();
   }
   scheduleWave3Focus();
+  window.addEventListener("hashchange", function () {
+    if (calc.isWave3FocusHash(window.location.hash)) focusWave3Appliance();
+  });
   if (window.PowerUI) window.PowerUI.setupRotateGate();
 })();
