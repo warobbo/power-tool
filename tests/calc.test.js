@@ -1188,6 +1188,17 @@ test("Ask ?wave3=1 isolates Wave 3 so only that row is enabled", function () {
   assert.strictEqual(calc.isWave3AskHandoff("?wave3=true"), true);
 });
 
+test("isWave3FocusHash matches #wave3 / #appliance-wave3 only", function () {
+  assert.strictEqual(calc.isWave3FocusHash("#wave3"), true);
+  assert.strictEqual(calc.isWave3FocusHash("#appliance-wave3"), true);
+  assert.strictEqual(calc.isWave3FocusHash("wave3"), true);
+  assert.strictEqual(calc.isWave3FocusHash("https://motorhomepower.co.uk/?wave3=1#wave3"), true);
+  assert.strictEqual(calc.isWave3FocusHash(""), false);
+  assert.strictEqual(calc.isWave3FocusHash("/"), false);
+  assert.strictEqual(calc.isWave3FocusHash("#calculator"), false);
+  assert.strictEqual(calc.isWave3FocusHash("#hours-wave3"), false);
+});
+
 test("Ask ?wave3=1&hours=4 totals 2560 Wh from Wave 3 alone", function () {
   var daily = defaults.createDefaultProfile().dailyPower;
   var bareWh = calc.calcTotals(daily).totalWh;
