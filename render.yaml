@@ -30,10 +30,25 @@ services:
       - type: redirect
         source: /*
         destination: https://motorhometools.co.uk/power/
+    # Same Cache-Control as the published _headers file. Render's default
+    # static header lets a shared cache keep HTML for five minutes.
+    # must-revalidate stops that window on the redirect stubs.
     headers:
       - path: /*
         name: X-Robots-Tag
         value: noindex
+      - path: /*.html
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /index.html
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /robots.txt
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
     envVars:
       - key: SKIP_INSTALL_DEPS
         value: "true"

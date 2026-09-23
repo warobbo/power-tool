@@ -27,6 +27,8 @@ Render does not read `_redirects`. That file repeats the map for hosts that do. 
 
 `X-Robots-Tag: noindex` is set on `/*` in `render.yaml` for when headers sync.
 
+HTML stubs, `/`, and `robots.txt` use `Cache-Control: public, max-age=0, must-revalidate` in both `render.yaml` and the published `_headers` file. That replaces the default `s-maxage=300`, which let Cloudflare keep a stale copy of a stub.
+
 ### Check
 
 ```bash

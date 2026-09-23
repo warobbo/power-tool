@@ -118,6 +118,21 @@ test("render.yaml catch-all 301s unknown paths to the hub Power page", function 
   );
 });
 
+test("HTML stubs and robots.txt must revalidate instead of s-maxage", function () {
+  var headersFile = load("_headers");
+  ["/*.html", "/", "/index.html", "/robots.txt"].forEach(function (pathRule) {
+    assert.ok(
+      headersFile.indexOf(pathRule + "\n  Cache-Control: public, max-age=0, must-revalidate") !== -1,
+      "missing _headers rule for " + pathRule
+    );
+    assert.ok(
+      yaml.indexOf("path: " + pathRule + "\n        name: Cache-Control\n        value: public, max-age=0, must-revalidate") !== -1,
+      "missing render.yaml Cache-Control for " + pathRule
+    );
+  });
+  assert.ok(load("battery.html").indexOf("<!-- cache-bust 2026-09-23b -->") !== -1);
+});
+
 test("robots.txt asks crawlers to stay off the old host", function () {
   var robots = load("robots.txt");
   assert.ok(/Disallow:\s*\//.test(robots), "missing Disallow: /");
