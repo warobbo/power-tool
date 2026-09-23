@@ -3,11 +3,14 @@ services:
     runtime: static
     name: power-tools
     staticPublishPath: .
-    # HTTP 301s to the hub. Render applies these from a synced Blueprint or
-    # from the power-tool service: Dashboard → Redirects/Rewrites.
-    # A rule is skipped when a file exists at that path. The HTML stubs
-    # answer 200 until they are removed after these rules are saved.
+    # HTTP 301s to the hub. Render applies these only from a synced Blueprint
+    # or from the power-tool service: Dashboard → Redirects/Rewrites.
+    # Git auto-deploy publishes files; it does not apply these routes.
+    # A rule is skipped when a file exists at that path. The HTML stubs,
+    # robots.txt, sitemap, and calculator assets are gone, so /, the
+    # calculator paths, and /* return the dashboard 301 instead of 200.
     # Live hostname is power-tool.onrender.com (service name power-tool).
+    # Do not rename this service here. The custom domain stays in the Dashboard.
     routes:
       - type: redirect
         source: /index.html
@@ -30,9 +33,9 @@ services:
       - type: redirect
         source: /*
         destination: https://motorhometools.co.uk/power/
-    # Same Cache-Control as the published _headers file. Render's default
-    # static header lets a shared cache keep HTML for five minutes.
-    # must-revalidate stops that window on the redirect stubs.
+    # Header rules do not publish files, so they do not block the 301s.
+    # They apply only after a Blueprint sync. X-Robots-Tag covers any path
+    # that still has a file (README, this Blueprint, _redirects, tests).
     headers:
       - path: /*
         name: X-Robots-Tag
