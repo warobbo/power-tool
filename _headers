@@ -1,8 +1,0 @@
-/*.html
-  Cache-Control: public, max-age=0, must-revalidate
-/
-  Cache-Control: public, max-age=0, must-revalidate
-/index.html
-  Cache-Control: public, max-age=0, must-revalidate
-/robots.txt
-  Cache-Control: public, max-age=0, must-revalidate
