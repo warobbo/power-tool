@@ -3,14 +3,37 @@ services:
     runtime: static
     name: power-tools
     staticPublishPath: .
+    # HTTP 301s to the hub. Render applies these from a synced Blueprint or
+    # from the power-tool service: Dashboard → Redirects/Rewrites.
+    # A rule is skipped when a file exists at that path. The HTML stubs
+    # answer 200 until they are removed after these rules are saved.
+    # Live hostname is power-tool.onrender.com (service name power-tool).
     routes:
       - type: redirect
         source: /index.html
-        destination: /
+        destination: https://motorhometools.co.uk/power/
+      - type: redirect
+        source: /battery.html
+        destination: https://motorhometools.co.uk/power/battery.html
+      - type: redirect
+        source: /solar.html
+        destination: https://motorhometools.co.uk/power/solar.html
+      - type: redirect
+        source: /inverter.html
+        destination: https://motorhometools.co.uk/power/inverter.html
+      - type: redirect
+        source: /wire.html
+        destination: https://motorhometools.co.uk/power/wire.html
+      - type: redirect
+        source: /
+        destination: https://motorhometools.co.uk/power/
+      - type: redirect
+        source: /*
+        destination: https://motorhometools.co.uk/power/
     headers:
-      - path: /index.html
-        name: Link
-        value: <https://motorhomepower.co.uk/>; rel="canonical"
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex
     envVars:
       - key: SKIP_INSTALL_DEPS
         value: "true"
