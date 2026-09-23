@@ -1,5 +1,2 @@
 User-agent: *
-Allow: /
-Disallow:
-
-Sitemap: https://motorhomepower.co.uk/sitemap.xml
+Disallow: /

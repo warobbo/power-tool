@@ -7,8 +7,33 @@ var path = require("path");
 
 var failed = 0;
 var root = path.join(__dirname, "..");
-var pages = ["index.html", "battery.html", "solar.html", "inverter.html", "wire.html"];
-var MAX_META = 160;
+var pages = [
+  {
+    file: "index.html",
+    dest: "https://motorhometools.co.uk/power/",
+    sources: ["/", "/index.html"],
+  },
+  {
+    file: "battery.html",
+    dest: "https://motorhometools.co.uk/power/battery.html",
+    sources: ["/battery.html"],
+  },
+  {
+    file: "solar.html",
+    dest: "https://motorhometools.co.uk/power/solar.html",
+    sources: ["/solar.html"],
+  },
+  {
+    file: "inverter.html",
+    dest: "https://motorhometools.co.uk/power/inverter.html",
+    sources: ["/inverter.html"],
+  },
+  {
+    file: "wire.html",
+    dest: "https://motorhometools.co.uk/power/wire.html",
+    sources: ["/wire.html"],
+  },
+];
 
 function test(name, fn) {
   try {
@@ -46,49 +71,58 @@ function load(file) {
   return fs.readFileSync(path.join(root, file), "utf8");
 }
 
-pages.forEach(function (file) {
-  var html = load(file);
+var yaml = load("render.yaml");
+var redirectsFile = load("_redirects");
 
-  test(file + " meta description is present and ≤" + MAX_META + " chars", function () {
-    var desc = attr(html, "meta", "description");
-    assert.ok(desc, "missing name=description");
-    assert.ok(desc.length > 80, "description too short (" + desc.length + ")");
+pages.forEach(function (page) {
+  test(page.file + " is a noindex client redirect to the hub", function () {
+    var html = load(page.file);
+    assert.strictEqual(attr(html, "meta", "robots"), "noindex");
+    assert.strictEqual(attr(html, "link", "canonical"), page.dest);
     assert.ok(
-      desc.length <= MAX_META,
-      "description is " + desc.length + " chars: " + desc
+      html.indexOf('http-equiv="refresh" content="0;url=' + page.dest + '"') !== -1,
+      "missing meta refresh to " + page.dest
     );
+    assert.ok(
+      html.indexOf('location.replace("' + page.dest + '" + location.search + location.hash)') !== -1,
+      "missing location.replace that keeps search and hash"
+    );
+    assert.ok(
+      html.indexOf('href="' + page.dest + '"') !== -1,
+      "missing fallback link"
+    );
+    assert.ok(!/content=["']index,follow["']/i.test(html), "page must not ask to be indexed");
   });
 
-  test(file + " og:description is present and ≤" + MAX_META + " chars", function () {
-    var desc = attr(html, "meta", "og:description");
-    assert.ok(desc, "missing og:description");
-    assert.ok(desc.length > 80, "og:description too short (" + desc.length + ")");
-    assert.ok(
-      desc.length <= MAX_META,
-      "og:description is " + desc.length + " chars: " + desc
-    );
-  });
+  page.sources.forEach(function (source) {
+    test("render.yaml 301 " + source + " → " + page.dest, function () {
+      var block = "source: " + source + "\n        destination: " + page.dest;
+      assert.ok(yaml.indexOf(block) !== -1, "missing route\n" + block);
+    });
 
-  test(file + " og:title is present", function () {
-    var title = attr(html, "meta", "og:title");
-    assert.ok(title, "missing og:title");
-    assert.ok(title.length >= 10, "og:title too short");
+    test("_redirects 301 " + source + " → " + page.dest, function () {
+      var line = source + "  " + page.dest + "  301";
+      assert.ok(redirectsFile.indexOf(line) !== -1, "missing " + line);
+    });
   });
 });
 
-test("homepage canonical and og:url are https://motorhomepower.co.uk/", function () {
-  var html = load("index.html");
-  assert.strictEqual(attr(html, "link", "canonical"), "https://motorhomepower.co.uk/");
-  assert.strictEqual(attr(html, "meta", "og:url"), "https://motorhomepower.co.uk/");
-});
-
-test("homepage og:image uses the public icon PNG", function () {
-  var html = load("index.html");
-  assert.strictEqual(
-    attr(html, "meta", "og:image"),
-    "https://motorhomepower.co.uk/assets/icon-512.png"
+test("render.yaml catch-all 301s unknown paths to the hub Power page", function () {
+  assert.ok(
+    yaml.indexOf("source: /*\n        destination: https://motorhometools.co.uk/power/") !== -1,
+    "missing /* redirect"
   );
-  assert.ok(fs.existsSync(path.join(root, "assets", "icon-512.png")));
+  assert.ok(
+    redirectsFile.indexOf("/*  https://motorhometools.co.uk/power/  301") !== -1,
+    "missing _redirects catch-all"
+  );
+});
+
+test("robots.txt asks crawlers to stay off the old host", function () {
+  var robots = load("robots.txt");
+  assert.ok(/Disallow:\s*\//.test(robots), "missing Disallow: /");
+  assert.ok(!/Sitemap:/i.test(robots), "sitemap line would keep advertising the old host");
+  assert.ok(!/motorhomepower\.co\.uk/.test(load("sitemap.xml")), "sitemap still lists the old host");
 });
 
 test("logo and favicon SVG use pine #1e4f43, not the old green", function () {
@@ -109,54 +143,11 @@ test("nav glyphs exist and use pine #1e4f43", function () {
   });
 });
 
-pages.forEach(function (file) {
-  var html = load(file);
-  test(file + " icon and logo links are cache-busted", function () {
-    assert.ok(
-      /assets\/favicon\.svg\?v=/.test(html),
-      "missing favicon.svg?v="
-    );
-    assert.ok(
-      /assets\/logo\.svg\?v=/.test(html),
-      "missing logo.svg?v="
-    );
-    assert.ok(
-      /assets\/icon-512\.png\?v=/.test(html),
-      "missing icon-512.png?v="
-    );
-    assert.ok(!/\?v=20260911[ab]/.test(html), "stale 20260911 icon cache-bust");
-    assert.ok(
-      /assets\/styles\.css\?v=/.test(html),
-      "missing styles.css?v="
-    );
-    assert.ok(
-      /assets\/glyph-daily\.svg\?v=/.test(html),
-      "missing glyph-daily.svg?v="
-    );
+test("redirect stubs do not point canonical URLs at motorhomepower.co.uk", function () {
+  pages.forEach(function (page) {
+    var html = load(page.file);
+    assert.ok(html.indexOf("https://motorhomepower.co.uk") === -1, page.file);
   });
-
-  test(file + " Power Tools nav has glyphs before each label", function () {
-    var nav = html.match(/<nav class="tool-nav no-print" aria-label="Power Tools">[\s\S]*?<\/nav>/);
-    assert.ok(nav, "missing Power Tools nav");
-    assert.ok(/glyph-daily\.svg/.test(nav[0]), "Daily Power missing glyph");
-    assert.ok(/glyph-battery\.svg/.test(nav[0]), "Battery missing glyph");
-    assert.ok(/glyph-solar\.svg/.test(nav[0]), "Solar missing glyph");
-    assert.ok(/glyph-inverter\.svg/.test(nav[0]), "Inverter missing glyph");
-    assert.ok(/glyph-wire\.svg/.test(nav[0]), "Wire missing glyph");
-    assert.ok(
-      /<img class="tool-glyph"[^>]*width="24"[^>]*height="24"/.test(nav[0]),
-      "nav glyphs should be 24px"
-    );
-  });
-});
-
-test("homepage og:title and og:description are sensible", function () {
-  var html = load("index.html");
-  var title = attr(html, "meta", "og:title");
-  var desc = attr(html, "meta", "og:description");
-  assert.ok(/Daily Power|watt-hours|Wh/i.test(title), "og:title should name the calculator");
-  assert.ok(/watt-hours|amp-hours|12V/i.test(desc), "og:description should mention Wh/Ah");
-  assert.ok(!/aggregateRating|★★★/i.test(html), "must not invent ratings");
 });
 
 if (failed) {

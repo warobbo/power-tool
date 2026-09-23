@@ -2,6 +2,47 @@
 
 A small, mobile-friendly hub of **campervan power calculators** for UK and EU motorhome users.
 
+The live copies on `https://motorhomepower.co.uk` and `https://power-tool.onrender.com` send people to the same calculators on [Motorhome Tools](https://motorhometools.co.uk/power/). This repo does not change `motorhometools.co.uk`.
+
+## Redirects
+
+| Request | Destination |
+| --- | --- |
+| `/` and `/index.html` | `https://motorhometools.co.uk/power/` |
+| `/battery.html` | `https://motorhometools.co.uk/power/battery.html` |
+| `/solar.html` | `https://motorhometools.co.uk/power/solar.html` |
+| `/inverter.html` | `https://motorhometools.co.uk/power/inverter.html` |
+| `/wire.html` | `https://motorhometools.co.uk/power/wire.html` |
+| any other path | `https://motorhometools.co.uk/power/` |
+
+Daily Power keeps the query string and hash (`/?wave3=1&hours=4#wave3`) in the browser redirect so Ask links still open the hub calculator.
+
+### HTTP 301
+
+Render static sites send **301 Moved Permanently** only from Redirect/Rewrite rules. Put the same map in the **power-tool** service: Dashboard → **Redirects/Rewrites** (Action: Redirect). `render.yaml` lists those rules for a Blueprint sync. Specific paths come first, then `/`, then `/*`.
+
+Render skips a rule when a file already exists at that path. The five HTML files in this repo are noindex redirect stubs, so a git deploy keeps working before the dashboard rules exist. After the rules are saved, delete those HTML files (and the other published files you want included in `/*`) so the 301 is the response. `robots.txt` stays as `Disallow: /` only if you want that URL to remain a file; delete it too if `/*` should cover it.
+
+Render does not read `_redirects`. That file repeats the map for hosts that do. This service’s git auto-deploy publishes files; it does not apply `render.yaml` routes by itself. Live responses today do not include the headers from this Blueprint, which is why the stubs are what deploy serves.
+
+`X-Robots-Tag: noindex` is set on `/*` in `render.yaml` for when headers sync.
+
+### Check
+
+```bash
+curl -sI https://motorhomepower.co.uk/
+curl -sI https://motorhomepower.co.uk/battery.html
+curl -sI https://motorhomepower.co.uk/solar.html
+curl -sI https://motorhomepower.co.uk/inverter.html
+curl -sI https://motorhomepower.co.uk/wire.html
+curl -sI https://power-tool.onrender.com/
+curl -sI https://power-tool.onrender.com/does-not-exist
+```
+
+While the HTML stubs are still published, the five calculator URLs return **200** and the body redirects. `curl -sI` shows no `Location` header. After the dashboard rules are saved and the stubs are removed, those URLs return **301** with `Location` set to the hub URL in the table. Unknown paths return **404** until the `/*` rule is saved, then **301** to `https://motorhometools.co.uk/power/`.
+
+Open `/` and `/battery.html` in a browser and confirm the address bar lands on the hub. A Daily Power URL with `?wave3=1&hours=4#wave3` should keep that query and hash.
+
 ## Daily Power
 
 Pick appliances and hours of use to see:
@@ -84,7 +125,7 @@ From the repo root:
 python3 -m http.server 8080
 ```
 
-Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html), [http://127.0.0.1:8080/inverter.html](http://127.0.0.1:8080/inverter.html), and [http://127.0.0.1:8080/wire.html](http://127.0.0.1:8080/wire.html).
+Then open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), [http://127.0.0.1:8080/battery.html](http://127.0.0.1:8080/battery.html), [http://127.0.0.1:8080/solar.html](http://127.0.0.1:8080/solar.html), [http://127.0.0.1:8080/inverter.html](http://127.0.0.1:8080/inverter.html), and [http://127.0.0.1:8080/wire.html](http://127.0.0.1:8080/wire.html). Each of those pages redirects to the matching hub URL.
 
 You can also open the HTML files directly in a browser. A local server is the more reliable option.
 
@@ -105,7 +146,7 @@ node tests/calc.test.js
 5. Optional environment variable: `SKIP_INSTALL_DEPS=true` (there are no Node dependencies to install).
 6. Deploy.
 
-A `render.yaml` Blueprint is included with the same static publish path. After you have a live domain, add that host to `sitemap.xml` (`<loc>`) and optionally a `Sitemap:` line in `robots.txt`. Do not use a placeholder domain.
+A `render.yaml` Blueprint is included with the same static publish path. Redirect rules for the move to Motorhome Tools are in that file. See [Redirects](#redirects).
 
 ## Persistence
 
