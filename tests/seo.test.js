@@ -122,6 +122,19 @@ test("service identity stays power-tools and publish dir is the public allowlist
   );
 });
 
+test("publish allowlist is only the redirect map and this test", function () {
+  var list = fs
+    .readFileSync(path.join(root, "scripts", "published-files.txt"), "utf8")
+    .split(/\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(function (line) {
+      return line && line.charAt(0) !== "#";
+    });
+  assert.deepStrictEqual(list, ["_redirects", "tests/seo.test.js"]);
+});
+
 test("publish script copies only the allowlist and no hidden paths", function () {
   var spawn = require("child_process").spawnSync;
   var pub = path.join(root, "public");

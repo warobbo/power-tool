@@ -13,7 +13,7 @@ Redirects are configured in the Render Dashboard on the **power-tool** service (
 | `/wire.html` | `https://motorhometools.co.uk/power/wire.html` |
 | any other path (`/*`) | `https://motorhometools.co.uk/power/` |
 
-Render skips a redirect when a file already exists at that path. Do not add `index.html`, the calculator HTML files, `robots.txt`, or `assets/` to the publish allowlist. The publish directory is `public/`, built by `bash scripts/publish-public.sh` from `scripts/published-files.txt` (`README.md`, `render.yaml`, `_redirects`, `tests/seo.test.js`). Those four stay files, so `/*` does not cover those exact paths. Dotfiles and `.cursor/` are not copied, so `/.gitignore` and `/.cursor/` follow the catch-all 301.
+Render skips a redirect when a file already exists at that path. Do not add `index.html`, the calculator HTML files, `robots.txt`, or `assets/` to the publish allowlist. The publish directory is `public/`, built by `bash scripts/publish-public.sh` from `scripts/published-files.txt`. The allowlist is `_redirects` and `tests/seo.test.js`. Those two stay files, so `/*` does not cover those exact paths. `README.md` and `render.yaml` stay in git and are not copied, so `/README.md` and `/render.yaml` follow the catch-all 301, the same as any other path with no file. Dotfiles and `.cursor/` are not copied either.
 
 The **power-tool** service has to use that build command and publish `public`. A git push publishes whatever directory is saved on the service. It does not change that setting from `render.yaml` by itself.
 

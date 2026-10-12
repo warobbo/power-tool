@@ -39,7 +39,8 @@ services:
         destination: https://motorhometools.co.uk/power/
     # Header rules do not publish files, so they do not block the 301s.
     # They apply only after a Blueprint sync. X-Robots-Tag covers any path
-    # that still has a file (README, this Blueprint, _redirects, tests).
+    # that still has a file (_redirects and tests/seo.test.js). README.md
+    # and this Blueprint stay in git and are not copied into public/.
     headers:
       - path: /*
         name: X-Robots-Tag

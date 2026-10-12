@@ -92,11 +92,30 @@ async function main() {
   }
 
   for (const filePath of lib.FILE_CASES) {
-    const response = await lib.requestOnce(instance.baseUrl + filePath);
+    const response = await lib.requestText(instance.baseUrl + filePath);
     if (response.status !== 200) {
       ok = fail(filePath + " status " + response.status + " (a real file must stay 200)") && ok;
     } else {
       say("ok  200 " + filePath);
+      const traces = lib.ownerTracesIn(response.body);
+      if (traces.length) {
+        ok = fail(filePath + " contains a public owner trace (" + traces.join(", ") + ")") && ok;
+      } else {
+        say("ok  no owner trace in " + filePath);
+      }
+    }
+  }
+
+  for (const item of lib.WITHHELD_CASES) {
+    const response = await lib.requestOnce(instance.baseUrl + item.path);
+    if (response.status === 200) {
+      ok = fail(item.path + " returned 200 (README.md and render.yaml must not be served)") && ok;
+    } else if (response.status !== 301 || response.location !== item.location) {
+      ok =
+        fail(item.path + " -> " + response.status + " " + response.location + " (wanted 301 " + item.location + ")") &&
+        ok;
+    } else {
+      say("ok  withheld 301 " + item.path);
     }
   }
 
@@ -148,11 +167,44 @@ async function main() {
   for (const base of liveBases) {
     for (const filePath of lib.FILE_CASES) {
       try {
-        const file = await lib.requestOnce(base + filePath);
-        if (file.status === 200 && !file.location) say("ok  live 200 " + base + filePath);
-        else ok = fail("live " + base + filePath + " status " + file.status + " " + file.location) && ok;
+        const file = await lib.requestText(base + filePath);
+        if (file.status === 200 && !file.location) {
+          say("ok  live 200 " + base + filePath);
+          const traces = lib.ownerTracesIn(file.body);
+          if (traces.length) {
+            ok = fail("live " + base + filePath + " contains a public owner trace (" + traces.join(", ") + ")") && ok;
+          } else {
+            say("ok  live no owner trace in " + base + filePath);
+          }
+        } else ok = fail("live " + base + filePath + " status " + file.status + " " + file.location) && ok;
       } catch (err) {
         ok = fail("live " + base + filePath + " " + err.message) && ok;
+      }
+    }
+    for (const item of lib.WITHHELD_CASES) {
+      try {
+        const withheld = await lib.requestOnce(base + item.path);
+        if (withheld.status === 200) {
+          ok = fail("live withheld " + base + item.path + " returned 200") && ok;
+        } else if (withheld.status !== 301 || withheld.location !== item.location) {
+          ok =
+            fail(
+              "live withheld " +
+                base +
+                item.path +
+                " -> " +
+                withheld.status +
+                " " +
+                withheld.location +
+                " (wanted 301 " +
+                item.location +
+                ")"
+            ) && ok;
+        } else {
+          say("ok  live withheld 301 " + base + item.path);
+        }
+      } catch (err) {
+        ok = fail("live withheld " + base + item.path + " " + err.message) && ok;
       }
     }
     for (const item of lib.HIDDEN_CASES) {
