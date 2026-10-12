@@ -21,7 +21,38 @@ const REDIRECT_CASES = [
   { path: "/battery.html/", location: "https://motorhometools.co.uk/power/battery.html" },
 ];
 
-const FILE_CASES = ["/README.md", "/render.yaml", "/_redirects", "/tests/seo.test.js"];
+function loadPublishedFiles() {
+  const text = fs.readFileSync(path.join(REPO_ROOT, "scripts", "published-files.txt"), "utf8");
+  const rels = text
+    .split(/\r?\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(function (line) {
+      return line && line.charAt(0) !== "#";
+    });
+  rels.forEach(function (rel) {
+    if (
+      rel.split("/").some(function (part) {
+        return !part || part.charAt(0) === ".";
+      })
+    ) {
+      throw new Error("published-files.txt contains a hidden path: " + rel);
+    }
+  });
+  return rels;
+}
+
+const PUBLISHED_FILES = loadPublishedFiles();
+const FILE_CASES = PUBLISHED_FILES.map(function (rel) {
+  return "/" + rel;
+});
+
+const HIDDEN_CASES = [
+  { path: "/.gitignore", location: "https://motorhometools.co.uk/power/" },
+  { path: "/.cursor/skills/verify-power/SKILL.md", location: "https://motorhometools.co.uk/power/" },
+  { path: "/.gitignore?x=1", location: "https://motorhometools.co.uk/power/?x=1" },
+];
 
 function runId() {
   return process.env.POWER_VERIFY_RUN || "local";
@@ -185,11 +216,12 @@ function publishedFile(pathname) {
   const parts = rel.split("/");
   if (
     parts.some(function (part) {
-      return !part || part === "." || part === ".." || part === ".git";
+      return !part || part === "." || part === ".." || part.charAt(0) === ".";
     })
   ) {
     return null;
   }
+  if (PUBLISHED_FILES.indexOf(rel) === -1) return null;
   const full = path.resolve(REPO_ROOT, rel);
   if (full !== REPO_ROOT && !full.startsWith(REPO_ROOT + path.sep)) return null;
   if (!fs.existsSync(full) || !fs.statSync(full).isFile()) return null;
@@ -236,7 +268,9 @@ module.exports = {
   REPO_ROOT: REPO_ROOT,
   SKILL_ROOT: SKILL_ROOT,
   REDIRECT_CASES: REDIRECT_CASES,
+  PUBLISHED_FILES: PUBLISHED_FILES,
   FILE_CASES: FILE_CASES,
+  HIDDEN_CASES: HIDDEN_CASES,
   runId: runId,
   runDir: runDir,
   evidenceDir: evidenceDir,

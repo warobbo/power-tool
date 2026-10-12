@@ -112,10 +112,53 @@ test("specific paths are listed before the catch-all", function () {
   });
 });
 
-test("service identity and publish root are unchanged", function () {
+test("service identity stays power-tools and publish dir is the public allowlist", function () {
   assert.ok(yaml.indexOf("name: power-tools") !== -1, "service name changed");
   assert.ok(yaml.indexOf("runtime: static") !== -1, "runtime changed");
-  assert.ok(yaml.indexOf("staticPublishPath: .") !== -1, "publish path changed");
+  assert.ok(yaml.indexOf("staticPublishPath: public") !== -1, "publish path must be public");
+  assert.ok(
+    yaml.indexOf("buildCommand: bash scripts/publish-public.sh") !== -1,
+    "build command must assemble public/"
+  );
+});
+
+test("publish script copies only the allowlist and no hidden paths", function () {
+  var spawn = require("child_process").spawnSync;
+  var pub = path.join(root, "public");
+  fs.rmSync(pub, { recursive: true, force: true });
+  var result = spawn("bash", ["scripts/publish-public.sh"], { cwd: root, encoding: "utf8" });
+  assert.strictEqual(result.status, 0, (result.stderr || "") + (result.stdout || ""));
+  var list = fs
+    .readFileSync(path.join(root, "scripts", "published-files.txt"), "utf8")
+    .split(/\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(function (line) {
+      return line && line.charAt(0) !== "#";
+    });
+  function walk(dir, acc) {
+    fs.readdirSync(dir).forEach(function (name) {
+      assert.ok(name.charAt(0) !== ".", "hidden path in publish tree: " + name);
+      var full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) walk(full, acc);
+      else acc.push(path.relative(pub, full).split(path.sep).join("/"));
+    });
+  }
+  var found = [];
+  walk(pub, found);
+  found.sort();
+  var expect = list.slice().sort();
+  assert.deepStrictEqual(found, expect);
+  list.forEach(function (rel) {
+    assert.ok(
+      fs.readFileSync(path.join(pub, rel)).equals(fs.readFileSync(path.join(root, rel))),
+      rel + " in public/ does not match the source"
+    );
+  });
+  assert.ok(!fs.existsSync(path.join(pub, ".gitignore")), ".gitignore was published");
+  assert.ok(!fs.existsSync(path.join(pub, ".cursor")), ".cursor was published");
+  fs.rmSync(pub, { recursive: true, force: true });
 });
 
 if (failed) {

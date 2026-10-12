@@ -100,6 +100,19 @@ async function main() {
     }
   }
 
+  for (const item of lib.HIDDEN_CASES) {
+    const response = await lib.requestOnce(instance.baseUrl + item.path);
+    if (response.status === 200) {
+      ok = fail(item.path + " returned 200 (dotfiles and .cursor/ must not be served)") && ok;
+    } else if (response.status !== 301 || response.location !== item.location) {
+      ok =
+        fail(item.path + " -> " + response.status + " " + response.location + " (wanted 301 " + item.location + ")") &&
+        ok;
+    } else {
+      say("ok  hidden 301 " + item.path);
+    }
+  }
+
   say("--- live hosts (not this process) ---");
   const liveBases = ["https://motorhomepower.co.uk", "https://power-tool.onrender.com"];
   for (const base of liveBases) {
@@ -132,12 +145,33 @@ async function main() {
     ok = fail("live query redirect " + err.message) && ok;
   }
 
-  try {
-    const readme = await lib.requestOnce("https://motorhomepower.co.uk/README.md");
-    if (readme.status === 200) say("ok  live README.md stays 200");
-    else ok = fail("live README.md status " + readme.status) && ok;
-  } catch (err) {
-    ok = fail("live README.md " + err.message) && ok;
+  for (const base of liveBases) {
+    for (const filePath of lib.FILE_CASES) {
+      try {
+        const file = await lib.requestOnce(base + filePath);
+        if (file.status === 200 && !file.location) say("ok  live 200 " + base + filePath);
+        else ok = fail("live " + base + filePath + " status " + file.status + " " + file.location) && ok;
+      } catch (err) {
+        ok = fail("live " + base + filePath + " " + err.message) && ok;
+      }
+    }
+    for (const item of lib.HIDDEN_CASES) {
+      try {
+        const hidden = await lib.requestOnce(base + item.path);
+        if (hidden.status === 200) {
+          ok = fail("live hidden " + base + item.path + " returned 200") && ok;
+        } else if (hidden.status !== 301 || hidden.location !== item.location) {
+          ok =
+            fail(
+              "live hidden " + base + item.path + " -> " + hidden.status + " " + hidden.location + " (wanted 301 " + item.location + ")"
+            ) && ok;
+        } else {
+          say("ok  live hidden 301 " + base + item.path);
+        }
+      } catch (err) {
+        ok = fail("live hidden " + base + item.path + " " + err.message) && ok;
+      }
+    }
   }
 
   try {

@@ -17,7 +17,7 @@ What a visitor gets today:
 
 `www.motorhomepower.co.uk` first 301s to the apex. Plain `http://` first 301s to `https://`. Those hops are the host edge, not `_redirects`.
 
-Files that exist in the publish root stay **200** and skip the catch-all. Today those are `README.md`, `render.yaml`, `_redirects`, and `tests/seo.test.js`. Adding `index.html`, a calculator page, `robots.txt`, or `assets/` back would hide the 301.
+The publish directory is `public/`, filled by `scripts/publish-public.sh` from `scripts/published-files.txt`. Those paths stay **200** and skip the catch-all: `README.md`, `render.yaml`, `_redirects`, and `tests/seo.test.js`. Dotfiles and `.cursor/` are not copied, so `/.gitignore` and `/.cursor/skills/verify-power/SKILL.md` are not files and follow the catch-all **301**. Adding `index.html`, a calculator page, `robots.txt`, or `assets/` back into that allowlist would hide the 301.
 
 The maths is not in this repo. `helpers/drive-calculator.js` loads the `calc.js` the live page actually requested and recomputes. If that script disagrees with the formula in the feature file, the drive fails. Do not type in a Wh, Ah, watt, or mm² figure from memory.
 
@@ -35,7 +35,7 @@ POWER_VERIFY_RUN=local node .cursor/skills/verify-power/helpers/serve.js
 
 Ready signal: a line `ready http://127.0.0.1:<port> run=local`. The process stays in the foreground. It listens on `127.0.0.1` only and writes `/tmp/verify-power/local/instance.json`.
 
-The server reads `_redirects`. If a real file exists at the path, it returns 200. Otherwise it returns the file's 301 and keeps the query string. A trailing slash is stripped before the match, so `/battery.html/` follows `/battery.html`. Response header `X-Power-Verify: local-redirect` marks the process.
+The server reads `_redirects`. A path in `scripts/published-files.txt` returns 200. Any other path, including dotfiles and `.cursor/`, returns the file's 301 and keeps the query string. A trailing slash is stripped before the match, so `/battery.html/` follows `/battery.html`. Response header `X-Power-Verify: local-redirect` marks the process.
 
 Stop that process with Cleanup. Do not start a second server with the same `POWER_VERIFY_RUN` while the pid is alive.
 
@@ -45,9 +45,9 @@ Stop that process with Cleanup. Do not start a second server with the same `POWE
 POWER_VERIFY_RUN=local node .cursor/skills/verify-power/helpers/doctor.js --evidence
 ```
 
-Read-only. Exit 0 means the local server is worth driving: the pid is the `serve.js` this run started, `/` answers on loopback with `X-Power-Verify`, calculator HTML is absent, `node tests/seo.test.js` passes, `_redirects` matches `render.yaml`, and the local 301/200 table matches the feature map.
+Read-only. Exit 0 means the local server is worth driving: the pid is the `serve.js` this run started, `/` answers on loopback with `X-Power-Verify`, calculator HTML is absent, `node tests/seo.test.js` passes, `_redirects` matches `render.yaml`, and the local 301/200 table matches the feature map. `/.gitignore` and `/.cursor/skills/verify-power/SKILL.md` must be 301s, not 200s.
 
-The same command then checks the live https hosts. A wrong live 301 fails the doctor. `www` and plain `http` are printed as edge hops. If plain `http` cannot be measured, the line says `UNMEASURED` and does not by itself fail a good https map.
+The same command then checks the live https hosts. A wrong live 301 fails the doctor. A live 200 for `/.gitignore` or `/.cursor/skills/verify-power/SKILL.md` fails the doctor. `www` and plain `http` are printed as edge hops. If plain `http` cannot be measured, the line says `UNMEASURED` and does not by itself fail a good https map.
 
 Run doctor again after a failed drive before driving anything else.
 
@@ -106,7 +106,7 @@ If a drive crashes, run Cleanup before starting another attempt with the same ru
 | --- | --- |
 | `node .cursor/skills/verify-power/helpers/serve.js` | Start the local 301 server |
 | `node .cursor/skills/verify-power/helpers/doctor.js --evidence` | Decide whether that server is worth driving |
-| `node .cursor/skills/verify-power/helpers/drive-redirects.js` | Check every redirect and published-file path |
+| `node .cursor/skills/verify-power/helpers/drive-redirects.js` | Check every redirect, published file, and hidden path |
 | `node .cursor/skills/verify-power/helpers/drive-calculator.js <daily\|battery\|solar\|inverter\|wire>` | Follow one 301 and run that calculator case |
 | `node .cursor/skills/verify-power/helpers/cleanup.js` | Stop the recorded processes and keep the evidence |
 
