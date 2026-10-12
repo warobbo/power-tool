@@ -1,0 +1,30 @@
+{
+  "tool": "daily",
+  "runId": "smoke",
+  "checkedAt": "2026-10-12T02:36:06.652Z",
+  "localUrl": "http://127.0.0.1:46357/",
+  "redirectStatus": 301,
+  "redirectLocation": "https://motorhometools.co.uk/power/",
+  "landed": "https://motorhometools.co.uk/power/",
+  "calcScript": "https://motorhometools.co.uk/power/assets/calc.js?v=20260923cap",
+  "calcSha256": "cdf1a451919e6b3bcae3bc251be9ffe69cc29488b6fa4459a537d6d0a85ade52",
+  "pass": true,
+  "input": "One custom row, Verify lamp, 100 W, 10 hours, quantity 1, other rows off, inverter loss off",
+  "formula": "Wh = watts × hours × qty. Ah at 12 V = Wh / 12. Ah at 24 V = Wh / 24. No inverter loss.",
+  "raw": {
+    "totalWh": 1000,
+    "ah12": 83.33333333333333,
+    "ah24": 41.666666666666664
+  },
+  "expected": {
+    "totalWh": "1,000",
+    "ah12": "83.3",
+    "ah24": "41.7"
+  },
+  "actual": {
+    "totalWh": "1,000",
+    "ah12": "83.3",
+    "ah24": "41.7"
+  },
+  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/daily.png"
+}

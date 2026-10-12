@@ -1,0 +1,33 @@
+{
+  "tool": "inverter",
+  "runId": "smoke",
+  "checkedAt": "2026-10-12T02:36:19.531Z",
+  "localUrl": "http://127.0.0.1:46357/inverter.html",
+  "redirectStatus": 301,
+  "redirectLocation": "https://motorhometools.co.uk/power/inverter.html",
+  "landed": "https://motorhometools.co.uk/power/inverter.html",
+  "calcScript": "https://motorhometools.co.uk/power/assets/calc.js?v=20260918wave3c",
+  "calcSha256": "cdf1a451919e6b3bcae3bc251be9ffe69cc29488b6fa4459a537d6d0a85ade52",
+  "pass": true,
+  "input": "One 230 V load, 1000 W running, 2000 W surge, quantity 1. Efficiency 88%, margin 20%, 12 V selected. Other loads off.",
+  "formula": "Shown continuous W = running W × (1 + margin/100). Shown surge W = max(surge, continuous). Shown amps = running W / efficiency / voltage, without the margin.",
+  "raw": {
+    "recommendedContinuousW": 1200,
+    "recommendedSurgeW": 2000,
+    "amps12": 94.69696969696969,
+    "amps24": 47.348484848484844
+  },
+  "expected": {
+    "continuous": "1,200",
+    "surge": "2,000",
+    "amps12": "94.7",
+    "amps24": "47.3"
+  },
+  "actual": {
+    "continuous": "1,200",
+    "surge": "2,000",
+    "amps12": "94.7",
+    "amps24": "47.3"
+  },
+  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/inverter.png"
+}

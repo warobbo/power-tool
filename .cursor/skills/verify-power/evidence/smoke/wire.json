@@ -1,0 +1,36 @@
+{
+  "tool": "wire",
+  "runId": "smoke",
+  "checkedAt": "2026-10-12T02:36:21.669Z",
+  "localUrl": "http://127.0.0.1:46357/wire.html",
+  "redirectStatus": 301,
+  "redirectLocation": "https://motorhometools.co.uk/power/wire.html",
+  "landed": "https://motorhometools.co.uk/power/wire.html",
+  "calcScript": "https://motorhometools.co.uk/power/assets/calc.js?v=20260918wave3c",
+  "calcSha256": "cdf1a451919e6b3bcae3bc251be9ffe69cc29488b6fa4459a537d6d0a85ade52",
+  "pass": true,
+  "input": "12 V, 20 A typed (not the inverter suggestion), 2 m one way, 3% allowed drop",
+  "formula": "required mm² = (2 × amps × one-way metres × 0.0175) / allowed volts. Allowed volts = voltage × drop% / 100. Next cable step that also covers the amps. Fuse is the step at or above 1.1 × amps that still fits the cable rating.",
+  "raw": {
+    "requiredMm2": 3.8888888888888893,
+    "cableMm2": 4,
+    "fuseAmps": 25,
+    "dropV": 0.35000000000000003,
+    "estimatedDropPct": 2.916666666666667
+  },
+  "expected": {
+    "cableMm2": "4",
+    "fuseAmps": "25",
+    "amps": "20",
+    "dropV": "0.35",
+    "dropPct": "2.9"
+  },
+  "actual": {
+    "cableMm2": "4",
+    "fuseAmps": "25",
+    "amps": "20",
+    "dropV": "0.35",
+    "dropPct": "2.9"
+  },
+  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/wire.png"
+}
