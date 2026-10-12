@@ -2,7 +2,11 @@ services:
   - type: web
     runtime: static
     name: power-tools
-    staticPublishPath: .
+    # public/ is the only directory that may be served. The build copies
+    # scripts/published-files.txt and nothing else, so dotfiles and .cursor/
+    # are not resources and the catch-all 301 applies.
+    buildCommand: bash scripts/publish-public.sh
+    staticPublishPath: public
     # HTTP 301s to the hub. Render applies these only from a synced Blueprint
     # or from the power-tool service: Dashboard → Redirects/Rewrites.
     # Git auto-deploy publishes files; it does not apply these routes.

@@ -17,7 +17,7 @@ Update this feature map in the same pull request whenever a build changes pages 
 ## Features
 
 - [Redirects](./redirects.md) — old Power URLs 301 onto the hub.
-- [Published files](./published-files.md) — paths that stay 200 because a file exists.
+- [Published files](./published-files.md) — allowlist paths stay 200. Dotfiles and `.cursor/` 301.
 - [Daily Power](./daily-power.md) — Wh/day and Ah at 12 V and 24 V.
 - [Battery](./battery.md) — leisure-battery Ah from daily Wh, days, chemistry, and contingency.
 - [Solar](./solar.md) — array watts from daily Wh, peak sun, losses, and margin.
