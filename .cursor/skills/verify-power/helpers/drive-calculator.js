@@ -84,6 +84,12 @@ function assertEqual(actual, expected, label) {
 async function openTool(page, instance, tool) {
   const localUrl = instance.baseUrl + tool.localPath;
   const redirect = await lib.requestOnce(localUrl);
+  const wantedLocation = "https://motorhometools.co.uk" + tool.finalPath;
+  if (redirect.status !== 301 || redirect.location !== wantedLocation) {
+    throw new Error(
+      "Local redirect " + redirect.status + " " + redirect.location + " wanted 301 " + wantedLocation
+    );
+  }
   await page.navigate(localUrl);
   const landed = await page.waitFor(
     "(document.querySelector('h1') && document.querySelector('h1').textContent) || ''"
@@ -114,6 +120,24 @@ async function turnOffOthers(page, customId) {
 async function customId(page) {
   await page.waitFor("!!document.querySelector('.name-input')");
   return page.evaluate("document.querySelector('.name-input').getAttribute('data-id')");
+}
+
+async function readProfile(page) {
+  const profile = await page.evaluate(
+    "JSON.parse(localStorage.getItem('powertools.systemProfile') || 'null')"
+  );
+  if (!profile) throw new Error("powertools.systemProfile was not saved");
+  return profile;
+}
+
+function expectFields(actual, expected, label) {
+  const keys = Object.keys(expected);
+  for (let i = 0; i < keys.length; i += 1) {
+    const key = keys[i];
+    if (!actual || actual[key] !== expected[key]) {
+      throw new Error(label + " saved " + JSON.stringify(actual) + " wanted " + JSON.stringify(expected));
+    }
+  }
 }
 
 async function loadCalc(page, scratchDir) {
@@ -170,8 +194,15 @@ async function driveDaily(page, calc) {
   const row = stored.appliances.find(function (item) {
     return item.id === id;
   });
-  if (!row || row.watts !== 100 || row.hours !== 10 || row.qty !== 1 || row.enabled !== true) {
-    throw new Error("Saved profile does not contain the Verify lamp row");
+  if (
+    !row ||
+    row.name !== "Verify lamp" ||
+    row.watts !== 100 ||
+    row.hours !== 10 ||
+    row.qty !== 1 ||
+    row.enabled !== true
+  ) {
+    throw new Error("Saved profile does not contain the Verify lamp row: " + JSON.stringify(row));
   }
   const othersOn = stored.appliances.some(function (item) {
     return item.id !== id && item.enabled;
@@ -183,7 +214,16 @@ async function driveDaily(page, calc) {
     raw: { totalWh: totals.totalWh, ah12: totals.ah12, ah24: totals.ah24 },
     expected: expected,
     actual: actual,
-    storageKey: "powertools.systemProfile",
+    stored: {
+      key: "powertools.systemProfile",
+      appliance: {
+        name: row.name,
+        watts: row.watts,
+        hours: row.hours,
+        qty: row.qty,
+        enabled: row.enabled,
+      },
+    },
   };
 }
 
@@ -218,12 +258,22 @@ async function driveBattery(page, calc) {
   assertEqual(actual.ah12, expected.ah12, "#bank-ah12");
   assertEqual(actual.ah24, expected.ah24, "#bank-ah24");
   assertEqual(actual.wh, expected.wh, "#bank-wh");
+  const saved = (await readProfile(page)).battery;
+  const storedBattery = {
+    useManualWh: true,
+    manualWh: 1000,
+    daysAutonomy: 2,
+    chemistry: "lifepo4",
+    contingencyPct: 10,
+  };
+  expectFields(saved, storedBattery, "battery");
   return {
     input: "Manual 1000 Wh/day, 2 days, LiFePO4 80% usable, 10% contingency",
     formula: "bankWh = dailyWh × days × (1 + contingency/100) / (usable/100). Ah = bankWh / voltage.",
     raw: { bankWh: result.bankWh, ah12: result.ah12, ah24: result.ah24, usablePct: result.usablePct },
     expected: expected,
     actual: actual,
+    stored: { key: "powertools.systemProfile", battery: storedBattery },
   };
 }
 
@@ -264,12 +314,32 @@ async function driveSolar(page, calc) {
   assertEqual(actual.panels100, expected.panels100, "#panels-100");
   assertEqual(actual.panels200, expected.panels200, "#panels-200");
   assertEqual(actual.panels400, expected.panels400, "#panels-400");
+  [100, 200, 400].forEach(function (watts, index) {
+    const panel = result.panels.find(function (item) {
+      return item.watts === watts;
+    });
+    const wanted = [5, 3, 2][index];
+    if (!panel || panel.count !== wanted) {
+      throw new Error("panel " + watts + " W count " + JSON.stringify(panel) + " wanted " + wanted);
+    }
+  });
+  const saved = (await readProfile(page)).solar;
+  const storedSolar = {
+    useManualWh: true,
+    manualWh: 1000,
+    season: "spring-autumn",
+    peakSunHours: 3,
+    lossPct: 25,
+    marginPct: 10,
+  };
+  expectFields(saved, storedSolar, "solar");
   return {
     input: "Manual 1000 Wh/day, 3 peak sun hours, 25% losses, 10% margin",
     formula: "arrayW = dailyWh × (1 + margin/100) / (peakSunHours × (1 - loss/100)). Panel counts round up.",
     raw: { arrayWatts: result.arrayWatts, panels: result.panels },
     expected: expected,
     actual: actual,
+    stored: { key: "powertools.systemProfile", solar: storedSolar },
   };
 }
 
@@ -311,6 +381,14 @@ async function driveInverter(page, calc) {
   assertEqual(actual.surge, expected.surge, "#inverter-surge");
   assertEqual(actual.amps12, expected.amps12, "#inverter-amps12");
   assertEqual(actual.amps24, expected.amps24, "#inverter-amps24");
+  const profile = await readProfile(page);
+  const load = profile.inverter.loads.find(function (item) {
+    return item.name === "Verify kettle";
+  });
+  const storedLoad = { name: "Verify kettle", watts: 1000, surgeWatts: 2000, qty: 1, enabled: true };
+  expectFields(load, storedLoad, "inverter load");
+  const storedInverter = { efficiencyPct: 88, marginPct: 20, systemVoltage: 12 };
+  expectFields(profile.inverter, storedInverter, "inverter");
   return {
     input: "One 230 V load, 1000 W running, 2000 W surge, quantity 1. Efficiency 88%, margin 20%, 12 V selected. Other loads off.",
     formula:
@@ -323,6 +401,11 @@ async function driveInverter(page, calc) {
     },
     expected: expected,
     actual: actual,
+    stored: {
+      key: "powertools.systemProfile",
+      inverter: storedInverter,
+      load: storedLoad,
+    },
   };
 }
 
@@ -370,6 +453,15 @@ async function driveWire(page, calc) {
   assertEqual(actual.amps, expected.amps, "#wiring-amps");
   assertEqual(actual.dropV, expected.dropV, "#drop-v");
   assertEqual(actual.dropPct, expected.dropPct, "#drop-pct-out");
+  const saved = (await readProfile(page)).wiring;
+  const storedWiring = {
+    systemVoltage: 12,
+    useInverterSuggestion: false,
+    currentA: 20,
+    oneWayLengthM: 2,
+    dropPct: 3,
+  };
+  expectFields(saved, storedWiring, "wiring");
   return {
     input: "12 V, 20 A typed (not the inverter suggestion), 2 m one way, 3% allowed drop",
     formula:
@@ -383,6 +475,7 @@ async function driveWire(page, calc) {
     },
     expected: expected,
     actual: actual,
+    stored: { key: "powertools.systemProfile", wiring: storedWiring },
   };
 }
 
@@ -431,10 +524,11 @@ async function main() {
       raw: result.raw,
       expected: result.expected,
       actual: result.actual,
-      screenshot: png,
+      stored: result.stored,
+      screenshot: path.relative(lib.REPO_ROOT, png),
     };
     const json = path.join(evidence, name + ".json");
-    fs.writeFileSync(json, JSON.stringify(report, null, 2));
+    fs.writeFileSync(json, JSON.stringify(report, null, 2) + "\n");
     console.log("ok  " + name);
     console.log(JSON.stringify({ expected: result.expected, actual: result.actual }));
     console.log("evidence " + json);

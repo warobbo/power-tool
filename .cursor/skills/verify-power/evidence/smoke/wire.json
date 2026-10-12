@@ -1,8 +1,8 @@
 {
   "tool": "wire",
   "runId": "smoke",
-  "checkedAt": "2026-10-12T02:36:21.669Z",
-  "localUrl": "http://127.0.0.1:46357/wire.html",
+  "checkedAt": "2026-10-12T02:50:04.128Z",
+  "localUrl": "http://127.0.0.1:40711/wire.html",
   "redirectStatus": 301,
   "redirectLocation": "https://motorhometools.co.uk/power/wire.html",
   "landed": "https://motorhometools.co.uk/power/wire.html",
@@ -32,5 +32,15 @@
     "dropV": "0.35",
     "dropPct": "2.9"
   },
-  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/wire.png"
+  "stored": {
+    "key": "powertools.systemProfile",
+    "wiring": {
+      "systemVoltage": 12,
+      "useInverterSuggestion": false,
+      "currentA": 20,
+      "oneWayLengthM": 2,
+      "dropPct": 3
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/wire.png"
 }

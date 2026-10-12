@@ -1,8 +1,8 @@
 {
   "tool": "daily",
   "runId": "smoke",
-  "checkedAt": "2026-10-12T02:36:06.652Z",
-  "localUrl": "http://127.0.0.1:46357/",
+  "checkedAt": "2026-10-12T02:49:54.379Z",
+  "localUrl": "http://127.0.0.1:40711/",
   "redirectStatus": 301,
   "redirectLocation": "https://motorhometools.co.uk/power/",
   "landed": "https://motorhometools.co.uk/power/",
@@ -26,5 +26,15 @@
     "ah12": "83.3",
     "ah24": "41.7"
   },
-  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/daily.png"
+  "stored": {
+    "key": "powertools.systemProfile",
+    "appliance": {
+      "name": "Verify lamp",
+      "watts": 100,
+      "hours": 10,
+      "qty": 1,
+      "enabled": true
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/daily.png"
 }

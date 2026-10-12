@@ -83,7 +83,7 @@ Proof goes to `.cursor/skills/verify-power/evidence/<POWER_VERIFY_RUN>/`. Cleanu
 | --- | --- |
 | `doctor.txt` | Local health check and live 301 sample |
 | `redirects.json` | Status and `Location` for each mapped path |
-| `<tool>.json` | Redirect followed, `calc.js` URL and sha256, INPUT, formula result, EXPECTED display text, ACTUAL display text |
+| `<tool>.json` | Redirect followed, `calc.js` URL and sha256, INPUT, formula result, EXPECTED display text, ACTUAL display text, and `stored` (the saved `powertools.systemProfile` row) |
 | `<tool>.png` | Full page after the inputs were typed |
 
 A proof shows the action and the result. For a calculator, the JSON must contain the typed input and the totals, and the saved `powertools.systemProfile` row when that tool writes one. A screenshot of the finished page with no record of what was typed is not enough.

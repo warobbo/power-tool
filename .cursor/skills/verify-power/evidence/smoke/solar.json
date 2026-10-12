@@ -1,8 +1,8 @@
 {
   "tool": "solar",
   "runId": "smoke",
-  "checkedAt": "2026-10-12T02:36:16.630Z",
-  "localUrl": "http://127.0.0.1:46357/solar.html",
+  "checkedAt": "2026-10-12T02:49:58.931Z",
+  "localUrl": "http://127.0.0.1:40711/solar.html",
   "redirectStatus": 301,
   "redirectLocation": "https://motorhometools.co.uk/power/solar.html",
   "landed": "https://motorhometools.co.uk/power/solar.html",
@@ -40,5 +40,16 @@
     "panels200": "3",
     "panels400": "2"
   },
-  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/solar.png"
+  "stored": {
+    "key": "powertools.systemProfile",
+    "solar": {
+      "useManualWh": true,
+      "manualWh": 1000,
+      "season": "spring-autumn",
+      "peakSunHours": 3,
+      "lossPct": 25,
+      "marginPct": 10
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/solar.png"
 }

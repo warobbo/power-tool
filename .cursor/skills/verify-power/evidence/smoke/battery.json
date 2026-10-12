@@ -1,8 +1,8 @@
 {
   "tool": "battery",
   "runId": "smoke",
-  "checkedAt": "2026-10-12T02:36:14.446Z",
-  "localUrl": "http://127.0.0.1:46357/battery.html",
+  "checkedAt": "2026-10-12T02:49:56.607Z",
+  "localUrl": "http://127.0.0.1:40711/battery.html",
   "redirectStatus": 301,
   "redirectLocation": "https://motorhometools.co.uk/power/battery.html",
   "landed": "https://motorhometools.co.uk/power/battery.html",
@@ -27,5 +27,15 @@
     "ah24": "115",
     "wh": "2,750"
   },
-  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/battery.png"
+  "stored": {
+    "key": "powertools.systemProfile",
+    "battery": {
+      "useManualWh": true,
+      "manualWh": 1000,
+      "daysAutonomy": 2,
+      "chemistry": "lifepo4",
+      "contingencyPct": 10
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/battery.png"
 }

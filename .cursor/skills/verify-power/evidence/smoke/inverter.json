@@ -1,8 +1,8 @@
 {
   "tool": "inverter",
   "runId": "smoke",
-  "checkedAt": "2026-10-12T02:36:19.531Z",
-  "localUrl": "http://127.0.0.1:46357/inverter.html",
+  "checkedAt": "2026-10-12T02:50:01.940Z",
+  "localUrl": "http://127.0.0.1:40711/inverter.html",
   "redirectStatus": 301,
   "redirectLocation": "https://motorhometools.co.uk/power/inverter.html",
   "landed": "https://motorhometools.co.uk/power/inverter.html",
@@ -29,5 +29,20 @@
     "amps12": "94.7",
     "amps24": "47.3"
   },
-  "screenshot": "/workspace/.cursor/skills/verify-power/evidence/smoke/inverter.png"
+  "stored": {
+    "key": "powertools.systemProfile",
+    "inverter": {
+      "efficiencyPct": 88,
+      "marginPct": 20,
+      "systemVoltage": 12
+    },
+    "load": {
+      "name": "Verify kettle",
+      "watts": 1000,
+      "surgeWatts": 2000,
+      "qty": 1,
+      "enabled": true
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/inverter.png"
 }

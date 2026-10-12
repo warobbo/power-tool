@@ -54,7 +54,7 @@ async function main() {
       },
       null,
       2
-    )
+    ) + "\n"
   );
   console.log("evidence " + file);
   if (!ok) process.exit(1);

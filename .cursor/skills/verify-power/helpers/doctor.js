@@ -35,12 +35,14 @@ async function main() {
   }
 
   const stubs = ["index.html", "battery.html", "solar.html", "inverter.html", "wire.html", "robots.txt", "assets"];
+  let stubsClear = true;
   stubs.forEach(function (name) {
     if (fs.existsSync(path.join(lib.REPO_ROOT, name))) {
+      stubsClear = false;
       ok = fail(name + " is in the publish root and would skip the 301") && ok;
     }
   });
-  say("ok  calculator HTML is not in this checkout");
+  if (stubsClear) say("ok  calculator HTML is not in this checkout");
 
   const seo = spawnSync(process.execPath, ["tests/seo.test.js"], {
     cwd: lib.REPO_ROOT,
@@ -57,15 +59,26 @@ async function main() {
   const redirects = lib.loadRedirects();
   const yaml = fs.readFileSync(path.join(lib.REPO_ROOT, "render.yaml"), "utf8");
   const yamlRoutes = lib.routesFromRenderYaml(yaml);
+  let routesMatch = true;
   redirects.forEach(function (rule) {
     const found = yamlRoutes.some(function (route) {
       return route.source === rule.source && route.destination === rule.destination;
     });
     if (!found || rule.status !== 301) {
+      routesMatch = false;
       ok = fail("_redirects and render.yaml disagree on " + rule.source) && ok;
     }
   });
-  say("ok  _redirects matches render.yaml destinations");
+  yamlRoutes.forEach(function (route) {
+    const found = redirects.some(function (rule) {
+      return rule.source === route.source && rule.destination === route.destination && rule.status === 301;
+    });
+    if (!found) {
+      routesMatch = false;
+      ok = fail("render.yaml route " + route.source + " is not a 301 in _redirects") && ok;
+    }
+  });
+  if (routesMatch) say("ok  _redirects matches render.yaml destinations");
 
   for (const item of lib.REDIRECT_CASES) {
     const response = await lib.requestOnce(instance.baseUrl + item.path);
