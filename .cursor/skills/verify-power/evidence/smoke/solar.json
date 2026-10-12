@@ -1,0 +1,55 @@
+{
+  "tool": "solar",
+  "runId": "smoke",
+  "checkedAt": "2026-10-12T02:49:58.931Z",
+  "localUrl": "http://127.0.0.1:40711/solar.html",
+  "redirectStatus": 301,
+  "redirectLocation": "https://motorhometools.co.uk/power/solar.html",
+  "landed": "https://motorhometools.co.uk/power/solar.html",
+  "calcScript": "https://motorhometools.co.uk/power/assets/calc.js?v=20260918wave3c",
+  "calcSha256": "cdf1a451919e6b3bcae3bc251be9ffe69cc29488b6fa4459a537d6d0a85ade52",
+  "pass": true,
+  "input": "Manual 1000 Wh/day, 3 peak sun hours, 25% losses, 10% margin",
+  "formula": "arrayW = dailyWh × (1 + margin/100) / (peakSunHours × (1 - loss/100)). Panel counts round up.",
+  "raw": {
+    "arrayWatts": 488.8888888888889,
+    "panels": [
+      {
+        "watts": 100,
+        "count": 5
+      },
+      {
+        "watts": 200,
+        "count": 3
+      },
+      {
+        "watts": 400,
+        "count": 2
+      }
+    ]
+  },
+  "expected": {
+    "arrayWatts": "489",
+    "panels100": "5",
+    "panels200": "3",
+    "panels400": "2"
+  },
+  "actual": {
+    "arrayWatts": "489",
+    "panels100": "5",
+    "panels200": "3",
+    "panels400": "2"
+  },
+  "stored": {
+    "key": "powertools.systemProfile",
+    "solar": {
+      "useManualWh": true,
+      "manualWh": 1000,
+      "season": "spring-autumn",
+      "peakSunHours": 3,
+      "lossPct": 25,
+      "marginPct": 10
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/solar.png"
+}

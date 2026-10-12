@@ -1,0 +1,41 @@
+{
+  "tool": "battery",
+  "runId": "smoke",
+  "checkedAt": "2026-10-12T02:49:56.607Z",
+  "localUrl": "http://127.0.0.1:40711/battery.html",
+  "redirectStatus": 301,
+  "redirectLocation": "https://motorhometools.co.uk/power/battery.html",
+  "landed": "https://motorhometools.co.uk/power/battery.html",
+  "calcScript": "https://motorhometools.co.uk/power/assets/calc.js?v=20260918wave3c",
+  "calcSha256": "cdf1a451919e6b3bcae3bc251be9ffe69cc29488b6fa4459a537d6d0a85ade52",
+  "pass": true,
+  "input": "Manual 1000 Wh/day, 2 days, LiFePO4 80% usable, 10% contingency",
+  "formula": "bankWh = dailyWh × days × (1 + contingency/100) / (usable/100). Ah = bankWh / voltage.",
+  "raw": {
+    "bankWh": 2750,
+    "ah12": 229.16666666666666,
+    "ah24": 114.58333333333333,
+    "usablePct": 80
+  },
+  "expected": {
+    "ah12": "229",
+    "ah24": "115",
+    "wh": "2,750"
+  },
+  "actual": {
+    "ah12": "229",
+    "ah24": "115",
+    "wh": "2,750"
+  },
+  "stored": {
+    "key": "powertools.systemProfile",
+    "battery": {
+      "useManualWh": true,
+      "manualWh": 1000,
+      "daysAutonomy": 2,
+      "chemistry": "lifepo4",
+      "contingencyPct": 10
+    }
+  },
+  "screenshot": ".cursor/skills/verify-power/evidence/smoke/battery.png"
+}

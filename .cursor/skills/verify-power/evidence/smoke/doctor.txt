@@ -1,0 +1,37 @@
+instance http://127.0.0.1:40711 pid=4919 run=smoke
+ok  local server identifies itself
+ok  calculator HTML is not in this checkout
+ok  node tests/seo.test.js
+ok  _redirects matches render.yaml destinations
+ok  301 /
+ok  301 /index.html
+ok  301 /battery.html
+ok  301 /solar.html
+ok  301 /inverter.html
+ok  301 /wire.html
+ok  301 /does-not-exist
+ok  301 /battery.html?x=1
+ok  301 /battery.html/
+ok  200 /README.md
+ok  200 /render.yaml
+ok  200 /_redirects
+ok  200 /tests/seo.test.js
+--- live hosts (not this process) ---
+ok  live 301 https://motorhomepower.co.uk/
+ok  live 301 https://motorhomepower.co.uk/index.html
+ok  live 301 https://motorhomepower.co.uk/battery.html
+ok  live 301 https://motorhomepower.co.uk/solar.html
+ok  live 301 https://motorhomepower.co.uk/inverter.html
+ok  live 301 https://motorhomepower.co.uk/wire.html
+ok  live 301 https://motorhomepower.co.uk/does-not-exist
+ok  live 301 https://power-tool.onrender.com/
+ok  live 301 https://power-tool.onrender.com/index.html
+ok  live 301 https://power-tool.onrender.com/battery.html
+ok  live 301 https://power-tool.onrender.com/solar.html
+ok  live 301 https://power-tool.onrender.com/inverter.html
+ok  live 301 https://power-tool.onrender.com/wire.html
+ok  live 301 https://power-tool.onrender.com/does-not-exist
+ok  live query string kept on /battery.html
+ok  live README.md stays 200
+edge www 301 https://motorhomepower.co.uk/ (first hop is the host edge, then the apex 301s to the hub)
+edge http 301 https://motorhomepower.co.uk/ (TLS hop, then the app 301)

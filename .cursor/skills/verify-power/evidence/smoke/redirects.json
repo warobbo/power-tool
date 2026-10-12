@@ -1,0 +1,111 @@
+{
+  "baseUrl": "http://127.0.0.1:40711",
+  "runId": "smoke",
+  "checkedAt": "2026-10-12T02:49:51.246Z",
+  "rows": [
+    {
+      "path": "/",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/",
+      "pass": true
+    },
+    {
+      "path": "/index.html",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/",
+      "pass": true
+    },
+    {
+      "path": "/battery.html",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/battery.html",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/battery.html",
+      "pass": true
+    },
+    {
+      "path": "/solar.html",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/solar.html",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/solar.html",
+      "pass": true
+    },
+    {
+      "path": "/inverter.html",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/inverter.html",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/inverter.html",
+      "pass": true
+    },
+    {
+      "path": "/wire.html",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/wire.html",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/wire.html",
+      "pass": true
+    },
+    {
+      "path": "/does-not-exist",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/",
+      "pass": true
+    },
+    {
+      "path": "/battery.html?x=1",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/battery.html?x=1",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/battery.html?x=1",
+      "pass": true
+    },
+    {
+      "path": "/battery.html/",
+      "status": 301,
+      "location": "https://motorhometools.co.uk/power/battery.html",
+      "expectedStatus": 301,
+      "expectedLocation": "https://motorhometools.co.uk/power/battery.html",
+      "pass": true
+    },
+    {
+      "path": "/README.md",
+      "status": 200,
+      "location": "",
+      "expectedStatus": 200,
+      "expectedLocation": "",
+      "pass": true
+    },
+    {
+      "path": "/render.yaml",
+      "status": 200,
+      "location": "",
+      "expectedStatus": 200,
+      "expectedLocation": "",
+      "pass": true
+    },
+    {
+      "path": "/_redirects",
+      "status": 200,
+      "location": "",
+      "expectedStatus": 200,
+      "expectedLocation": "",
+      "pass": true
+    },
+    {
+      "path": "/tests/seo.test.js",
+      "status": 200,
+      "location": "",
+      "expectedStatus": 200,
+      "expectedLocation": "",
+      "pass": true
+    }
+  ]
+}
