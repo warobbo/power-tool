@@ -132,12 +132,16 @@ async function main() {
     ok = fail("live query redirect " + err.message) && ok;
   }
 
-  try {
-    const readme = await lib.requestOnce("https://motorhomepower.co.uk/README.md");
-    if (readme.status === 200) say("ok  live README.md stays 200");
-    else ok = fail("live README.md status " + readme.status) && ok;
-  } catch (err) {
-    ok = fail("live README.md " + err.message) && ok;
+  for (const base of liveBases) {
+    for (const filePath of lib.FILE_CASES) {
+      try {
+        const file = await lib.requestOnce(base + filePath);
+        if (file.status === 200 && !file.location) say("ok  live 200 " + base + filePath);
+        else ok = fail("live " + base + filePath + " status " + file.status + " " + file.location) && ok;
+      } catch (err) {
+        ok = fail("live " + base + filePath + " " + err.message) && ok;
+      }
+    }
   }
 
   try {

@@ -21,7 +21,14 @@ const REDIRECT_CASES = [
   { path: "/battery.html/", location: "https://motorhometools.co.uk/power/battery.html" },
 ];
 
-const FILE_CASES = ["/README.md", "/render.yaml", "/_redirects", "/tests/seo.test.js"];
+const FILE_CASES = [
+  "/README.md",
+  "/render.yaml",
+  "/_redirects",
+  "/tests/seo.test.js",
+  "/.gitignore",
+  "/.cursor/skills/verify-power/SKILL.md",
+];
 
 function runId() {
   return process.env.POWER_VERIFY_RUN || "local";

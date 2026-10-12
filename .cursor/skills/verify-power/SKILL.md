@@ -17,7 +17,7 @@ What a visitor gets today:
 
 `www.motorhomepower.co.uk` first 301s to the apex. Plain `http://` first 301s to `https://`. Those hops are the host edge, not `_redirects`.
 
-Files that exist in the publish root stay **200** and skip the catch-all. Today those are `README.md`, `render.yaml`, `_redirects`, and `tests/seo.test.js`. Adding `index.html`, a calculator page, `robots.txt`, or `assets/` back would hide the 301.
+Files that exist in the publish root stay **200** and skip the catch-all. Today that includes `README.md`, `render.yaml`, `_redirects`, `tests/seo.test.js`, `.gitignore`, and the files under `.cursor/skills/verify-power/` (dot paths are published). Adding `index.html`, a calculator page, `robots.txt`, or `assets/` back would hide the 301.
 
 The maths is not in this repo. `helpers/drive-calculator.js` loads the `calc.js` the live page actually requested and recomputes. If that script disagrees with the formula in the feature file, the drive fails. Do not type in a Wh, Ah, watt, or mm² figure from memory.
 
