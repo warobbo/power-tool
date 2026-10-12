@@ -54,6 +54,36 @@ const HIDDEN_CASES = [
   { path: "/.gitignore?x=1", location: "https://motorhometools.co.uk/power/?x=1" },
 ];
 
+const WITHHELD_CASES = [
+  { path: "/README.md", location: "https://motorhometools.co.uk/power/" },
+  { path: "/render.yaml", location: "https://motorhometools.co.uk/power/" },
+  { path: "/README.md?x=1", location: "https://motorhometools.co.uk/power/?x=1" },
+];
+
+function ownerTraceNeedles() {
+  function fromCodes(codes) {
+    return String.fromCharCode.apply(null, codes);
+  }
+  return [
+    fromCodes([87, 97, 121, 110, 101]),
+    fromCodes([82, 111, 98, 105, 110, 115, 111, 110]),
+    fromCodes([119, 97, 114, 111, 98, 98, 111, 50, 52]),
+    fromCodes([119, 97, 114, 111, 98, 98, 111]),
+  ];
+}
+
+function ownerTracesIn(text) {
+  const found = [];
+  const lower = String(text).toLowerCase();
+  ownerTraceNeedles().forEach(function (needle) {
+    if (lower.indexOf(needle.toLowerCase()) !== -1 && found.indexOf("name") === -1) found.push("name");
+  });
+  if (/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(text) && found.indexOf("email") === -1) {
+    found.push("email");
+  }
+  return found;
+}
+
 function runId() {
   return process.env.POWER_VERIFY_RUN || "local";
 }
@@ -171,7 +201,7 @@ function requestOnce(urlString) {
   return new Promise(function (resolve, reject) {
     const req = lib.request(
       url,
-      { method: "GET", headers: { "User-Agent": "verify-power" } },
+      { method: "GET", headers: { "User-Agent": "verify-power", "Accept-Encoding": "identity" } },
       function (res) {
         res.resume();
         res.on("end", function () {
@@ -180,6 +210,41 @@ function requestOnce(urlString) {
             location: res.headers.location || "",
             verify: res.headers["x-power-verify"] || "",
             contentType: res.headers["content-type"] || "",
+          });
+        });
+      }
+    );
+    req.setTimeout(20000, function () {
+      req.destroy(new Error("timeout " + urlString));
+    });
+    req.on("error", reject);
+    req.end();
+  });
+}
+
+function requestText(urlString, limit) {
+  const max = limit || 200000;
+  const url = new URL(urlString);
+  const lib = url.protocol === "https:" ? https : http;
+  return new Promise(function (resolve, reject) {
+    const req = lib.request(
+      url,
+      { method: "GET", headers: { "User-Agent": "verify-power", "Accept-Encoding": "identity" } },
+      function (res) {
+        const chunks = [];
+        let size = 0;
+        res.on("data", function (chunk) {
+          size += chunk.length;
+          if (size <= max) chunks.push(chunk);
+        });
+        res.on("end", function () {
+          resolve({
+            status: res.statusCode,
+            location: res.headers.location || "",
+            verify: res.headers["x-power-verify"] || "",
+            contentType: res.headers["content-type"] || "",
+            body: Buffer.concat(chunks).toString("utf8"),
+            truncated: size > max,
           });
         });
       }
@@ -271,6 +336,8 @@ module.exports = {
   PUBLISHED_FILES: PUBLISHED_FILES,
   FILE_CASES: FILE_CASES,
   HIDDEN_CASES: HIDDEN_CASES,
+  WITHHELD_CASES: WITHHELD_CASES,
+  ownerTracesIn: ownerTracesIn,
   runId: runId,
   runDir: runDir,
   evidenceDir: evidenceDir,
@@ -282,6 +349,7 @@ module.exports = {
   readInstance: readInstance,
   requireInstance: requireInstance,
   requestOnce: requestOnce,
+  requestText: requestText,
   normalisePath: normalisePath,
   publishedFile: publishedFile,
   contentType: contentType,

@@ -12,7 +12,7 @@ Update this feature map in the same pull request whenever a build changes pages 
 - Set `POWER_VERIFY_RUN` so this run does not share a port or Chrome profile with another.
 - Calculator drives use a new Chrome profile. Saved `powertools.systemProfile` data from a normal browser is out of scope and will make totals look wrong.
 - Desktop viewport for drives is 1280×900. The portrait gate covers the page only for a short landscape phone (`orientation: landscape`, `max-height: 540px`, `max-width: 1000px`).
-- EXPECTED figures in calculator files were derived from the live page's `calc.js` functions, checked against `warobbo/motorhometools` `power/assets/calc.js` at `44433573` on 12 Oct 2026. They are not stored in this repo. The drive recomputes from the script the page loaded and fails if the result changed.
+- EXPECTED figures in calculator files were derived from the live page's `calc.js` functions, checked against Motorhome Tools `power/assets/calc.js` at `44433573` on 12 Oct 2026. They are not stored in this repo. The drive recomputes from the script the page loaded and fails if the result changed.
 
 ## Features
 

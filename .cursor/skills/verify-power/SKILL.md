@@ -13,11 +13,11 @@ What a visitor gets today:
 | --- | --- |
 | `https://motorhomepower.co.uk` | App 301s. `/`, `/index.html`, and any path with no file go to `https://motorhometools.co.uk/power/`. `/battery.html`, `/solar.html`, `/inverter.html`, and `/wire.html` go to the same path under `/power/`. |
 | `https://power-tool.onrender.com` | Same 301 map. The Render service is `power-tool`. `render.yaml` still says `name: power-tools`. Do not rename it here. |
-| `https://motorhometools.co.uk/power` | The live calculators. Source is `warobbo/motorhometools` `power/`, not this checkout. |
+| `https://motorhometools.co.uk/power` | The live calculators. Source is the Motorhome Tools `power/` tree, not this checkout. |
 
 `www.motorhomepower.co.uk` first 301s to the apex. Plain `http://` first 301s to `https://`. Those hops are the host edge, not `_redirects`.
 
-The publish directory is `public/`, filled by `scripts/publish-public.sh` from `scripts/published-files.txt`. Those paths stay **200** and skip the catch-all: `README.md`, `render.yaml`, `_redirects`, and `tests/seo.test.js`. Dotfiles and `.cursor/` are not copied, so `/.gitignore` and `/.cursor/skills/verify-power/SKILL.md` are not files and follow the catch-all **301**. Adding `index.html`, a calculator page, `robots.txt`, or `assets/` back into that allowlist would hide the 301.
+The publish directory is `public/`, filled by `scripts/publish-public.sh` from `scripts/published-files.txt`. Those paths stay **200** and skip the catch-all: `_redirects` and `tests/seo.test.js`. `README.md` and `render.yaml` stay in git and are not copied, so `/README.md` and `/render.yaml` are not files and follow the catch-all **301**. Dotfiles and `.cursor/` are not copied either, so `/.gitignore` and `/.cursor/skills/verify-power/SKILL.md` follow that same **301**. Adding `index.html`, a calculator page, `robots.txt`, or `assets/` back into that allowlist would hide the 301.
 
 The maths is not in this repo. `helpers/drive-calculator.js` loads the `calc.js` the live page actually requested and recomputes. If that script disagrees with the formula in the feature file, the drive fails. Do not type in a Wh, Ah, watt, or mm² figure from memory.
 
@@ -35,7 +35,7 @@ POWER_VERIFY_RUN=local node .cursor/skills/verify-power/helpers/serve.js
 
 Ready signal: a line `ready http://127.0.0.1:<port> run=local`. The process stays in the foreground. It listens on `127.0.0.1` only and writes `/tmp/verify-power/local/instance.json`.
 
-The server reads `_redirects`. A path in `scripts/published-files.txt` returns 200. Any other path, including dotfiles and `.cursor/`, returns the file's 301 and keeps the query string. A trailing slash is stripped before the match, so `/battery.html/` follows `/battery.html`. Response header `X-Power-Verify: local-redirect` marks the process.
+The server reads `_redirects`. A path in `scripts/published-files.txt` returns 200. Any other path, including `/README.md`, `/render.yaml`, dotfiles, and `.cursor/`, returns the file's 301 and keeps the query string. A trailing slash is stripped before the match, so `/battery.html/` follows `/battery.html`. Response header `X-Power-Verify: local-redirect` marks the process.
 
 Stop that process with Cleanup. Do not start a second server with the same `POWER_VERIFY_RUN` while the pid is alive.
 
@@ -45,9 +45,9 @@ Stop that process with Cleanup. Do not start a second server with the same `POWE
 POWER_VERIFY_RUN=local node .cursor/skills/verify-power/helpers/doctor.js --evidence
 ```
 
-Read-only. Exit 0 means the local server is worth driving: the pid is the `serve.js` this run started, `/` answers on loopback with `X-Power-Verify`, calculator HTML is absent, `node tests/seo.test.js` passes, `_redirects` matches `render.yaml`, and the local 301/200 table matches the feature map. `/.gitignore` and `/.cursor/skills/verify-power/SKILL.md` must be 301s, not 200s.
+Read-only. Exit 0 means the local server is worth driving: the pid is the `serve.js` this run started, `/` answers on loopback with `X-Power-Verify`, calculator HTML is absent, `node tests/seo.test.js` passes, `_redirects` matches `render.yaml`, and the local 301/200 table matches the feature map. `/README.md`, `/render.yaml`, `/.gitignore`, and `/.cursor/skills/verify-power/SKILL.md` must be 301s, not 200s. Allowlist bodies must not contain an owner name or an email address.
 
-The same command then checks the live https hosts. A wrong live 301 fails the doctor. A live 200 for `/.gitignore` or `/.cursor/skills/verify-power/SKILL.md` fails the doctor. `www` and plain `http` are printed as edge hops. If plain `http` cannot be measured, the line says `UNMEASURED` and does not by itself fail a good https map.
+The same command then checks the live https hosts. A wrong live 301 fails the doctor. A live 200 for `/README.md`, `/render.yaml`, `/.gitignore`, or `/.cursor/skills/verify-power/SKILL.md` fails the doctor. A live allowlist body that contains an owner name or an email address fails the doctor. `www` and plain `http` are printed as edge hops. If plain `http` cannot be measured, the line says `UNMEASURED` and does not by itself fail a good https map.
 
 Run doctor again after a failed drive before driving anything else.
 
